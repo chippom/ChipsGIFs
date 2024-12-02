@@ -425,8 +425,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     document.addEventListener('mousemove', updateStarPosition);
-// Download button functionality
+
+    // Download button functionality
     document.querySelectorAll('.download-btn').forEach(button => {
+        const gifName = button.getAttribute('data-gif');
+        const countSpan = button.nextElementSibling;
+        const storedCount = localStorage.getItem(`downloads_${gifName}`) || 0;
+        countSpan.textContent = `Downloads: ${storedCount}`;
+
         button.addEventListener('click', function() {
             const gifName = this.getAttribute('data-gif');
             const link = document.createElement('a');
@@ -436,13 +442,13 @@ document.addEventListener('DOMContentLoaded', function() {
             link.click();
             document.body.removeChild(link);
             
-            // Update download count
             const countSpan = this.nextElementSibling;
-            let count = parseInt(countSpan.textContent.split(': ')[1]);
-            countSpan.textContent = `Downloads: ${count + 1}`;
+            let count = parseInt(localStorage.getItem(`downloads_${gifName}`) || 0);
+            count++;
+            localStorage.setItem(`downloads_${gifName}`, count);
+            countSpan.textContent = `Downloads: ${count}`;
         });
     });
-
 });
 </script>
 </body>
