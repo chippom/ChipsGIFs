@@ -425,6 +425,24 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     document.addEventListener('mousemove', updateStarPosition);
+// Download button functionality
+    document.querySelectorAll('.download-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const gifName = this.getAttribute('data-gif');
+            const link = document.createElement('a');
+            link.href = gifName;
+            link.download = gifName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Update download count
+            const countSpan = this.nextElementSibling;
+            let count = parseInt(countSpan.textContent.split(': ')[1]);
+            countSpan.textContent = `Downloads: ${count + 1}`;
+        });
+    });
+
 });
 </script>
 </body>
