@@ -135,7 +135,7 @@ body.dark-mode #followMeButton {
 .star:before,
 .star:after {
     position: absolute;
-    content: '\u2726';
+    content: '\u2726'; /* Unicode for star */
     font-size: 0.75rem;
 }
 
