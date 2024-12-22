@@ -1,108 +1,220 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Client-side caching
-    if ('caches' in window) {
-        caches.open('my-gif-cache').then(cache => {
-            document.querySelectorAll('.gif-item img').forEach(img => {
-                cache.add(img.src);
-            });
-        });
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0 0 7.5rem 0;
+    background-color: #f4f4f4;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
+}
+
+.instructions {
+    font-size: 0.75rem;
+    color: #666;
+    text-align: center;
+    margin-top: 0.5rem;
+}
+
+.gif-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 2rem;
+    justify-content: center;
+}
+
+.gif-item {
+    flex: 1 1 12.5rem;
+    max-width: 12.5rem;
+    box-sizing: border-box;
+    margin-bottom: 1rem;
+}
+
+.gif-item img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
+}
+
+.download-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0.625rem;
+}
+
+.download-btn {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 0.3125rem 0.625rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+    border-radius: 0.3125rem;
+    margin-right: 0.625rem;
+    width: 6.25rem;
+    height: 1.875rem;
+    text-align: center;
+}
+
+.download-btn:hover,
+#contactMeButton:hover,
+#toggleDarkMode:hover,
+#followMeButton:hover {
+    background-color: #45a049;
+}
+
+.download-count {
+    font-size: 0.75rem;
+}
+
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 5;
+}
+
+#toggleDarkMode,
+#followMeButton {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 0.9375rem 2rem;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1rem;
+    margin: 0.25rem 0.125rem;
+    cursor: pointer;
+}
+
+body.dark-mode {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+body.dark-mode header,
+body.dark-mode footer {
+    background-color: #1e1e1e;
+}
+
+body.dark-mode .gif-item img {
+    box-shadow: 0 0.25rem 0.375rem rgba(255, 255, 255, 0.2);
+}
+
+body.dark-mode .download-btn,
+body.dark-mode #contactMeButton,
+body.dark-mode #toggleDarkMode,
+body.dark-mode #followMeButton {
+    background-color: #45a049;
+    color: #ffffff;
+}
+
+.star {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    color: gold;
+    font-size: 1.875rem;
+    transition: opacity 0.5s ease-out;
+    opacity: 0;
+}
+
+.star:before,
+.star:after {
+    position: absolute;
+    content: '\u2726'; /* Unicode for star */
+    font-size: 0.75rem;
+}
+
+.star:before {
+    color: transparent;
+    text-shadow: 0 0 0.1875rem rgb(250, 250, 174);
+}
+
+.star:after {
+    color: yellow;
+}
+
+#contactMeButton {
+    display: inline-block;
+    background-color: #4CAF50;
+    color: white;
+    padding: 0.625rem 1.25rem;
+    border: none;
+    border-radius: 0.3125rem;
+    text-decoration: none;
+    cursor: pointer;
+    margin-bottom: 1.25rem;
+    position: relative;
+    z-index: 10;
+}
+
+.contact-button-container {
+    text-align: center;
+    margin: 1.25rem 0;
+    position: relative;
+    z-index: 10;
+}
+
+.fullsize-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.fullsize-image {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+}
+
+/* Navigation Button Styles */
+.nav-button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px;
+    background-color: #007BFF; /* Button background color */
+    color: white; /* Text color */
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px; /* Rounded corners */
+    border: none; /* Remove border */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+.nav-button:hover {
+    background-color: #0056b3; /* Darker background on hover */
+}
+
+/* Media Queries for Responsive Design */
+@media (max-width: 768px) {
+    .gif-item {
+        flex: 1 1 45%; /* Two items per row on smaller screens */
     }
+}
 
-    // Dark mode toggle functionality
-    const darkModeToggle = document.getElementById('toggleDarkMode');
-    const body = document.body;
-    if (darkModeToggle) {
-        darkModeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
-        });
+@media (max-width: 480px) {
+    .gif-item {
+        flex: 1 1 100%; /* One item per row on very small screens */
     }
-
-    // Check for saved dark mode preference
-    if (localStorage.getItem('darkMode') === 'true') {
-        body.classList.add('dark-mode');
-    }
-
-    // GIF overlay functionality
-    const gifContainer = document.querySelector('.gif-container');
-    gifContainer.addEventListener('click', function(e) {
-        if (e.target.classList.contains('download-btn')) return;
-        const gifItem = e.target.closest('.gif-item');
-        if (gifItem) {
-            const img = gifItem.querySelector('img');
-            const existingOverlay = document.querySelector('.fullsize-overlay');
-            if (existingOverlay) {
-                document.body.removeChild(existingOverlay);
-            }
-            const overlay = document.createElement('div');
-            overlay.className = 'fullsize-overlay';
-            const fullsizeImage = document.createElement('img');
-            fullsizeImage.src = img.src;
-            fullsizeImage.className = 'fullsize-image';
-            overlay.appendChild(fullsizeImage);
-            document.body.appendChild(overlay);
-            overlay.addEventListener('click', function() {
-                document.body.removeChild(overlay);
-            });
-        }
-    });
-
-    // Star effect
-    const starContainer = document.createElement('div');
-    starContainer.style.position = 'fixed';
-    starContainer.style.pointerEvents = 'none';
-    starContainer.style.zIndex = '9999';
-    document.body.appendChild(starContainer);
-
-    const stars = [];
-    const starCount = 5;
-    for (let i = 0; i < starCount; i++) {
-        const star = document.createElement('div');
-        star.textContent = '\u2726'; // Unicode for star
-        star.className = 'star';
-        starContainer.appendChild(star);
-        stars.push(star);
-    }
-
-    let currentIndex = 0;
-    function updateStarPosition(e) {
-        if (!e || !e.clientX || !e.clientY) return;
-        const star = stars[currentIndex];
-        star.style.left = e.clientX + 'px';
-        star.style.top = e.clientY + 'px';
-        star.style.opacity = '1';
-        setTimeout(() => {
-            star.style.opacity = '0';
-        }, 500);
-        currentIndex = (currentIndex + 1) % starCount;
-    }
-
-    document.addEventListener('mousemove', updateStarPosition);
-
-    // Download button functionality
-    document.querySelectorAll('.download-btn').forEach(button => {
-        const gifName = button.getAttribute('data-gif');
-        const countSpan = button.nextElementSibling;
-        const storedCount = localStorage.getItem(`downloads_${gifName}`) || 0;
-        if (countSpan) {
-            countSpan.textContent = `Downloads: ${storedCount}`;
-        }
-        button.addEventListener('click', function() {
-            const gifName = this.getAttribute('data-gif');
-            const link = document.createElement('a');
-            link.href = gifName;
-            link.download = gifName;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            const countSpan = this.nextElementSibling;
-            if (countSpan) {
-                let count = parseInt(localStorage.getItem(`downloads_${gifName}`) || 0);
-                count++;
-                localStorage.setItem(`downloads_${gifName}`, count);
-                countSpan.textContent = `Downloads: ${count}`;
-            }
-        });
-    });
-});
-
+}
