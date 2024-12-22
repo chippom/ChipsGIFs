@@ -673,7 +673,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Client-side caching
     if ('caches' in window) {
         caches.open('my-gif-cache').then(cache => {
-            // Cache all gif images
             document.querySelectorAll('.gif-item img').forEach(img => {
                 cache.add(img.src);
             });
@@ -683,7 +682,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Dark mode toggle functionality
     const darkModeToggle = document.getElementById('toggleDarkMode');
     const body = document.body;
-
     if (darkModeToggle) {
         darkModeToggle.addEventListener('click', () => {
             body.classList.toggle('dark-mode');
@@ -698,7 +696,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // GIF overlay functionality
     const gifContainer = document.querySelector('.gif-container');
-    
     gifContainer.addEventListener('click', function(e) {
         if (e.target.classList.contains('download-btn')) return;
         const gifItem = e.target.closest('.gif-item');
@@ -730,28 +727,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const stars = [];
     const starCount = 5;
-
     for (let i = 0; i < starCount; i++) {
         const star = document.createElement('div');
-        star.textContent = '★';
+        star.textContent = '\u2605'; // Unicode for star
         star.className = 'star';
         starContainer.appendChild(star);
         stars.push(star);
     }
 
     let currentIndex = 0;
-
     function updateStarPosition(e) {
         if (!e || !e.clientX || !e.clientY) return;
         const star = stars[currentIndex];
         star.style.left = e.clientX + 'px';
         star.style.top = e.clientY + 'px';
         star.style.opacity = '1';
-
         setTimeout(() => {
             star.style.opacity = '0';
         }, 500);
-
         currentIndex = (currentIndex + 1) % starCount;
     }
 
@@ -762,22 +755,20 @@ document.addEventListener('DOMContentLoaded', function() {
         const gifName = button.getAttribute('data-gif');
         const countSpan = button.nextElementSibling;
         const storedCount = localStorage.getItem(`downloads_${gifName}`) || 0;
-        
         if (countSpan) {
             countSpan.textContent = `Downloads: ${storedCount}`;
         }
-
         button.addEventListener('click', function() {
+            const gifName = this.getAttribute('data-gif');
             const link = document.createElement('a');
             link.href = gifName;
             link.download = gifName;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            
-            let count;
+            const countSpan = this.nextElementSibling;
             if (countSpan) {
-                count = parseInt(localStorage.getItem(`downloads_${gifName}`)) || 0;
+                let count = parseInt(localStorage.getItem(`downloads_${gifName}`) || 0);
                 count++;
                 localStorage.setItem(`downloads_${gifName}`, count);
                 countSpan.textContent = `Downloads: ${count}`;
@@ -785,6 +776,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
 </script>
 </body>
 </html>
