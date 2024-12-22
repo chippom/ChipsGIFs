@@ -131,13 +131,13 @@ body.dark-mode #followMeButton {
     transition: opacity 0.5s ease-out;
     opacity: 0;
 }
-
 .star:before,
 .star:after {
     position: absolute;
-    content: '\u2726'; /* Unicode for star */
+    content: "\2726"; /* Unicode for star */
     font-size: 0.75rem;
 }
+
 
 .star:before {
     color: transparent;
