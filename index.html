@@ -9,27 +9,55 @@
     <title>Top 10 Creative GIFs for Every Occasion | My GIF Showcase</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="canonical" href="https://chippom.github.io/ChipsGIFs/index.html" />
+    <style>
+        .header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 10px;
+            background-color: #333; /* Dark background color */
+            color: #fff; /* White text color */
+        }
+        .site-title {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .icon {
+            margin-left: 10px; /* Adjust as needed */
+        }
+        .title {
+            font-size: 38px; /* Increased font size */
+            font-weight: bold;
+        }
+        .instructions {
+            margin-top: 10px;
+            font-size: 20px; /* Smaller font size for instructions */
+        }
+    </style>
 </head>
 
 <body>
-<header>
+<header class="header">
     <div class="site-title">
-        <h1>My Awesome GIF Creations</h1>
-        <img src="Parental_Advisery_3.gif" alt="Parental Advisory" class="icon" width="150" height="150">
+        <h1 class="title">My Awesome GIF Creations</h1>
+        <img src="Parental_Advisery_4.gif" alt="Parental Advisory" class="icon" width="150" height="150">
     </div>
     <p class="instructions">Click on the GIF to view the full-size image.</p>
 </header>
 
- <div style="text-align: right; margin: 10px;"> 
-        <button id="toggleDarkMode">Toggle Dark Mode</button> 
-        <a href="https://bsky.app/profile/chippom.bsky.social" target="_blank"> 
-            <button id="followMeButton">Follow Me</button> 
-        </a> 
-    </div>
+<div style="text-align: right; margin: 10px;"> 
+    <button id="toggleDarkMode">Toggle Dark Mode</button> 
+    <a href="https://bsky.app/profile/chippom.bsky.social" target="_blank"> 
+        <button id="followMeButton">Follow Me</button> 
+    </a> 
+</div>
 
-    <main>
-        <div class="gif-container">
-        <!-- Example GIF items -->
+<main>
+    <div class="gif-container">
+        <!-- Example GIF items go here -->
+
 <div class="gif-item">
     <img src="TRumpster_Fire_1.gif" alt=" Trump gets hit by lightning and captures fire" class="gif-thumbnail" loading="lazy">
     <button class="download-btn" data-gif="TRumpster_Fire_1.gif">Download</button>
