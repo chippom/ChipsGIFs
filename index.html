@@ -35,6 +35,21 @@
             margin-top: 10px;
             font-size: 20px; /* Smaller font size for instructions */
         }
+        .pagination {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f4f4f4;
+        }
+        .pagination a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #007bff;
+        }
+        .pagination a:hover {
+            text-decoration: underline;
+        }
     </style>
     <!-- Google Tag Manager -->
     <script>
@@ -56,7 +71,6 @@
 <!-- End Google Tag Manager (noscript) -->
 
 <header class="header">
-
     <div class="site-title">
         <h1 class="title">My Awesome GIF Creations</h1>
         <img src="Parental_Advisery_4.gif" alt="Parental Advisory" class="icon" width="150" height="150">
@@ -64,11 +78,16 @@
     <p class="instructions">Click on the GIF to view the full-size image.</p>
 </header>
 
-<div style="text-align: right; margin: 10px;"> 
-    <button id="toggleDarkMode">Toggle Dark Mode</button> 
-    <a href="https://bsky.app/profile/chippom.bsky.social" target="_blank"> 
-        <button id="followMeButton">Follow Me</button> 
-    </a> 
+<div class="pagination">
+    <span>Page 1 of 4</span>
+    <a href="page_2.html">Next</a>
+</div>
+
+<div style="text-align: right; margin: 10px;">
+    <button id="toggleDarkMode">Toggle Dark Mode</button>
+    <a href="https://bsky.app/profile/chippom.bsky.social" target="_blank">
+        <button id="followMeButton">Follow Me</button>
+    </a>
 </div>
 
 <main>
