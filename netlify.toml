@@ -2,13 +2,6 @@
 for = "/*.html"
   [headers.values]
   Cache-Control = "no-cache, no-store, must-revalidate"
-  Content-Type = "text/html; charset=utf-8"
-
-[[headers]]
-for = "/*/"
-  [headers.values]
-  Cache-Control = "no-cache, no-store, must-revalidate"
-  Content-Type = "text/html; charset=utf-8"
 
 [[headers]]
 for = "/*.css"
@@ -34,6 +27,3 @@ for = "/favicon.ico"
 for = "/*"
   [headers.values]
   X-Content-Type-Options = "nosniff"
-
-
-
