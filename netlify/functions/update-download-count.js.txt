@@ -1,0 +1,66 @@
+// netlify/functions/update-download-count.js
+
+import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+)
+
+export async function handler(event) {
+  // Only allow POST requests
+  if (event.httpMethod !== 'POST') {
+    return { statusCode: 405, body: 'Method Not Allowed' }
+  }
+
+  let gifName
+  try {
+    gifName = JSON.parse(event.body).gif_name
+  } catch {
+    return { statusCode: 400, body: 'Invalid JSON body' }
+  }
+
+  if (!gifName) {
+    return { statusCode: 400, body: 'gif_name is required' }
+  }
+
+  // Atomically upsert and increment the count
+  // 1) read existing or assume 0
+  const { data: existing, error: getError } = await supabase
+    .from('downloads')
+    .select('count')
+    .eq('gif_name', gifName)
+    .single()
+
+  if (getError && getError.code !== 'PGRST116') {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: getError.message })
+    }
+  }
+
+  const newCount = (existing?.count || 0) + 1
+
+  // 2) upsert the new count
+  const { data, error: upsertError } = await supabase
+    .from('downloads')
+    .upsert({ gif_name: gifName, count: newCount }, { onConflict: 'gif_name' })
+    .select('count')
+    .single()
+
+  if (upsertError) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: upsertError.message })
+    }
+  }
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ count: data.count }),
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*'
+    }
+  }
+}
