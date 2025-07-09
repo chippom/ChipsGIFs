@@ -1,5 +1,3 @@
-// netlify/functions/update-download-count.js
-
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(
@@ -8,7 +6,6 @@ const supabase = createClient(
 )
 
 export async function handler(event) {
-  // Only allow POST requests
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' }
   }
@@ -19,48 +16,31 @@ export async function handler(event) {
   } catch {
     return { statusCode: 400, body: 'Invalid JSON body' }
   }
-
   if (!gifName) {
     return { statusCode: 400, body: 'gif_name is required' }
   }
 
-  // Atomically upsert and increment the count
-  // 1) read existing or assume 0
-  const { data: existing, error: getError } = await supabase
+  // Upsert: insert {gif_name, count: 1} or increment existing row’s count
+  const { data, error } = await supabase
     .from('downloads')
-    .select('count')
-    .eq('gif_name', gifName)
-    .single()
-
-  if (getError && getError.code !== 'PGRST116') {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: getError.message })
-    }
-  }
-
-  const newCount = (existing?.count || 0) + 1
-
-  // 2) upsert the new count
-  const { data, error: upsertError } = await supabase
-    .from('downloads')
-    .upsert({ gif_name: gifName, count: newCount }, { onConflict: 'gif_name' })
+    .upsert(
+      { gif_name: gifName, count: 1 },
+      { onConflict: ['gif_name'] }
+    )
     .select('count')
     .single()
 
-  if (upsertError) {
+  if (error) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: upsertError.message })
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify({ error: error.message })
     }
   }
 
   return {
     statusCode: 200,
-    body: JSON.stringify({ count: data.count }),
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*'
-    }
+    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+    body: JSON.stringify({ count: data.count })
   }
 }
