@@ -22,23 +22,39 @@ export async function handler(event) {
   }
 
   // Upsert: insert {gif_name, count: 1} or increment existing row’s count
-  const { data, error } = await supabase
+  const { error: upsertError } = await supabase
     .from('downloads')
     .upsert(
       { gif_name: gifName, count: 1 },
       { onConflict: ['gif_name'] }
     )
-    .select('count')
-    .single()
 
-  if (error) {
+  if (upsertError) {
     return {
       statusCode: 500,
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
       },
-      body: JSON.stringify({ error: error.message })
+      body: JSON.stringify({ error: upsertError.message })
+    }
+  }
+
+  // Now fetch the updated count
+  const { data, error: fetchError } = await supabase
+    .from('downloads')
+    .select('count')
+    .eq('gif_name', gifName)
+    .single()
+
+  if (fetchError) {
+    return {
+      statusCode: 500,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({ error: fetchError.message })
     }
   }
 
@@ -50,6 +66,6 @@ export async function handler(event) {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*'
     },
-    body: JSON.stringify({ count: data?.count ?? 1 }) // Fallback ensures no undefined
+    body: JSON.stringify({ count: data?.count ?? 1 })
   }
 }
