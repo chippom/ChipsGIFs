@@ -20,7 +20,8 @@
         });
 
         const data = await res.json();
-        alert("✅ Count updated: " + (data.count ?? "undefined"));
+        alert("✅ Full response: " + JSON.stringify(data));  // Show raw response for diagnostics
+        alert("✅ Count updated: " + (data.count ?? "undefined"));  // Display parsed count value
       } catch (err) {
         console.error("❌ Fetch failed:", err);
         alert("❌ Error: " + err.message);
