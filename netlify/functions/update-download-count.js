@@ -21,7 +21,7 @@ export async function handler(event) {
     return { statusCode: 400, body: 'gif_name is required' }
   }
 
-  // Upsert: insert {gif_name, count: 1} or increment existing row’s count
+  // Upsert: insert or update the row
   const { error: upsertError } = await supabase
     .from('downloads')
     .upsert(
@@ -40,25 +40,25 @@ export async function handler(event) {
     }
   }
 
-  // Now fetch the updated count
+  // Fetch the updated count
   const { data, error: fetchError } = await supabase
     .from('downloads')
     .select('count')
     .eq('gif_name', gifName)
     .single()
 
-  if (fetchError) {
+  console.log("🔍 Supabase fetch result:", data)
+
+  if (fetchError || !data) {
     return {
-      statusCode: 500,
+      statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
       },
-      body: JSON.stringify({ error: fetchError.message })
+      body: JSON.stringify({ count: "unavailable" })
     }
   }
-
-  console.log("🔍 Supabase returned:", data)
 
   return {
     statusCode: 200,
@@ -66,6 +66,6 @@ export async function handler(event) {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*'
     },
-    body: JSON.stringify({ count: data?.count ?? 1 })
+    body: JSON.stringify({ count: data.count })
   }
 }
