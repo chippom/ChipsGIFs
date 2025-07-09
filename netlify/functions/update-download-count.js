@@ -30,44 +30,67 @@ export async function handler(event) {
     }
   }
 
-  // Check if the row exists
-  const { data: existing, error: fetchError } = await supabase
+  // Step 1: Try to fetch the current row
+  const { data: existingRow, error: fetchError } = await supabase
     .from('downloads')
     .select('count')
     .eq('gif_name', gifName)
     .single()
 
-  if (fetchError) {
-    console.error("🔴 Fetch error:", fetchError.message)
-  }
-
-  let updatedCount = 1
-
-  if (existing?.count !== undefined) {
-    updatedCount = existing.count + 1
-  }
-
-  // Upsert with updated count
-  const { error: upsertError } = await supabase
-    .from('downloads')
-    .upsert(
-      { gif_name: gifName, count: updatedCount },
-      { onConflict: ['gif_name'] }
-    )
-
-  if (upsertError) {
-    console.error("🔴 Upsert error:", upsertError.message)
+  if (fetchError && fetchError.code !== 'PGRST116') { // ignore "No rows found"
+    console.error("🔴 Error fetching existing row:", fetchError.message)
     return {
       statusCode: 500,
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
       },
-      body: JSON.stringify({ error: upsertError.message })
+      body: JSON.stringify({ error: fetchError.message })
     }
   }
 
-  console.log(`🟢 Updated count for ${gifName}:`, updatedCount)
+  let updatedCount
+
+  if (existingRow) {
+    updatedCount = existingRow.count + 1
+
+    const { error: updateError } = await supabase
+      .from('downloads')
+      .update({ count: updatedCount })
+      .eq('gif_name', gifName)
+
+    if (updateError) {
+      console.error("🔴 Error updating count:", updateError.message)
+      return {
+        statusCode: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({ error: updateError.message })
+      }
+    }
+  } else {
+    updatedCount = 1
+
+    const { error: insertError } = await supabase
+      .from('downloads')
+      .insert({ gif_name: gifName, count: updatedCount })
+
+    if (insertError) {
+      console.error("🔴 Error inserting new row:", insertError.message)
+      return {
+        statusCode: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({ error: insertError.message })
+      }
+    }
+  }
+
+  console.log(`🟢 Final count for "${gifName}":`, updatedCount)
 
   return {
     statusCode: 200,
