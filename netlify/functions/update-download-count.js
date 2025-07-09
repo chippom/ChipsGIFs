@@ -30,52 +30,51 @@ export async function handler(event) {
     }
   }
 
-  // Step 1: Try to fetch the current row
-  const { data: existingRow, error: fetchError } = await supabase
-    .from('downloads')
-    .select('count')
-    .eq('gif_name', gifName)
-    .single()
-
-  console.log("🔍 Existing row:", existingRow)
-  if (fetchError) {
-    console.error("❌ Fetch error:", fetchError.message)
-  }
-
   let updatedCount = 1
 
-  if (existingRow?.count !== undefined) {
-    updatedCount = existingRow.count + 1
-  }
+  try {
+    const { data: existingRow, error: fetchError } = await supabase
+      .from('downloads')
+      .select('count')
+      .eq('gif_name', gifName)
+      .single()
 
-  // Step 2: Upsert with updated count
-  const { error: upsertError } = await supabase
-    .from('downloads')
-    .upsert(
-      { gif_name: gifName, count: updatedCount },
-      { onConflict: ['gif_name'] }
-    )
+    console.log("🔍 Existing row:", existingRow)
 
-  if (upsertError) {
-    console.error("❌ Upsert error:", upsertError.message)
+    if (existingRow?.count !== undefined) {
+      updatedCount = existingRow.count + 1
+    }
+
+    const { error: upsertError } = await supabase
+      .from('downloads')
+      .upsert(
+        { gif_name: gifName, count: updatedCount },
+        { onConflict: ['gif_name'] }
+      )
+
+    if (upsertError) {
+      console.error("❌ Upsert error:", upsertError.message)
+    }
+
+    console.log(`✅ Final count for "${gifName}":`, updatedCount)
+
     return {
-      statusCode: 500,
+      statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
       },
-      body: JSON.stringify({ error: upsertError.message })
+      body: JSON.stringify({ count: updatedCount ?? 1 })
     }
-  }
-
-  console.log(`✅ Final count for "${gifName}":`, updatedCount)
-
-  return {
-    statusCode: 200,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*'
-    },
-    body: JSON.stringify({ count: updatedCount })
+  } catch (err) {
+    console.error("🚨 Unexpected error:", err.message)
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({ count: 1 }) // fallback
+    }
   }
 }
