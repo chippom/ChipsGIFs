@@ -1,26 +1,26 @@
 // netlify/functions/get-download-count.js
 
-import { createClient } from '@supabase/supabase-js'
+const { createClient } = require('@supabase/supabase-js');
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
-)
+);
 
-export async function handler(event) {
+exports.handler = async function (event) {
   if (event.httpMethod !== 'GET') {
     return {
       statusCode: 405,
       body: 'Method Not Allowed'
-    }
+    };
   }
 
-  const gifName = event.queryStringParameters?.gif_name
+  const gifName = event.queryStringParameters?.gif_name;
   if (!gifName) {
     return {
       statusCode: 400,
       body: 'gif_name is required'
-    }
+    };
   }
 
   try {
@@ -28,9 +28,9 @@ export async function handler(event) {
       .from('downloads')
       .select('count')
       .eq('gif_name', gifName)
-      .single()
+      .single();
 
-    const count = data?.count || 0
+    const count = data?.count || 0;
     return {
       statusCode: 200,
       headers: {
@@ -38,12 +38,12 @@ export async function handler(event) {
         'Access-Control-Allow-Origin': '*'
       },
       body: JSON.stringify({ count })
-    }
+    };
   } catch (err) {
     return {
       statusCode: 500,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ error: err.message || 'Unexpected error' })
-    }
+    };
   }
-}
+};
