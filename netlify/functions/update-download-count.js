@@ -7,29 +7,56 @@ const supabase = createClient(
 
 export async function handler(event) {
   if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' }
+    return {
+      statusCode: 405,
+      body: 'Method Not Allowed'
+    }
   }
 
   let gifName
   try {
     gifName = JSON.parse(event.body).gif_name
   } catch {
-    return { statusCode: 400, body: 'Invalid JSON body' }
+    return {
+      statusCode: 400,
+      body: 'Invalid JSON body'
+    }
   }
 
   if (!gifName) {
-    return { statusCode: 400, body: 'gif_name is required' }
+    return {
+      statusCode: 400,
+      body: 'gif_name is required'
+    }
   }
 
-  // Upsert: insert or update the row
+  // Check if the row exists
+  const { data: existing, error: fetchError } = await supabase
+    .from('downloads')
+    .select('count')
+    .eq('gif_name', gifName)
+    .single()
+
+  if (fetchError) {
+    console.error("🔴 Fetch error:", fetchError.message)
+  }
+
+  let updatedCount = 1
+
+  if (existing?.count !== undefined) {
+    updatedCount = existing.count + 1
+  }
+
+  // Upsert with updated count
   const { error: upsertError } = await supabase
     .from('downloads')
     .upsert(
-      { gif_name: gifName, count: 1 },
+      { gif_name: gifName, count: updatedCount },
       { onConflict: ['gif_name'] }
     )
 
   if (upsertError) {
+    console.error("🔴 Upsert error:", upsertError.message)
     return {
       statusCode: 500,
       headers: {
@@ -40,25 +67,7 @@ export async function handler(event) {
     }
   }
 
-  // Fetch the updated count
-  const { data, error: fetchError } = await supabase
-    .from('downloads')
-    .select('count')
-    .eq('gif_name', gifName)
-    .single()
-
-  console.log("🔍 Supabase fetch result:", data)
-
-  if (fetchError || !data) {
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: JSON.stringify({ count: "unavailable" })
-    }
-  }
+  console.log(`🟢 Updated count for ${gifName}:`, updatedCount)
 
   return {
     statusCode: 200,
@@ -66,6 +75,6 @@ export async function handler(event) {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*'
     },
-    body: JSON.stringify({ count: data.count })
+    body: JSON.stringify({ count: updatedCount })
   }
 }
