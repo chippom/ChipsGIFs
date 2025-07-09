@@ -1,5 +1,3 @@
-// netlify/functions/get-download-count.js
-
 const { createClient } = require('@supabase/supabase-js');
 
 const supabase = createClient(
@@ -11,7 +9,11 @@ exports.handler = async function (event) {
   if (event.httpMethod !== 'GET') {
     return {
       statusCode: 405,
-      body: 'Method Not Allowed'
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({ error: 'Method Not Allowed' })
     };
   }
 
@@ -19,7 +21,11 @@ exports.handler = async function (event) {
   if (!gifName) {
     return {
       statusCode: 400,
-      body: 'gif_name is required'
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({ error: 'gif_name is required' })
     };
   }
 
@@ -30,19 +36,30 @@ exports.handler = async function (event) {
       .eq('gif_name', gifName)
       .single();
 
-    const count = data?.count || 0;
+    if (error) {
+      console.error("🔴 Supabase error:", error.message);
+    }
+
+    const count = data?.count ?? 0;
+    console.log(`🟢 Count for ${gifName}:`, count);
+
     return {
       statusCode: 200,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
         'Access-Control-Allow-Origin': '*'
       },
       body: JSON.stringify({ count })
     };
   } catch (err) {
+    console.error("🚨 Unexpected error in GET handler:", err);
+
     return {
       statusCode: 500,
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Access-Control-Allow-Origin': '*'
+      },
       body: JSON.stringify({ error: err.message || 'Unexpected error' })
     };
   }
