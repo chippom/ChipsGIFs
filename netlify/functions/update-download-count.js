@@ -48,7 +48,11 @@ export async function handler(event) {
     const { error: upsertError } = await supabase
       .from('downloads')
       .upsert(
-        { gif_name: gifName, count: updatedCount },
+        {
+          gif_name: gifName,
+          count: updatedCount,
+          timestamp: new Date().toISOString() // ⏱️ update timestamp to now (UTC)
+        },
         { onConflict: ['gif_name'] }
       )
 
