@@ -2,26 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Edge Fetch Test</title>
+  <title>GIF Counter Mobile Test</title>
 </head>
 <body>
-  <h2>🧪 Edge Fetch Test Page</h2>
-  <button id="downloadBtn">Download GIF + Update Count</button>
+  <h2>🧪 Mobile Fetch Row-Creation Test</h2>
+  <button id="downloadBtn">Download Test GIF + Create Row</button>
+  <a id="downloadLink" href="/gifs/MobileTest_GIF_001.gif" download style="display:none;"></a>
 
   <script>
     document.getElementById("downloadBtn").addEventListener("click", async () => {
-      alert("Button clicked – sending count update");
+      alert("Button clicked – sending count update for MobileTest_GIF_001.gif");
 
       try {
         const res = await fetch("https://chips-gifs.com/.netlify/functions/update-download-count", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ gif_name: "Trumpster.gif" })
+          body: JSON.stringify({ gif_name: "MobileTest_GIF_001.gif" })
         });
 
         const data = await res.json();
-        alert("✅ Full response: " + JSON.stringify(data));  // Show raw response for diagnostics
-        alert("✅ Count updated: " + (data.count ?? "undefined"));  // Display parsed count value
+        alert("✅ Full response: " + JSON.stringify(data));
+        alert("✅ Count updated: " + (data.count ?? "undefined"));
+
+        // Trigger the actual download after the counter update
+        document.getElementById("downloadLink").click();
       } catch (err) {
         console.error("❌ Fetch failed:", err);
         alert("❌ Error: " + err.message);
