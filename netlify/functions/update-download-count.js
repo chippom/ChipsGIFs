@@ -45,13 +45,20 @@ export async function handler(event) {
       updatedCount = existingRow.count + 1
     }
 
+    // 🌆 New York time
+    const nyTimeString = new Date().toLocaleString("en-US", {
+      timeZone: "America/New_York"
+    })
+    const timestamp_ny = new Date(nyTimeString).toISOString()
+
     const { error: upsertError } = await supabase
       .from('downloads')
       .upsert(
         {
           gif_name: gifName,
           count: updatedCount,
-          timestamp: new Date().toISOString() // ⏱️ update timestamp to now (UTC)
+          timestamp: new Date().toISOString(), // ⏱️ UTC
+          timestamp_ny                      // 🗽 New York time
         },
         { onConflict: ['gif_name'] }
       )
