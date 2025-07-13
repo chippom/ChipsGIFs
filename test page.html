@@ -1,51 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>GIF Counter Mobile Test</title>
-</head>
-<body>
-  <h2>🧪 Mobile Fetch Row-Creation + Visitor Log Test</h2>
-  <button id="downloadBtn">Download Test GIF + Create Row</button>
-  <a id="downloadLink" href="/gifs/MobileTest_GIF_002.gif" download style="display:none;"></a>
-
-  <script>
-    document.getElementById("downloadBtn").addEventListener("click", async () => {
-      alert("Button clicked – logging visitor and updating count for MobileTest_GIF_002.gif");
-
-      // 🔍 Visitor log function — logs into visitor_logs table
-      fetch("https://chips-gifs.com/.netlify/functions/logVisitor", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          gif_name: "MobileTest_GIF_002.gif",
-          visitor_id: "mobile_test_user",
-          page: "mobile-test.html",                      // ✅ replaces 'source'
-          referrer: "https://chips-gifs.com",            // ✅ added explicitly
-          userAgent: navigator.userAgent,                // ✅ replaces 'useragent'
-          location: "Test Device"
-        })
-      });
-
-      // 📊 Download count + gif_downloads insert
-      try {
-        const res = await fetch("https://chips-gifs.com/.netlify/functions/update-download-count", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ gif_name: "MobileTest_GIF_002.gif" })
-        });
-
-        const data = await res.json();
-        alert("✅ Full response: " + JSON.stringify(data));
-        alert("✅ Count updated: " + (data.count ?? "undefined"));
-
-        // ⬇️ Trigger the actual download
-        document.getElementById("downloadLink").click();
-      } catch (err) {
-        console.error("❌ Fetch failed:", err);
-        alert("❌ Error: " + err.message);
-      }
-    });
-  </script>
-</body>
-</html>
+fetch("https://chips-gifs.com/.netlify/functions/logVisitor", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    gif_name: "MobileTest_GIF_002.gif",
+    visitor_id: "mobile_test_user",
+    page: "mobile-test.html",
+    referrer: "https://chips-gifs.com",
+    userAgent: navigator.userAgent,
+    location: "Test Device"
+  })
+})
+.then(res => res.text())
+.then(text => {
+  console.log("📬 logVisitor response:", text);
+})
+.catch(err => {
+  console.error("❌ logVisitor fetch error:", err);
+});
