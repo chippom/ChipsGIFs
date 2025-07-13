@@ -77,14 +77,18 @@ export async function handler(event) {
       referrer: 'mobile-test.html'
     }
 
-    const { error: logError } = await supabase
-      .from('gif_downloads')
-      .insert([downloadPayload])
+    try {
+      const { error: logError } = await supabase
+        .from('gif_downloads')
+        .insert([downloadPayload])
 
-    if (logError) {
-      console.warn("⚠️ gif_downloads insert error:", logError.message)
-    } else {
-      console.log("📥 Logged into gif_downloads:", downloadPayload)
+      if (logError) {
+        console.warn("⚠️ gif_downloads insert error:", logError.message)
+      } else {
+        console.log("📥 Logged into gif_downloads:", downloadPayload)
+      }
+    } catch (err) {
+      console.error("🚨 gif_downloads insert failed:", err.message)
     }
 
     console.log(`✅ Final count for "${gifName}":`, updatedCount)
