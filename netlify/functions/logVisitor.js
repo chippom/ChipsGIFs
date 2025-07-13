@@ -31,7 +31,7 @@ export async function handler(event) {
       visitor_id,
       page,
       referrer,
-      userAgent,
+      userAgent, // still read this from the frontend...
       gif_name,
       excludeTester
     } = data;
@@ -46,7 +46,7 @@ export async function handler(event) {
       };
     }
 
-    let location = 'lookup disabled'; // fallback if IPInfo isn't configured
+    let location = 'lookup disabled'; // Fallback in case IPInfo fails
     try {
       const geoRes = await fetch(`https://ipinfo.io/${ip}/json?token=YOUR_TOKEN_HERE`);
       const geo = await geoRes.json();
@@ -61,7 +61,7 @@ export async function handler(event) {
       visitor_id,
       page,
       referrer,
-      userAgent,
+      useragent: userAgent, // 👈 renamed key for Supabase
       location,
       ip,
       gif_name,
