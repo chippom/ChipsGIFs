@@ -7,17 +7,17 @@
 <body>
   <h2>🧪 Mobile Fetch Row-Creation Test</h2>
   <button id="downloadBtn">Download Test GIF + Create Row</button>
-  <a id="downloadLink" href="/gifs/MobileTest_GIF_001.gif" download style="display:none;"></a>
+  <a id="downloadLink" href="/gifs/MobileTest_GIF_002.gif" download style="display:none;"></a>
 
   <script>
     document.getElementById("downloadBtn").addEventListener("click", async () => {
-      alert("Button clicked – sending count update for MobileTest_GIF_001.gif");
+      alert("Button clicked – sending count update for MobileTest_GIF_002.gif");
 
       try {
         const res = await fetch("https://chips-gifs.com/.netlify/functions/update-download-count", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ gif_name: "MobileTest_GIF_001.gif" })
+          body: JSON.stringify({ gif_name: "MobileTest_GIF_002.gif" })
         });
 
         const data = await res.json();
