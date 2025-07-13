@@ -12,6 +12,11 @@ export async function handler(event) {
     if (event.httpMethod !== 'POST') {
       return {
         statusCode: 405,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'X-Content-Type-Options': 'nosniff'
+        },
         body: JSON.stringify({ error: 'Method Not Allowed' })
       };
     }
@@ -23,6 +28,11 @@ export async function handler(event) {
       console.error('❌ JSON parse error:', err.message);
       return {
         statusCode: 400,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'X-Content-Type-Options': 'nosniff'
+        },
         body: JSON.stringify({ error: 'Invalid JSON' })
       };
     }
@@ -31,7 +41,7 @@ export async function handler(event) {
       visitor_id,
       page,
       referrer,
-      userAgent, // still read this from the frontend...
+      userAgent,
       gif_name,
       excludeTester
     } = data;
@@ -42,11 +52,16 @@ export async function handler(event) {
       console.log('🚫 Visitor excluded from tracking.');
       return {
         statusCode: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'X-Content-Type-Options': 'nosniff'
+        },
         body: JSON.stringify({ message: 'Visitor excluded from tracking.' })
       };
     }
 
-    let location = 'lookup disabled'; // Fallback in case IPInfo fails
+    let location = 'lookup disabled';
     try {
       const geoRes = await fetch(`https://ipinfo.io/${ip}/json?token=YOUR_TOKEN_HERE`);
       const geo = await geoRes.json();
@@ -61,7 +76,7 @@ export async function handler(event) {
       visitor_id,
       page,
       referrer,
-      useragent: userAgent, // 👈 renamed key for Supabase
+      useragent: userAgent,
       location,
       ip,
       gif_name,
@@ -76,11 +91,15 @@ export async function handler(event) {
       console.error('🚨 Supabase insert error:', error);
       return {
         statusCode: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'X-Content-Type-Options': 'nosniff'
+        },
         body: JSON.stringify({ error: 'Failed to log visit.' })
       };
     }
 
-    // 👉 NEW INSERT: Log confirmed downloads into gif_downloads
     if (gif_name && visitor_id) {
       try {
         await supabase.from('gif_downloads').insert([{
@@ -99,12 +118,22 @@ export async function handler(event) {
 
     return {
       statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'X-Content-Type-Options': 'nosniff'
+      },
       body: JSON.stringify({ message: 'Visit logged successfully.' })
     };
   } catch (err) {
     console.error('🧨 Uncaught top-level error:', err);
     return {
       statusCode: 500,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'X-Content-Type-Options': 'nosniff'
+      },
       body: JSON.stringify({ error: 'Unhandled exception in function.' })
     };
   }
