@@ -7,14 +7,20 @@ const supabase = createClient(
 
 export async function handler(event) {
   if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ error: 'Method Not Allowed' })
+    };
   }
 
   let data;
   try {
     data = JSON.parse(event.body);
   } catch (err) {
-    return { statusCode: 400, body: 'Invalid JSON' };
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: 'Invalid JSON' })
+    };
   }
 
   const {
@@ -26,10 +32,8 @@ export async function handler(event) {
     excludeTester
   } = data;
 
-  // Optional: get IP address from headers
   const ip = event.headers['x-nf-client-connection-ip'] || 'unknown';
 
-  // Skip logging if user opted out (e.g., tester mode)
   if (excludeTester) {
     return {
       statusCode: 200,
@@ -37,7 +41,6 @@ export async function handler(event) {
     };
   }
 
-  // Optional: try to look up location via IPInfo or similar
   let location = 'unknown';
   try {
     const geoRes = await fetch(`https://ipinfo.io/${ip}/json?token=YOUR_TOKEN_HERE`);
@@ -49,7 +52,6 @@ export async function handler(event) {
     console.warn('Location lookup failed:', err.message);
   }
 
-  // Insert data into Supabase
   const { error } = await supabase
     .from('visitor_logs')
     .insert([{
@@ -65,7 +67,10 @@ export async function handler(event) {
 
   if (error) {
     console.error('Supabase insert error:', error.message);
-    return { statusCode: 500, body: 'Failed to log visit.' };
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'Failed to log visit.' })
+    };
   }
 
   return {
