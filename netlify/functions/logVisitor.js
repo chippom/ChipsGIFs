@@ -80,6 +80,23 @@ export async function handler(event) {
       };
     }
 
+    // 👉 NEW INSERT: Log confirmed downloads into gif_downloads
+    if (gif_name && visitor_id) {
+      try {
+        await supabase.from('gif_downloads').insert([{
+          gif_name,
+          visitor_id,
+          timestamp: new Date().toISOString(),
+          ip,
+          location,
+          referrer
+        }]);
+        console.log('🎯 Download event logged in gif_downloads');
+      } catch (insertErr) {
+        console.warn('⚠️ Failed to insert into gif_downloads:', insertErr.message);
+      }
+    }
+
     return {
       statusCode: 200,
       body: JSON.stringify({ message: 'Visit logged successfully.' })
