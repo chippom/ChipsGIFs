@@ -6,6 +6,9 @@ const supabase = createClient(
 );
 
 export async function handler(event) {
+  // Log every trigger
+  console.log('🔍 Function triggered: method =', event.httpMethod);
+
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
@@ -17,6 +20,7 @@ export async function handler(event) {
   try {
     data = JSON.parse(event.body);
   } catch (err) {
+    console.error('❌ JSON parse error:', err.message);
     return {
       statusCode: 400,
       body: JSON.stringify({ error: 'Invalid JSON' })
@@ -49,11 +53,11 @@ export async function handler(event) {
       location = `${geo.city}, ${geo.region}`;
     }
   } catch (err) {
-    console.warn('Location lookup failed:', err.message);
+    console.warn('🌐 Location lookup failed:', err.message);
   }
 
-  // 👉 Log the full insert payload for debugging
-  console.log('Insert payload:', {
+  // 📝 Log the full payload
+  const payload = {
     visitor_id,
     page,
     referrer,
@@ -62,23 +66,13 @@ export async function handler(event) {
     ip,
     gif_name,
     timestamp: new Date().toISOString()
-  });
+  };
+  console.log('📦 Inserting payload into Supabase:', payload);
 
-  const { error } = await supabase
-    .from('visitor_logs')
-    .insert([{
-      visitor_id,
-      page,
-      referrer,
-      userAgent,
-      location,
-      ip,
-      gif_name,
-      timestamp: new Date().toISOString()
-    }]);
+  const { error } = await supabase.from('visitor_logs').insert([payload]);
 
   if (error) {
-    console.error('Supabase insert error:', error.message);
+    console.error('🚨 Supabase insert error:', error); // log full error object
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'Failed to log visit.' })
