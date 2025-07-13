@@ -67,28 +67,25 @@ export async function handler(event) {
       console.error("❌ Upsert error:", upsertError.message)
     }
 
-    // ✅ NEW: Insert clean event into gif_downloads
-    const downloadPayload = {
+    // ✅ TEST INSERT: Minimal payload to ensure gif_downloads works
+    const minimalPayload = {
       gif_name: gifName,
-      visitor_id: 'mobile_test_user',
-      timestamp: new Date().toISOString(),
-      ip: 'test_ip',
-      location: 'mobile test',
-      referrer: 'mobile-test.html'
+      timestamp: new Date().toISOString()
     }
 
     try {
-      const { error: logError } = await supabase
+      const { data, error } = await supabase
         .from('gif_downloads')
-        .insert([downloadPayload])
+        .insert([minimalPayload])
 
-      if (logError) {
-        console.warn("⚠️ gif_downloads insert error:", logError.message)
+      if (error) {
+        console.error("❌ gif_downloads insert error:", error.message)
+        console.error("🧪 Full Supabase error object:", error)
       } else {
-        console.log("📥 Logged into gif_downloads:", downloadPayload)
+        console.log("✅ gif_downloads insert success:", data)
       }
     } catch (err) {
-      console.error("🚨 gif_downloads insert failed:", err.message)
+      console.error("💥 Exception during gif_downloads insert:", err.message)
     }
 
     console.log(`✅ Final count for "${gifName}":`, updatedCount)
