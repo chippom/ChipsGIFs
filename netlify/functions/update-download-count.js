@@ -33,7 +33,7 @@ export async function handler(event) {
   let updatedCount = 1
 
   try {
-    const { data: existingRow, error: fetchError } = await supabase
+    const { data: existingRow } = await supabase
       .from('downloads')
       .select('count')
       .eq('gif_name', gifName)
@@ -58,13 +58,33 @@ export async function handler(event) {
           gif_name: gifName,
           count: updatedCount,
           timestamp: new Date().toISOString(), // ⏱️ UTC
-          timestamp_ny                      // 🗽 New York time
+          timestamp_ny                          // 🗽 NY local time
         },
         { onConflict: ['gif_name'] }
       )
 
     if (upsertError) {
       console.error("❌ Upsert error:", upsertError.message)
+    }
+
+    // ✅ NEW: Insert clean event into gif_downloads
+    const downloadPayload = {
+      gif_name: gifName,
+      visitor_id: 'mobile_test_user',
+      timestamp: new Date().toISOString(),
+      ip: 'test_ip',
+      location: 'mobile test',
+      referrer: 'mobile-test.html'
+    }
+
+    const { error: logError } = await supabase
+      .from('gif_downloads')
+      .insert([downloadPayload])
+
+    if (logError) {
+      console.warn("⚠️ gif_downloads insert error:", logError.message)
+    } else {
+      console.log("📥 Logged into gif_downloads:", downloadPayload)
     }
 
     console.log(`✅ Final count for "${gifName}":`, updatedCount)
@@ -75,7 +95,7 @@ export async function handler(event) {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
       },
-      body: JSON.stringify({ count: updatedCount ?? 1 })
+      body: JSON.stringify({ count: updatedCount })
     }
   } catch (err) {
     console.error("🚨 Unexpected error:", err.message)
