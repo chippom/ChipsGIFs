@@ -67,10 +67,11 @@ export async function handler(event) {
       console.error("❌ Upsert error:", upsertError.message)
     }
 
-    // ✅ TEST INSERT: Minimal payload to ensure gif_downloads works
+    // ✅ Insert event into gif_downloads with NY timestamp
     const minimalPayload = {
       gif_name: gifName,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      timestamp_ny
     }
 
     try {
