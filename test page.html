@@ -20,7 +20,9 @@
         body: JSON.stringify({
           gif_name: "MobileTest_GIF_002.gif",
           visitor_id: "mobile_test_user",
-          source: "mobile-test.html",
+          page: "mobile-test.html",                      // ✅ replaces 'source'
+          referrer: "https://chips-gifs.com",            // ✅ added explicitly
+          userAgent: navigator.userAgent,                // ✅ replaces 'useragent'
           location: "Test Device"
         })
       });
