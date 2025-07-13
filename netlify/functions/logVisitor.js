@@ -52,6 +52,18 @@ export async function handler(event) {
     console.warn('Location lookup failed:', err.message);
   }
 
+  // 👉 Log the full insert payload for debugging
+  console.log('Insert payload:', {
+    visitor_id,
+    page,
+    referrer,
+    userAgent,
+    location,
+    ip,
+    gif_name,
+    timestamp: new Date().toISOString()
+  });
+
   const { error } = await supabase
     .from('visitor_logs')
     .insert([{
