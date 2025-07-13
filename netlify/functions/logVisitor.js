@@ -9,14 +9,17 @@ export async function handler(event) {
   try {
     console.log('🔍 Function triggered: method =', event.httpMethod);
 
+    const headers = {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'X-Content-Type-Options': 'nosniff',
+      'Cache-Control': 'no-store'
+    };
+
     if (event.httpMethod !== 'POST') {
       return {
         statusCode: 405,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'X-Content-Type-Options': 'nosniff'
-        },
+        headers,
         body: JSON.stringify({ error: 'Method Not Allowed' })
       };
     }
@@ -28,11 +31,7 @@ export async function handler(event) {
       console.error('❌ JSON parse error:', err.message);
       return {
         statusCode: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'X-Content-Type-Options': 'nosniff'
-        },
+        headers,
         body: JSON.stringify({ error: 'Invalid JSON' })
       };
     }
@@ -52,11 +51,7 @@ export async function handler(event) {
       console.log('🚫 Visitor excluded from tracking.');
       return {
         statusCode: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'X-Content-Type-Options': 'nosniff'
-        },
+        headers,
         body: JSON.stringify({ message: 'Visitor excluded from tracking.' })
       };
     }
@@ -91,11 +86,7 @@ export async function handler(event) {
       console.error('🚨 Supabase insert error:', error);
       return {
         statusCode: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'X-Content-Type-Options': 'nosniff'
-        },
+        headers,
         body: JSON.stringify({ error: 'Failed to log visit.' })
       };
     }
@@ -118,11 +109,7 @@ export async function handler(event) {
 
     return {
       statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'X-Content-Type-Options': 'nosniff'
-      },
+      headers,
       body: JSON.stringify({ message: 'Visit logged successfully.' })
     };
   } catch (err) {
@@ -132,7 +119,8 @@ export async function handler(event) {
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
-        'X-Content-Type-Options': 'nosniff'
+        'X-Content-Type-Options': 'nosniff',
+        'Cache-Control': 'no-store'
       },
       body: JSON.stringify({ error: 'Unhandled exception in function.' })
     };
