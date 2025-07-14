@@ -3,8 +3,9 @@
 export default async (req, context) => {
   const urlsToSubmit = [
     "https://chips-gifs.com/",
-    "https://chips-gifs.com/page_2"
-    // Add more URLs here if needed
+    "https://chips-gifs.com/page_2",
+    "https://chips-gifs.com/page_3",
+    "https://chips-gifs.com/page_4"
   ];
 
   const INDEXNOW_KEY = "c17865d32a424741b06fd08418c88bcb";
