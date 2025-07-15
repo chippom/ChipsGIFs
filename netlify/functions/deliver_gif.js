@@ -38,6 +38,8 @@ export async function handler(event) {
       event.headers['x-nf-client-connection-ip'] ||
       'unknown';
 
+    console.log('📡 IP detected:', ip); // Diagnostic log
+
     let location = 'lookup disabled';
 
     try {
@@ -51,6 +53,8 @@ export async function handler(event) {
     } catch (err) {
       console.warn('🌐 Location lookup failed:', err.message);
     }
+
+    console.log('📍 Location resolved as:', location); // Diagnostic log
 
     const timestampUtc = new Date().toISOString();
     const timestampNy = new Date().toLocaleString('en-US', {
