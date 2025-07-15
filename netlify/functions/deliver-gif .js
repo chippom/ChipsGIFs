@@ -8,13 +8,13 @@ const supabase = createClient(
 );
 
 export async function handler(event) {
-  try {
-    const headers = {
-      'Access-Control-Allow-Origin': '*',
-      'X-Content-Type-Options': 'nosniff',
-      'Cache-Control': 'no-store'
-    };
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'X-Content-Type-Options': 'nosniff',
+    'Cache-Control': 'no-store'
+  };
 
+  try {
     if (event.httpMethod !== 'GET') {
       return {
         statusCode: 405,
@@ -36,7 +36,7 @@ export async function handler(event) {
     let location = 'lookup disabled';
 
     try {
-      const geoRes = await fetch(`https://ipinfo.io/${ip}/json?token=YOUR_TOKEN_HERE`);
+      const geoRes = await fetch(`https://api.ipinfo.io/lite/${ip}?token=${process.env.IPINFO_TOKEN}`);
       const geo = await geoRes.json();
       if (geo.city && geo.region) {
         location = `${geo.city}, ${geo.region}`;
@@ -47,35 +47,26 @@ export async function handler(event) {
 
     await supabase.from('gif_downloads').insert([{
       gif_name: gifName,
-      visitor_id: 'anonymous_user',
+      page: event.headers.referer || 'direct-link',
       timestamp: new Date().toISOString(),
-      ip,
-      location,
-      referrer: event.headers.referer || 'direct-link'
+      timestamp_ny: new Date().toLocaleString("en-US", { timeZone: "America/New_York" }),
+      location
     }]);
 
-    // 🔧 Corrected file path for main folder
     const filePath = path.resolve('.', gifName);
-    try {
-      const fileBuffer = await fs.readFile(filePath);
-      return {
-        statusCode: 200,
-        headers: {
-          ...headers,
-          'Content-Type': 'image/gif',
-          'Content-Disposition': `attachment; filename="${gifName}"`
-        },
-        body: fileBuffer.toString('base64'),
-        isBase64Encoded: true
-      };
-    } catch (err) {
-      console.error('❌ GIF read error:', err.message);
-      return {
-        statusCode: 404,
-        headers: { ...headers, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ error: 'GIF not found' })
-      };
-    }
+    const fileBuffer = await fs.readFile(filePath);
+
+    return {
+      statusCode: 200,
+      headers: {
+        ...headers,
+        'Content-Type': 'image/gif',
+        'Content-Disposition': `attachment; filename="${gifName}"`
+      },
+      body: fileBuffer.toString('base64'),
+      isBase64Encoded: true
+    };
+
   } catch (err) {
     console.error('🧨 Uncaught error:', err);
     return {
