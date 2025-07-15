@@ -45,12 +45,28 @@ export async function handler(event) {
       console.warn('🌐 Location lookup failed:', err.message);
     }
 
+    const timestampUtc = new Date().toISOString();
+    const timestampNy = new Date().toLocaleString("en-US", {
+      timeZone: "America/New_York"
+    });
+    const referrer = event.headers.referer || 'direct-link';
+
+    // Log the GIF download
     await supabase.from('gif_downloads').insert([{
       gif_name: gifName,
-      page: event.headers.referer || 'direct-link',
-      timestamp: new Date().toISOString(),
-      timestamp_ny: new Date().toLocaleString("en-US", { timeZone: "America/New_York" }),
+      page: referrer,
+      timestamp: timestampUtc,
+      timestamp_ny: timestampNy,
       location
+    }]);
+
+    // Log the visitor snapshot
+    await supabase.from('visitors_logs').insert([{
+      ip,
+      location,
+      page: referrer,
+      timestamp: timestampUtc,
+      timestamp_ny: timestampNy
     }]);
 
     const filePath = path.resolve('.', gifName);
