@@ -32,11 +32,18 @@ export async function handler(event) {
       };
     }
 
-    const ip = event.headers['x-nf-client-connection-ip'] || 'unknown';
+    // Grab IP using multiple fallbacks
+    const ip =
+      event.headers['client-ip'] ||
+      event.headers['x-nf-client-connection-ip'] ||
+      'unknown';
+
     let location = 'lookup disabled';
 
     try {
-      const geoRes = await fetch(`https://api.ipinfo.io/lite/${ip}?token=${process.env.IPINFO_TOKEN}`);
+      const geoRes = await fetch(
+        `https://api.ipinfo.io/lite/${ip}?token=${process.env.IPINFO_TOKEN}`
+      );
       const geo = await geoRes.json();
       if (geo.city && geo.region) {
         location = `${geo.city}, ${geo.region}`;
@@ -46,8 +53,8 @@ export async function handler(event) {
     }
 
     const timestampUtc = new Date().toISOString();
-    const timestampNy = new Date().toLocaleString("en-US", {
-      timeZone: "America/New_York"
+    const timestampNy = new Date().toLocaleString('en-US', {
+      timeZone: 'America/New_York'
     });
     const referrer = event.headers.referer || 'direct-link';
 
@@ -57,6 +64,7 @@ export async function handler(event) {
       page: referrer,
       timestamp: timestampUtc,
       timestamp_ny: timestampNy,
+      ip,
       location
     }]);
 
@@ -67,6 +75,15 @@ export async function handler(event) {
       page: referrer,
       timestamp: timestampUtc,
       timestamp_ny: timestampNy
+    }]);
+
+    // Log into gif_download_summary for quick analytics
+    await supabase.from('gif_download_summary').insert([{
+      gif_name: gifName,
+      timestamp: timestampNy,
+      referrer,
+      ip,
+      location
     }]);
 
     const filePath = path.resolve('.', gifName);
