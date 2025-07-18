@@ -1,113 +1,114 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
-)
+);
 
 export async function handler(event) {
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
-      body: 'Method Not Allowed'
-    }
+      body: 'Method Not Allowed',
+    };
   }
 
-  let gifName
+  let gifName;
   try {
-    gifName = JSON.parse(event.body).gif_name
+    gifName = JSON.parse(event.body).gif_name;
   } catch {
     return {
       statusCode: 400,
-      body: 'Invalid JSON body'
-    }
+      body: 'Invalid JSON body',
+    };
   }
 
   if (!gifName) {
     return {
       statusCode: 400,
-      body: 'gif_name is required'
-    }
+      body: 'gif_name is required',
+    };
   }
 
-  let updatedCount = 1
+  let updatedCount = 1;
 
   try {
+    // 🔍 Check for existing record
     const { data: existingRow } = await supabase
       .from('downloads')
       .select('count')
       .eq('gif_name', gifName)
-      .single()
+      .single();
 
-    console.log("🔍 Existing row:", existingRow)
+    console.log('🔍 Existing row:', existingRow);
 
     if (existingRow?.count !== undefined) {
-      updatedCount = existingRow.count + 1
+      updatedCount = existingRow.count + 1;
     }
 
-    // 🌆 New York time
-    const nyTimeString = new Date().toLocaleString("en-US", {
-      timeZone: "America/New_York"
-    })
-    const timestamp_ny = new Date(nyTimeString).toISOString()
+    // 🌆 New York local time
+    const nyTimeString = new Date().toLocaleString('en-US', {
+      timeZone: 'America/New_York',
+    });
+    const timestamp_ny = new Date(nyTimeString).toISOString();
 
+    // 🔁 Upsert count to downloads table
     const { error: upsertError } = await supabase
       .from('downloads')
       .upsert(
         {
           gif_name: gifName,
           count: updatedCount,
-          timestamp: new Date().toISOString(), // ⏱️ UTC
-          timestamp_ny                          // 🗽 NY local time
+          timestamp: new Date().toISOString(), // ⏱ UTC
+          timestamp_ny, // 🗽 Local NY time
         },
         { onConflict: ['gif_name'] }
-      )
+      );
 
     if (upsertError) {
-      console.error("❌ Upsert error:", upsertError.message)
+      console.error('❌ Upsert error:', upsertError.message);
     }
 
-    // ✅ Insert event into gif_downloads with NY timestamp
+    // ✅ Optional: log to gif_downloads table
     const minimalPayload = {
       gif_name: gifName,
       timestamp: new Date().toISOString(),
-      timestamp_ny
-    }
+      timestamp_ny,
+    };
 
     try {
       const { data, error } = await supabase
         .from('gif_downloads')
-        .insert([minimalPayload])
+        .insert([minimalPayload]);
 
       if (error) {
-        console.error("❌ gif_downloads insert error:", error.message)
-        console.error("🧪 Full Supabase error object:", error)
+        console.error('❌ gif_downloads insert error:', error.message);
       } else {
-        console.log("✅ gif_downloads insert success:", data)
+        console.log('✅ gif_downloads insert success:', data);
       }
     } catch (err) {
-      console.error("💥 Exception during gif_downloads insert:", err.message)
+      console.error('💥 Exception during gif_downloads insert:', err.message);
     }
 
-    console.log(`✅ Final count for "${gifName}":`, updatedCount)
+    console.log(`✅ Final count for "${gifName}":`, updatedCount);
 
     return {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*',
       },
-      body: JSON.stringify({ count: updatedCount })
-    }
+      body: JSON.stringify({ count: updatedCount }),
+    };
   } catch (err) {
-    console.error("🚨 Unexpected error:", err.message)
+    console.error('🚨 Unexpected error:', err.message);
     return {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*',
       },
-      body: JSON.stringify({ count: 1 }) // fallback
-    }
+      body: JSON.stringify({ count: 1 }), // fallback count
+    };
   }
 }
