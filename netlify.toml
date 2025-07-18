@@ -16,7 +16,8 @@ for = "/*.js"
 [[headers]]
 for = "/*.gif"
   [headers.values]
-  Cache-Control = "no-store"
+  Access-Control-Allow-Origin = "*"
+  Cache-Control = "public, max-age=31536000"
   Accept-Ranges = "none"
   Content-Type = "image/gif"
 
@@ -49,6 +50,3 @@ for = "/*.png"
 for = "/robots.txt"
   [headers.values]
   Cache-Control = "public, max-age=31536000, immutable"
-
-
-
