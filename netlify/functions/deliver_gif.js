@@ -38,7 +38,7 @@ export async function handler(event) {
       event.headers['x-nf-client-connection-ip'] ||
       'unknown';
 
-    console.log('📡 IP detected:', ip); // Diagnostic log
+    console.log('📡 IP detected:', ip);
 
     let location = 'lookup disabled';
 
@@ -54,7 +54,7 @@ export async function handler(event) {
       console.warn('🌐 Location lookup failed:', err.message);
     }
 
-    console.log('📍 Location resolved as:', location); // Diagnostic log
+    console.log('📍 Location resolved as:', location);
 
     const timestampUtc = new Date().toISOString();
     const timestampNy = new Date().toLocaleString('en-US', {
@@ -62,7 +62,7 @@ export async function handler(event) {
     });
     const referrer = event.headers.referer || 'direct-link';
 
-    // Log the GIF download
+    // ✅ Log download to gif_downloads
     await supabase.from('gif_downloads').insert([{
       gif_name: gifName,
       page: referrer,
@@ -72,8 +72,8 @@ export async function handler(event) {
       location
     }]);
 
-    // Log the visitor snapshot
-    await supabase.from('visitors_logs').insert([{
+    // ✅ Log visitor snapshot to visitor_logs (was previously misspelled)
+    await supabase.from('visitor_logs').insert([{
       ip,
       location,
       page: referrer,
@@ -81,7 +81,7 @@ export async function handler(event) {
       timestamp_ny: timestampNy
     }]);
 
-    // Log into gif_download_summary for quick analytics
+    // ✅ Log summary
     await supabase.from('gif_download_summary').insert([{
       gif_name: gifName,
       timestamp: timestampNy,
@@ -108,7 +108,7 @@ export async function handler(event) {
     console.error('🧨 Uncaught error:', err);
     return {
       statusCode: 500,
-      headers: { 'Content-Type': 'application/json', ...headers },
+      headers: { ...headers, 'Content-Type': 'application/json' },
       body: JSON.stringify({ error: 'Unhandled server error' })
     };
   }
