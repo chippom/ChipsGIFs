@@ -1,5 +1,3 @@
-// netlify/functions/indexnow.js
-
 export default async (req, context) => {
   const urlsToSubmit = [
     "https://chips-gifs.com/",

@@ -1,18 +1,20 @@
-const { createClient } = require('@supabase/supabase-js');
+import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-exports.handler = async function (event) {
+export async function handler(event) {
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Content-Type': 'application/json'
+  };
+
   if (event.httpMethod !== 'GET') {
     return {
       statusCode: 405,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Access-Control-Allow-Origin': '*'
-      },
+      headers,
       body: JSON.stringify({ error: 'Method Not Allowed' })
     };
   }
@@ -21,11 +23,8 @@ exports.handler = async function (event) {
   if (!gifName) {
     return {
       statusCode: 400,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: JSON.stringify({ error: 'gif_name is required' })
+      headers,
+      body: JSON.stringify({ error: 'Missing gif_name parameter' })
     };
   }
 
@@ -36,31 +35,21 @@ exports.handler = async function (event) {
       .eq('gif_name', gifName)
       .single();
 
-    if (error) {
-      console.error("🔴 Supabase error:", error.message);
-    }
+    if (error) throw error;
 
-    const count = data?.count ?? 0;
-    console.log(`🟢 Count for ${gifName}:`, count);
+    const count = data?.count || 0;
 
     return {
       statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Access-Control-Allow-Origin': '*'
-      },
+      headers,
       body: JSON.stringify({ count })
     };
   } catch (err) {
-    console.error("🚨 Unexpected error in GET handler:", err);
-
+    console.error('❌ Error retrieving count:', err.message);
     return {
       statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: JSON.stringify({ error: err.message || 'Unexpected error' })
+      headers,
+      body: JSON.stringify({ error: 'Internal Server Error' })
     };
   }
-};
+}

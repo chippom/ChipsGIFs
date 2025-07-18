@@ -41,10 +41,9 @@ export async function handler(event) {
     console.log('📡 IP detected:', ip);
 
     let location = 'lookup disabled';
-
     try {
       const geoRes = await fetch(
-        `https://api.ipinfo.io/lite/${ip}?token=${process.env.IPINFO_TOKEN}`
+        `https://ipinfo.io/${ip}/json?token=${process.env.IPINFO_TOKEN}`
       );
       const geo = await geoRes.json();
       if (geo.city && geo.region) {
@@ -56,32 +55,34 @@ export async function handler(event) {
 
     console.log('📍 Location resolved as:', location);
 
-    const timestampUtc = new Date().toISOString();
+    const timestamp = new Date().toISOString();
     const timestampNy = new Date().toLocaleString('en-US', {
       timeZone: 'America/New_York'
     });
     const referrer = event.headers.referer || 'direct-link';
+    const page = referrer;
 
-    // ✅ Log download to gif_downloads
+    // Log into gif_downloads (uses page)
     await supabase.from('gif_downloads').insert([{
       gif_name: gifName,
-      page: referrer,
-      timestamp: timestampUtc,
+      page, // correct key 'page'
+      timestamp,
       timestamp_ny: timestampNy,
       ip,
       location
     }]);
 
-    // ✅ Log visitor snapshot to visitor_logs (was previously misspelled)
+    // Log into visitor_logs (has both page and referrer)
     await supabase.from('visitor_logs').insert([{
       ip,
       location,
-      page: referrer,
-      timestamp: timestampUtc,
+      page,
+      referrer,
+      timestamp,
       timestamp_ny: timestampNy
     }]);
 
-    // ✅ Log summary
+    // Log into gif_download_summary (uses referrer)
     await supabase.from('gif_download_summary').insert([{
       gif_name: gifName,
       timestamp: timestampNy,

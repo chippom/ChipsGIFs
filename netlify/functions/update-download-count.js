@@ -33,82 +33,45 @@ export async function handler(event) {
   let updatedCount = 1;
 
   try {
-    // 🔍 Check for existing record
+    // Check if the GIF is already in the downloads table
     const { data: existingRow } = await supabase
       .from('downloads')
       .select('count')
       .eq('gif_name', gifName)
       .single();
 
-    console.log('🔍 Existing row:', existingRow);
-
     if (existingRow?.count !== undefined) {
       updatedCount = existingRow.count + 1;
     }
 
-    // 🌆 New York local time
-    const nyTimeString = new Date().toLocaleString('en-US', {
-      timeZone: 'America/New_York',
-    });
-    const timestamp_ny = new Date(nyTimeString).toISOString();
-
-    // 🔁 Upsert count to downloads table
+    // Upsert the updated count
     const { error: upsertError } = await supabase
       .from('downloads')
       .upsert(
         {
           gif_name: gifName,
           count: updatedCount,
-          timestamp: new Date().toISOString(), // ⏱ UTC
-          timestamp_ny, // 🗽 Local NY time
+          timestamp: new Date().toISOString(),
         },
         { onConflict: ['gif_name'] }
       );
 
     if (upsertError) {
-      console.error('❌ Upsert error:', upsertError.message);
+      throw upsertError;
     }
 
-    // ✅ Optional: log to gif_downloads table
-    const minimalPayload = {
-      gif_name: gifName,
-      timestamp: new Date().toISOString(),
-      timestamp_ny,
-    };
-
-    try {
-      const { data, error } = await supabase
-        .from('gif_downloads')
-        .insert([minimalPayload]);
-
-      if (error) {
-        console.error('❌ gif_downloads insert error:', error.message);
-      } else {
-        console.log('✅ gif_downloads insert success:', data);
-      }
-    } catch (err) {
-      console.error('💥 Exception during gif_downloads insert:', err.message);
-    }
-
-    console.log(`✅ Final count for "${gifName}":`, updatedCount);
+    console.log(`✅ Updated count for "${gifName}" to ${updatedCount}`);
 
     return {
       statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ count: updatedCount }),
     };
   } catch (err) {
-    console.error('🚨 Unexpected error:', err.message);
+    console.error('❌ update-download-count function error:', err.message);
     return {
       statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ count: 1 }), // fallback count
+      body: JSON.stringify({ count: 1 }), // fallback
     };
   }
 }

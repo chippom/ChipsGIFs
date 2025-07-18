@@ -7,8 +7,6 @@ const supabase = createClient(
 
 export async function handler(event) {
   try {
-    console.log('🔍 Function triggered: method =', event.httpMethod);
-
     const headers = {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
@@ -38,13 +36,20 @@ export async function handler(event) {
 
     const {
       visitor_id,
-      page,
-      referrer,
+      page,         // direct page input, but we’ll default from referrer below
+      referrer,     // direct referrer input
       userAgent,
       gif_name,
       excludeTester
     } = data;
 
+    // Use HTTP referer if not set
+    const requestReferrer = event.headers.referer || 'direct-link';
+    // Standardize page/referrer values for all tables:
+    const pageValue = page || requestReferrer;
+    const referrerValue = referrer || requestReferrer;
+
+    // IP detection
     const ip = event.headers['x-nf-client-connection-ip'] || 'unknown';
 
     if (excludeTester) {
@@ -58,7 +63,9 @@ export async function handler(event) {
 
     let location = 'lookup disabled';
     try {
-      const geoRes = await fetch(`https://ipinfo.io/${ip}/json?token=YOUR_TOKEN_HERE`);
+      const geoRes = await fetch(
+        `https://ipinfo.io/${ip}/json?token=${process.env.IPINFO_TOKEN}`
+      );
       const geo = await geoRes.json();
       if (geo.city && geo.region) {
         location = `${geo.city}, ${geo.region}`;
@@ -67,44 +74,46 @@ export async function handler(event) {
       console.warn('🌐 Location lookup failed:', err.message);
     }
 
-    const payload = {
+    const timestamp = new Date().toISOString();
+
+    // --- VISITOR LOGS (has both page and referrer) ---
+    const visitorPayload = {
       visitor_id,
-      page,
-      referrer,
-      useragent: userAgent,
-      location,
       ip,
-      gif_name,
-      timestamp: new Date().toISOString()
+      location,
+      useragent: userAgent,
+      page: pageValue,
+      referrer: referrerValue,
+      timestamp
     };
+    console.log('Inserting into visitor_logs:', visitorPayload);
+    await supabase.from('visitor_logs').insert([visitorPayload]);
 
-    console.log('📦 Inserting payload into Supabase:', payload);
-
-    const { error } = await supabase.from('visitor_logs').insert([payload]);
-
-    if (error) {
-      console.error('🚨 Supabase insert error:', error);
-      return {
-        statusCode: 500,
-        headers,
-        body: JSON.stringify({ error: 'Failed to log visit.' })
+    // --- GIF DOWNLOADS (uses page, not referrer) ---
+    if (gif_name && visitor_id) {
+      const gifDownloadPayload = {
+        gif_name,
+        visitor_id,
+        timestamp,
+        ip,
+        location,
+        page: pageValue
       };
+      console.log('Inserting into gif_downloads:', gifDownloadPayload);
+      await supabase.from('gif_downloads').insert([gifDownloadPayload]);
     }
 
-    if (gif_name && visitor_id) {
-      try {
-        await supabase.from('gif_downloads').insert([{
-          gif_name,
-          visitor_id,
-          timestamp: new Date().toISOString(),
-          ip,
-          location,
-          referrer
-        }]);
-        console.log('🎯 Download event logged in gif_downloads');
-      } catch (insertErr) {
-        console.warn('⚠️ Failed to insert into gif_downloads:', insertErr.message);
-      }
+    // --- GIF DOWNLOAD SUMMARY (uses referrer, not page) ---
+    if (gif_name) {
+      const summaryPayload = {
+        gif_name,
+        timestamp,
+        ip,
+        location,
+        referrer: referrerValue
+      };
+      console.log('Inserting into gif_download_summary:', summaryPayload);
+      await supabase.from('gif_download_summary').insert([summaryPayload]);
     }
 
     return {
