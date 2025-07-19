@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Comprehensive GIF Download Test</title>
+  <title>GIF Logging Test</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -22,17 +22,17 @@
       border: 1px solid #ccc;
       margin-top: 1.5em;
       font-size: 15px;
+      border-radius: 6px;
     }
   </style>
 </head>
 <body>
-  <h2>🚀 GIF Download Logging Test Page</h2>
-  <p>This test sends analytics and counter requests for a <b>unique test GIF and user</b>. Check browser console for details.</p>
+  <h2>🚀 GIF Logging Test Page</h2>
+  <p>This test sends requests with a unique test GIF and user. Check the output below after each run.</p>
   <button id="runTest">Run Logging Test</button>
   <pre id="output">Ready for test...</pre>
   <script>
     document.getElementById("runTest").addEventListener("click", async () => {
-      // Make test unique for each run
       const now = new Date();
       const testGifName = `TestGIF_${now.toISOString().slice(0,10)}_${Math.floor(Math.random()*100000)}.gif`;
       const testUser = `testUser_${now.getTime()}`;
