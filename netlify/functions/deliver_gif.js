@@ -32,7 +32,7 @@ export async function handler(event) {
       };
     }
 
-    // Gather location (only for gif_downloads)
+    // Get location for gif_downloads only
     let location = 'lookup disabled';
     try {
       const ip = event.headers['client-ip'] ||
@@ -56,33 +56,42 @@ export async function handler(event) {
     const referrer = event.headers.referer || 'direct-link';
     const page = referrer;
 
-    // --- LOG TO gif_downloads (KEEP location) ---
-    const { error: gifDownloadsError } = await supabase.from('gif_downloads').insert([{
-      gif_name: gifName,
-      page,
-      timestamp,
-      timestamp_ny: timestampNy,
-      location
-    }]);
-    if (gifDownloadsError) console.error('gif_downloads insert error:', gifDownloadsError);
+    // --- LOG TO gif_downloads (with location) ---
+    try {
+      await supabase.from('gif_downloads').insert([{
+        gif_name: gifName,
+        page,
+        timestamp,
+        timestamp_ny: timestampNy,
+        location
+      }]);
+    } catch (gifDownloadsError) {
+      console.error('gif_downloads insert error:', gifDownloadsError);
+    }
 
     // --- LOG TO visitor_logs (NO location, NO ip) ---
-    const { error: visitorLogsError } = await supabase.from('visitor_logs').insert([{
-      gif_name: gifName,
-      page,
-      referrer,
-      timestamp,
-      timestamp_ny: timestampNy
-    }]);
-    if (visitorLogsError) console.error('visitor_logs insert error:', visitorLogsError);
+    try {
+      await supabase.from('visitor_logs').insert([{
+        gif_name: gifName,
+        page,
+        referrer,
+        timestamp,
+        timestamp_ny: timestampNy
+      }]);
+    } catch (visitorLogsError) {
+      console.error('visitor_logs insert error:', visitorLogsError);
+    }
 
     // --- LOG TO gif_download_summary (NO location, NO ip) ---
-    const { error: summaryError } = await supabase.from('gif_download_summary').insert([{
-      gif_name: gifName,
-      timestamp: timestampNy,
-      referrer
-    }]);
-    if (summaryError) console.error('gif_download_summary insert error:', summaryError);
+    try {
+      await supabase.from('gif_download_summary').insert([{
+        gif_name: gifName,
+        timestamp: timestampNy,
+        referrer
+      }]);
+    } catch (summaryError) {
+      console.error('gif_download_summary insert error:', summaryError);
+    }
 
     // --- UPDATE downloads COUNTER TABLE ---
     let updatedCount = 1;
@@ -97,7 +106,7 @@ export async function handler(event) {
         updatedCount = existingRow.count + 1;
       }
 
-      const { error: downloadsError } = await supabase
+      await supabase
         .from('downloads')
         .upsert([
           {
@@ -106,25 +115,33 @@ export async function handler(event) {
             timestamp: new Date().toISOString()
           }
         ], { onConflict: ['gif_name'] });
-      if (downloadsError) console.error('downloads upsert error:', downloadsError);
-    } catch (err) {
-      console.error('downloads upsert general error:', err);
+    } catch (downloadsError) {
+      console.error('downloads upsert error:', downloadsError);
     }
 
     // --- SERVE THE GIF FILE ---
-    const filePath = path.resolve('.', gifName);
-    const fileBuffer = await fs.readFile(filePath);
+    try {
+      const filePath = path.resolve('.', gifName);
+      const fileBuffer = await fs.readFile(filePath);
 
-    return {
-      statusCode: 200,
-      headers: {
-        ...headers,
-        'Content-Type': 'image/gif',
-        'Content-Disposition': `attachment; filename="${gifName}"`
-      },
-      body: fileBuffer.toString('base64'),
-      isBase64Encoded: true
-    };
+      return {
+        statusCode: 200,
+        headers: {
+          ...headers,
+          'Content-Type': 'image/gif',
+          'Content-Disposition': `attachment; filename="${gifName}"`
+        },
+        body: fileBuffer.toString('base64'),
+        isBase64Encoded: true
+      };
+    } catch (fileError) {
+      console.error('GIF file read error:', fileError);
+      return {
+        statusCode: 404,
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ error: 'Could not find or read GIF file.' })
+      };
+    }
 
   } catch (err) {
     console.error('🧨 Uncaught error:', err);

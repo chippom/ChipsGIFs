@@ -73,39 +73,51 @@ export async function handler(event) {
   const timestamp = new Date().toISOString();
 
   // --- VISITOR LOGS (NO location) ---
-  const visitorPayload = {
-    visitor_id,
-    useragent: userAgent,
-    page: pageValue,
-    referrer: referrerValue,
-    timestamp,
-    gif_name
-  };
-  const { error: visitorLogsError } = await supabase.from('visitor_logs').insert([visitorPayload]);
-  if (visitorLogsError) console.error('visitor_logs insert error:', visitorLogsError);
+  try {
+    const visitorPayload = {
+      visitor_id,
+      useragent: userAgent,
+      page: pageValue,
+      referrer: referrerValue,
+      timestamp,
+      gif_name
+    };
+    const { error: visitorLogsError } = await supabase.from('visitor_logs').insert([visitorPayload]);
+    if (visitorLogsError) console.error('visitor_logs insert error:', visitorLogsError);
+  } catch (err) {
+    console.error('visitor_logs try-block error:', err);
+  }
 
   // --- GIF DOWNLOADS (WITH location) ---
-  if (gif_name && visitor_id) {
-    const gifDownloadPayload = {
-      gif_name,
-      visitor_id,
-      timestamp,
-      location,
-      page: pageValue
-    };
-    const { error: gifDownloadsError } = await supabase.from('gif_downloads').insert([gifDownloadPayload]);
-    if (gifDownloadsError) console.error('gif_downloads insert error:', gifDownloadsError);
+  try {
+    if (gif_name && visitor_id) {
+      const gifDownloadPayload = {
+        gif_name,
+        visitor_id,
+        timestamp,
+        location,
+        page: pageValue
+      };
+      const { error: gifDownloadsError } = await supabase.from('gif_downloads').insert([gifDownloadPayload]);
+      if (gifDownloadsError) console.error('gif_downloads insert error:', gifDownloadsError);
+    }
+  } catch (err) {
+    console.error('gif_downloads try-block error:', err);
   }
 
   // --- GIF DOWNLOAD SUMMARY (NO location) ---
-  if (gif_name) {
-    const summaryPayload = {
-      gif_name,
-      timestamp,
-      referrer: referrerValue
-    };
-    const { error: summaryError } = await supabase.from('gif_download_summary').insert([summaryPayload]);
-    if (summaryError) console.error('gif_download_summary insert error:', summaryError);
+  try {
+    if (gif_name) {
+      const summaryPayload = {
+        gif_name,
+        timestamp,
+        referrer: referrerValue
+      };
+      const { error: summaryError } = await supabase.from('gif_download_summary').insert([summaryPayload]);
+      if (summaryError) console.error('gif_download_summary insert error:', summaryError);
+    }
+  } catch (err) {
+    console.error('gif_download_summary try-block error:', err);
   }
 
   return {
