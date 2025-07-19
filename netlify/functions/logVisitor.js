@@ -45,7 +45,6 @@ export async function handler(event) {
   const requestReferrer = event.headers.referer || 'direct-link';
   const pageValue = page || requestReferrer;
   const referrerValue = referrer || requestReferrer;
-  const ip = event.headers['x-nf-client-connection-ip'] || 'unknown';
 
   if (excludeTester) {
     console.log('🚫 Visitor excluded from tracking.');
@@ -56,8 +55,10 @@ export async function handler(event) {
     };
   }
 
+  // Get location (for gif_downloads only)
   let location = 'lookup disabled';
   try {
+    const ip = event.headers['x-nf-client-connection-ip'] || 'unknown';
     const geoRes = await fetch(
       `https://ipinfo.io/${ip}/json?token=${process.env.IPINFO_TOKEN}`
     );
@@ -71,27 +72,24 @@ export async function handler(event) {
 
   const timestamp = new Date().toISOString();
 
-  // --- VISITOR LOGS (has gif_name, page, and referrer) ---
+  // --- VISITOR LOGS (NO location) ---
   const visitorPayload = {
     visitor_id,
-    ip,
-    location,
     useragent: userAgent,
     page: pageValue,
     referrer: referrerValue,
     timestamp,
-    gif_name // ensures gif_name is recorded!
+    gif_name
   };
   const { error: visitorLogsError } = await supabase.from('visitor_logs').insert([visitorPayload]);
   if (visitorLogsError) console.error('visitor_logs insert error:', visitorLogsError);
 
-  // --- GIF DOWNLOADS (event-level log) ---
+  // --- GIF DOWNLOADS (WITH location) ---
   if (gif_name && visitor_id) {
     const gifDownloadPayload = {
       gif_name,
       visitor_id,
       timestamp,
-      ip,
       location,
       page: pageValue
     };
@@ -99,13 +97,11 @@ export async function handler(event) {
     if (gifDownloadsError) console.error('gif_downloads insert error:', gifDownloadsError);
   }
 
-  // --- GIF DOWNLOAD SUMMARY (uses referrer, not page) ---
+  // --- GIF DOWNLOAD SUMMARY (NO location) ---
   if (gif_name) {
     const summaryPayload = {
       gif_name,
       timestamp,
-      ip,
-      location,
       referrer: referrerValue
     };
     const { error: summaryError } = await supabase.from('gif_download_summary').insert([summaryPayload]);

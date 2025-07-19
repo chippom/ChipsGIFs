@@ -32,14 +32,12 @@ export async function handler(event) {
       };
     }
 
-    // Gather IP using multiple fallbacks
-    const ip = event.headers['client-ip'] ||
-      event.headers['x-nf-client-connection-ip'] ||
-      'unknown';
-    console.log('📡 IP detected:', ip);
-
+    // Gather location (only for gif_downloads)
     let location = 'lookup disabled';
     try {
+      const ip = event.headers['client-ip'] ||
+        event.headers['x-nf-client-connection-ip'] ||
+        'unknown';
       const geoRes = await fetch(
         `https://ipinfo.io/${ip}/json?token=${process.env.IPINFO_TOKEN}`
       );
@@ -51,8 +49,6 @@ export async function handler(event) {
       console.warn('🌐 Location lookup failed:', err.message);
     }
 
-    console.log('📍 Location resolved as:', location);
-
     const timestamp = new Date().toISOString();
     const timestampNy = new Date().toLocaleString('en-US', {
       timeZone: 'America/New_York'
@@ -60,22 +56,19 @@ export async function handler(event) {
     const referrer = event.headers.referer || 'direct-link';
     const page = referrer;
 
-    // --- LOG TO gif_downloads (event-level analytics) ---
+    // --- LOG TO gif_downloads (KEEP location) ---
     const { error: gifDownloadsError } = await supabase.from('gif_downloads').insert([{
       gif_name: gifName,
       page,
       timestamp,
       timestamp_ny: timestampNy,
-      ip,
       location
     }]);
     if (gifDownloadsError) console.error('gif_downloads insert error:', gifDownloadsError);
 
-    // --- LOG TO visitor_logs ---
+    // --- LOG TO visitor_logs (NO location, NO ip) ---
     const { error: visitorLogsError } = await supabase.from('visitor_logs').insert([{
       gif_name: gifName,
-      ip,
-      location,
       page,
       referrer,
       timestamp,
@@ -83,17 +76,15 @@ export async function handler(event) {
     }]);
     if (visitorLogsError) console.error('visitor_logs insert error:', visitorLogsError);
 
-    // --- LOG TO gif_download_summary ---
+    // --- LOG TO gif_download_summary (NO location, NO ip) ---
     const { error: summaryError } = await supabase.from('gif_download_summary').insert([{
       gif_name: gifName,
       timestamp: timestampNy,
-      referrer,
-      ip,
-      location
+      referrer
     }]);
     if (summaryError) console.error('gif_download_summary insert error:', summaryError);
 
-    // --- UPDATE downloads COUNTER TABLE (summary, 1 row per GIF) ---
+    // --- UPDATE downloads COUNTER TABLE ---
     let updatedCount = 1;
     try {
       const { data: existingRow } = await supabase
