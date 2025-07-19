@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Test logVisitor Function</title>
+  <title>Comprehensive GIF Download Test</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -26,34 +26,68 @@
   </style>
 </head>
 <body>
-  <h2>🚀 logVisitor Test Page</h2>
-  <p>This page sends a test request to <code>logVisitor</code> on your Netlify Functions endpoint.</p>
-  <button id="sendTest">Send Test Request</button>
-  <pre id="output">Waiting for test...</pre>
+  <h2>🚀 GIF Download Logging Test Page</h2>
+  <p>This test sends analytics and counter requests for a <b>unique test GIF and user</b>. Check browser console for details.</p>
+  <button id="runTest">Run Logging Test</button>
+  <pre id="output">Ready for test...</pre>
   <script>
-    document.getElementById("sendTest").addEventListener("click", async () => {
+    document.getElementById("runTest").addEventListener("click", async () => {
+      // Make test unique for each run
+      const now = new Date();
+      const testGifName = `TestGIF_${now.toISOString().slice(0,10)}_${Math.floor(Math.random()*100000)}.gif`;
+      const testUser = `testUser_${now.getTime()}`;
+      let resultText = '';
+
+      // 1. Call logVisitor
       const payload = {
-        gif_name: "NewTest_GIF_7-18.gif",
-        visitor_id: "mobile_test_user",
-        page: "mobile-test.html",
-        referrer: "https://chips-gifs.com",
+        gif_name: testGifName,
+        visitor_id: testUser,
+        page: "tester.html",
+        referrer: "https://chips-gifs.com/tester",
         userAgent: navigator.userAgent,
-        location: "Test Device"
+        location: "Automated JS Test"
       };
-      let resText = "";
       try {
-        const res = await fetch("https://chips-gifs.com/.netlify/functions/logVisitor", {
+        const res1 = await fetch("/.netlify/functions/logVisitor", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         });
-        resText = await res.text();
-        document.getElementById("output").textContent = resText;
-        console.log("logVisitor response:", resText);
+        const text1 = await res1.text();
+        resultText += `logVisitor:\n${text1}\n\n`;
+        console.log("logVisitor response:", text1);
       } catch (err) {
-        document.getElementById("output").textContent = "❌ Fetch error:\n" + err;
-        console.error("Fetch error:", err);
+        resultText += `❌ logVisitor error:\n${err}\n\n`;
+        console.error("logVisitor error:", err);
       }
+
+      // 2. Optionally: Update downloads counter as if button was clicked
+      try {
+        const res2 = await fetch("/.netlify/functions/update-download-count.js", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ gif_name: testGifName })
+        });
+        const text2 = await res2.text();
+        resultText += `update-download-count.js:\n${text2}\n\n`;
+        console.log("update-download-count.js response:", text2);
+      } catch (err) {
+        resultText += `❌ update-download-count.js error:\n${err}\n\n`;
+        console.error("update-download-count.js error:", err);
+      }
+
+      // 3. Fetch the latest download count for the test GIF
+      try {
+        const res3 = await fetch(`/.netlify/functions/get-download-count.js?gif_name=${encodeURIComponent(testGifName)}`);
+        const text3 = await res3.text();
+        resultText += `get-download-count.js:\n${text3}\n`;
+        console.log("get-download-count.js response:", text3);
+      } catch (err) {
+        resultText += `❌ get-download-count.js error:\n${err}\n`;
+        console.error("get-download-count.js error:", err);
+      }
+
+      document.getElementById("output").textContent = resultText;
     });
   </script>
 </body>
