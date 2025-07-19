@@ -32,10 +32,11 @@ export async function handler(event) {
       };
     }
 
-    // Get location for gif_downloads only
+    // --- Location Lookup ---
     let location = 'lookup disabled';
     try {
-      const ip = event.headers['client-ip'] ||
+      const ip =
+        event.headers['client-ip'] ||
         event.headers['x-nf-client-connection-ip'] ||
         'unknown';
       const geoRes = await fetch(
@@ -101,20 +102,17 @@ export async function handler(event) {
         .select('count')
         .eq('gif_name', gifName)
         .single();
-
       if (existingRow?.count !== undefined) {
         updatedCount = existingRow.count + 1;
       }
-
-      await supabase
-        .from('downloads')
-        .upsert([
-          {
-            gif_name: gifName,
-            count: updatedCount,
-            timestamp: new Date().toISOString()
-          }
-        ], { onConflict: ['gif_name'] });
+      await supabase.from('downloads').upsert(
+        [{
+          gif_name: gifName,
+          count: updatedCount,
+          timestamp: new Date().toISOString()
+        }],
+        { onConflict: ['gif_name'] }
+      );
     } catch (downloadsError) {
       console.error('downloads upsert error:', downloadsError);
     }
@@ -123,7 +121,6 @@ export async function handler(event) {
     try {
       const filePath = path.resolve('.', gifName);
       const fileBuffer = await fs.readFile(filePath);
-
       return {
         statusCode: 200,
         headers: {
@@ -142,7 +139,6 @@ export async function handler(event) {
         body: JSON.stringify({ error: 'Could not find or read GIF file.' })
       };
     }
-
   } catch (err) {
     console.error('🧨 Uncaught error:', err);
     return {
