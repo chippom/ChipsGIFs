@@ -35,10 +35,18 @@ export async function handler(event) {
       .eq('gif_name', gifName)
       .single();
 
-    if (error) throw error;
+    let count = 0;
 
-    // Return 0 if data is null or count is undefined
-    const count = data?.count ?? 0;
+    // Supabase returns an error.code of 'PGRST116' if the row is not found (PostgREST)
+    if (error) {
+      if (error.code === 'PGRST116' || error.message?.toLowerCase().includes('row not found')) {
+        count = 0;
+      } else {
+        throw error; // Unexpected error, fail with 500
+      }
+    } else {
+      count = (typeof data.count === 'number') ? data.count : 0;
+    }
 
     return {
       statusCode: 200,
