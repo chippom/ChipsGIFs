@@ -37,8 +37,8 @@ export async function handler(event) {
 
     if (error) throw error;
 
-    // Always return 0 when no record is found
-    const count = (data && typeof data.count === 'number') ? data.count : 0;
+    // Return 0 if data is null or count is undefined
+    const count = data?.count ?? 0;
 
     return {
       statusCode: 200,
