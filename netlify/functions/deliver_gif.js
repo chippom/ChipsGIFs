@@ -32,12 +32,10 @@ export async function handler(event) {
       };
     }
 
-    // Grab IP using multiple fallbacks
-    const ip =
-      event.headers['client-ip'] ||
+    // Gather IP using multiple fallbacks
+    const ip = event.headers['client-ip'] ||
       event.headers['x-nf-client-connection-ip'] ||
       'unknown';
-
     console.log('📡 IP detected:', ip);
 
     let location = 'lookup disabled';
@@ -62,18 +60,20 @@ export async function handler(event) {
     const referrer = event.headers.referer || 'direct-link';
     const page = referrer;
 
-    // Log into gif_downloads (uses page)
-    await supabase.from('gif_downloads').insert([{
+    // --- LOG TO gif_downloads (event-level analytics) ---
+    const { error: gifDownloadsError } = await supabase.from('gif_downloads').insert([{
       gif_name: gifName,
-      page, // correct key 'page'
+      page,
       timestamp,
       timestamp_ny: timestampNy,
       ip,
       location
     }]);
+    if (gifDownloadsError) console.error('gif_downloads insert error:', gifDownloadsError);
 
-    // Log into visitor_logs (has both page and referrer)
-    await supabase.from('visitor_logs').insert([{
+    // --- LOG TO visitor_logs ---
+    const { error: visitorLogsError } = await supabase.from('visitor_logs').insert([{
+      gif_name: gifName,
       ip,
       location,
       page,
@@ -81,16 +81,46 @@ export async function handler(event) {
       timestamp,
       timestamp_ny: timestampNy
     }]);
+    if (visitorLogsError) console.error('visitor_logs insert error:', visitorLogsError);
 
-    // Log into gif_download_summary (uses referrer)
-    await supabase.from('gif_download_summary').insert([{
+    // --- LOG TO gif_download_summary ---
+    const { error: summaryError } = await supabase.from('gif_download_summary').insert([{
       gif_name: gifName,
       timestamp: timestampNy,
       referrer,
       ip,
       location
     }]);
+    if (summaryError) console.error('gif_download_summary insert error:', summaryError);
 
+    // --- UPDATE downloads COUNTER TABLE (summary, 1 row per GIF) ---
+    let updatedCount = 1;
+    try {
+      const { data: existingRow } = await supabase
+        .from('downloads')
+        .select('count')
+        .eq('gif_name', gifName)
+        .single();
+
+      if (existingRow?.count !== undefined) {
+        updatedCount = existingRow.count + 1;
+      }
+
+      const { error: downloadsError } = await supabase
+        .from('downloads')
+        .upsert([
+          {
+            gif_name: gifName,
+            count: updatedCount,
+            timestamp: new Date().toISOString()
+          }
+        ], { onConflict: ['gif_name'] });
+      if (downloadsError) console.error('downloads upsert error:', downloadsError);
+    } catch (err) {
+      console.error('downloads upsert general error:', err);
+    }
+
+    // --- SERVE THE GIF FILE ---
     const filePath = path.resolve('.', gifName);
     const fileBuffer = await fs.readFile(filePath);
 
