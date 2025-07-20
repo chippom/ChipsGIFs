@@ -37,15 +37,15 @@ export async function handler(event) {
 
     let count = 0;
 
-    // Supabase returns an error.code of 'PGRST116' if the row is not found (PostgREST)
+    // If no matching row found, return 0
     if (error) {
-      if (error.code === 'PGRST116' || error.message?.toLowerCase().includes('row not found')) {
-        count = 0;
+      if (error.code === 'PGRST116') {
+        count = 0; // Row not found
       } else {
-        throw error; // Unexpected error, fail with 500
+        throw error; // Unhandled error
       }
     } else {
-      count = (typeof data.count === 'number') ? data.count : 0;
+      count = typeof data.count === 'number' ? data.count : 0;
     }
 
     return {
@@ -53,12 +53,13 @@ export async function handler(event) {
       headers,
       body: JSON.stringify({ count })
     };
+
   } catch (err) {
-    console.error('❌ Error retrieving count:', err.message);
+    console.error('❌ get-download-count error:', err.message);
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: 'Internal Server Error' })
+      body: JSON.stringify({ error: 'Internal server error' })
     };
   }
 }

@@ -32,94 +32,24 @@ export async function handler(event) {
       };
     }
 
-    // --- Location Lookup ---
-    let location = 'lookup disabled';
+    // Optional Logging: fallback route, no count update
     try {
-      const ip =
-        event.headers['client-ip'] ||
-        event.headers['x-nf-client-connection-ip'] ||
-        'unknown';
-      const geoRes = await fetch(
-        `https://ipinfo.io/${ip}/json?token=${process.env.IPINFO_TOKEN}`
-      );
-      const geo = await geoRes.json();
-      if (geo.city && geo.region) {
-        location = `${geo.city}, ${geo.region}`;
-      }
-    } catch (err) {
-      console.warn('🌐 Location lookup failed:', err.message);
-    }
+      const timestamp = new Date().toISOString();
+      const page = event.headers.referer || 'direct-link';
 
-    const timestamp = new Date().toISOString();
-    const timestampNy = new Date().toLocaleString('en-US', {
-      timeZone: 'America/New_York'
-    });
-    const referrer = event.headers.referer || 'direct-link';
-    const page = referrer;
-
-    // --- LOG TO gif_downloads (with location) ---
-    try {
       await supabase.from('gif_downloads').insert([{
         gif_name: gifName,
-        page,
         timestamp,
-        timestamp_ny: timestampNy,
-        location
-      }]);
-    } catch (gifDownloadsError) {
-      console.error('gif_downloads insert error:', gifDownloadsError);
-    }
-
-    // --- LOG TO visitor_logs (NO location, NO ip) ---
-    try {
-      await supabase.from('visitor_logs').insert([{
-        gif_name: gifName,
         page,
-        referrer,
-        timestamp,
-        timestamp_ny: timestampNy
+        method: 'fallback'
       }]);
-    } catch (visitorLogsError) {
-      console.error('visitor_logs insert error:', visitorLogsError);
+    } catch (logError) {
+      console.warn('🟠 Logging fallback download failed:', logError.message);
     }
 
-    // --- LOG TO gif_download_summary (NO location, NO ip) ---
+    // Serve GIF file
     try {
-      await supabase.from('gif_download_summary').insert([{
-        gif_name: gifName,
-        timestamp: timestampNy,
-        referrer
-      }]);
-    } catch (summaryError) {
-      console.error('gif_download_summary insert error:', summaryError);
-    }
-
-    // --- UPDATE downloads COUNTER TABLE ---
-    let updatedCount = 1;
-    try {
-      const { data: existingRow } = await supabase
-        .from('downloads')
-        .select('count')
-        .eq('gif_name', gifName)
-        .single();
-      if (existingRow?.count !== undefined) {
-        updatedCount = existingRow.count + 1;
-      }
-      await supabase.from('downloads').upsert(
-        [{
-          gif_name: gifName,
-          count: updatedCount,
-          timestamp: new Date().toISOString()
-        }],
-        { onConflict: ['gif_name'] }
-      );
-    } catch (downloadsError) {
-      console.error('downloads upsert error:', downloadsError);
-    }
-
-    // --- SERVE THE GIF FILE ---
-    try {
-      const filePath = path.resolve('.', gifName);
+      const filePath = path.resolve(__dirname, '../../gifs', gifName);
       const fileBuffer = await fs.readFile(filePath);
       return {
         statusCode: 200,
@@ -132,19 +62,20 @@ export async function handler(event) {
         isBase64Encoded: true
       };
     } catch (fileError) {
-      console.error('GIF file read error:', fileError);
+      console.error('❌ Could not read GIF file:', fileError.message);
       return {
         statusCode: 404,
         headers: { ...headers, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ error: 'Could not find or read GIF file.' })
+        body: JSON.stringify({ error: 'GIF not found' })
       };
     }
+
   } catch (err) {
-    console.error('🧨 Uncaught error:', err);
+    console.error('🧨 Uncaught error in deliver_gif.js:', err.message);
     return {
       statusCode: 500,
       headers: { ...headers, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Unhandled server error' })
+      body: JSON.stringify({ error: 'Server error' })
     };
   }
 }
