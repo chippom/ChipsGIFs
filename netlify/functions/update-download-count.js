@@ -14,8 +14,14 @@ export async function handler(event) {
   }
 
   let gifName;
+  let page;
+  let location;
+
   try {
-    gifName = JSON.parse(event.body).gif_name;
+    const body = JSON.parse(event.body);
+    gifName = body.gif_name;
+    page = body.page || 'unspecified';
+    location = body.location || 'unknown';
   } catch {
     return {
       statusCode: 400,
@@ -30,13 +36,11 @@ export async function handler(event) {
     };
   }
 
-  let updatedCount = 1;
-
   try {
-    // Check if the row already exists
+    // Check for existing row
     const { data: existingRow, error: selectError } = await supabase
       .from('downloads')
-      .select('count')
+      .select('id, count')
       .eq('gif_name', gifName)
       .single();
 
@@ -45,41 +49,51 @@ export async function handler(event) {
       throw selectError;
     }
 
-    if (existingRow?.count !== undefined) {
-      updatedCount = existingRow.count + 1;
-    }
-
-    // Upsert count
-    const { error: upsertError } = await supabase
-      .from('downloads')
-      .upsert(
-        [{
+    if (!existingRow) {
+      // No existing entry — insert new row
+      const { error: insertError } = await supabase
+        .from('downloads')
+        .insert([{
           gif_name: gifName,
-          count: updatedCount,
+          count: 1,
+          page,
+          location,
           timestamp: new Date().toISOString()
-        }],
-        { onConflict: ['gif_name'] }
-      );
+        }]);
 
-    if (upsertError) {
-      console.error('Upsert error:', upsertError.message);
-      throw upsertError;
+      if (insertError) throw insertError;
+
+      console.log(`🆕 Inserted new row for "${gifName}" with count 1`);
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ count: 1 }),
+      };
     }
 
-    console.log(`✅ Updated count for "${gifName}" to ${updatedCount}`);
+    // Row exists — update count
+    const newCount = existingRow.count + 1;
 
+    const { error: updateError } = await supabase
+      .from('downloads')
+      .update({
+        count: newCount,
+        timestamp: new Date().toISOString()
+      })
+      .eq('id', existingRow.id);
+
+    if (updateError) throw updateError;
+
+    console.log(`🔁 Updated "${gifName}" count to ${newCount}`);
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ count: updatedCount }),
+      body: JSON.stringify({ count: newCount }),
     };
 
   } catch (err) {
-    console.error('❌ update-download-count.js error:', err.message);
+    console.error('❌ Error updating download count:', err.message);
     return {
       statusCode: 500,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Failed to update download count', count: 1 }),
+      body: JSON.stringify({ error: 'Failed to update download count' }),
     };
   }
 }
