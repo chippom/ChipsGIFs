@@ -38,6 +38,8 @@
       const testUser = `testUser_${now.getTime()}`;
       let resultText = '';
 
+      alert(`🧪 Starting test with:\nGIF: ${testGifName}\nUser: ${testUser}`);
+
       // 1. Call logVisitor
       const payload = {
         gif_name: testGifName,
@@ -54,14 +56,16 @@
           body: JSON.stringify(payload)
         });
         const text1 = await res1.text();
+        alert(`✅ logVisitor succeeded:\n${text1}`);
         resultText += `logVisitor:\n${text1}\n\n`;
         console.log("logVisitor response:", text1);
       } catch (err) {
+        alert(`❌ logVisitor failed:\n${err}`);
         resultText += `❌ logVisitor error:\n${err}\n\n`;
         console.error("logVisitor error:", err);
       }
 
-      // 2. Optionally: Update downloads counter as if button was clicked
+      // 2. Update downloads counter
       try {
         const res2 = await fetch("/.netlify/functions/update-download-count.js", {
           method: "POST",
@@ -69,20 +73,24 @@
           body: JSON.stringify({ gif_name: testGifName })
         });
         const text2 = await res2.text();
+        alert(`✅ Count updated:\n${text2}`);
         resultText += `update-download-count.js:\n${text2}\n\n`;
         console.log("update-download-count.js response:", text2);
       } catch (err) {
+        alert(`❌ Count update failed:\n${err}`);
         resultText += `❌ update-download-count.js error:\n${err}\n\n`;
         console.error("update-download-count.js error:", err);
       }
 
-      // 3. Fetch the latest download count for the test GIF
+      // 3. Fetch latest download count
       try {
         const res3 = await fetch(`/.netlify/functions/get-download-count.js?gif_name=${encodeURIComponent(testGifName)}`);
         const text3 = await res3.text();
+        alert(`📊 Current download count:\n${text3}`);
         resultText += `get-download-count.js:\n${text3}\n`;
         console.log("get-download-count.js response:", text3);
       } catch (err) {
+        alert(`❌ Count fetch failed:\n${err}`);
         resultText += `❌ get-download-count.js error:\n${err}\n`;
         console.error("get-download-count.js error:", err);
       }
