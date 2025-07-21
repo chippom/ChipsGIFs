@@ -65,12 +65,16 @@
         console.error("logVisitor error:", err);
       }
 
-      // 2. Update downloads counter
+      // 2. Update downloads counter (added page and location)
       try {
         const res2 = await fetch("/.netlify/functions/update-download-count.js", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ gif_name: testGifName })
+          body: JSON.stringify({
+            gif_name: testGifName,
+            page: "tester.html",
+            location: "Automated JS Test"
+          })
         });
         const text2 = await res2.text();
         alert(`✅ Count updated:\n${text2}`);
