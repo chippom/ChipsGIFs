@@ -45,12 +45,13 @@ export async function handler(event) {
       console.warn('🟠 Logging fallback download failed:', logError.message);
     }
 
-    // Redirect to the public GIF file
+    // Redirect to the public GIF file with download hint
     return {
       statusCode: 302,
       headers: {
         ...headers,
-        Location: `https://chips-gifs.com/gifs/${gifName}`
+        Location: `https://chips-gifs.com/gifs/${gifName}`,
+        'Content-Disposition': `attachment; filename="${gifName}"`
       }
     };
 
