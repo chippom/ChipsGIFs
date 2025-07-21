@@ -1,6 +1,4 @@
 import { createClient } from '@supabase/supabase-js';
-import path from 'path';
-import fs from 'fs/promises';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -32,7 +30,7 @@ export async function handler(event) {
       };
     }
 
-    // Optional Logging: fallback route, no count update
+    // Log the download attempt
     try {
       const timestamp = new Date().toISOString();
       const page = event.headers.referer || 'direct-link';
@@ -47,28 +45,14 @@ export async function handler(event) {
       console.warn('🟠 Logging fallback download failed:', logError.message);
     }
 
-    // Serve GIF file
-    try {
-      const filePath = path.resolve(__dirname, '../../gifs', gifName);
-      const fileBuffer = await fs.readFile(filePath);
-      return {
-        statusCode: 200,
-        headers: {
-          ...headers,
-          'Content-Type': 'image/gif',
-          'Content-Disposition': `attachment; filename="${gifName}"`
-        },
-        body: fileBuffer.toString('base64'),
-        isBase64Encoded: true
-      };
-    } catch (fileError) {
-      console.error('❌ Could not read GIF file:', fileError.message);
-      return {
-        statusCode: 404,
-        headers: { ...headers, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ error: 'GIF not found' })
-      };
-    }
+    // Redirect to the public GIF file
+    return {
+      statusCode: 302,
+      headers: {
+        ...headers,
+        Location: `https://chips-gifs.com/gifs/${gifName}`
+      }
+    };
 
   } catch (err) {
     console.error('🧨 Uncaught error in deliver_gif.js:', err.message);
