@@ -1,3 +1,4 @@
+// deliver_gif.js
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
@@ -13,53 +14,82 @@ export async function handler(event) {
   };
 
   try {
+    // Only allow GET
     if (event.httpMethod !== 'GET') {
       return {
         statusCode: 405,
-        headers: { ...headers, 'Content-Type': 'application/json' },
+        headers: { 
+          ...headers, 
+          'Content-Type': 'application/json' 
+        },
         body: JSON.stringify({ error: 'Method Not Allowed' })
       };
     }
 
+    // Required query param
     const gifName = event.queryStringParameters?.gif_name;
     if (!gifName) {
       return {
         statusCode: 400,
-        headers: { ...headers, 'Content-Type': 'application/json' },
+        headers: { 
+          ...headers, 
+          'Content-Type': 'application/json' 
+        },
         body: JSON.stringify({ error: 'Missing gif_name parameter' })
       };
     }
 
-    // Log the download attempt
+    // Log download attempt (best‐effort)
     try {
       const timestamp = new Date().toISOString();
       const page = event.headers.referer || 'direct-link';
 
-      await supabase.from('gif_downloads').insert([{
-        gif_name: gifName,
-        timestamp,
-        page,
-        method: 'fallback'
-      }]);
+      await supabase
+        .from('gif_downloads')
+        .insert([{
+          gif_name: gifName,
+          timestamp,
+          page,
+          method: 'fallback'
+        }]);
     } catch (logError) {
       console.warn('🟠 Logging fallback download failed:', logError.message);
     }
 
-    // Redirect to the public GIF file with download hint
+    // Fetch the GIF as binary and return it base64‐encoded
+    const fileUrl = `https://chips-gifs.com/gifs/${gifName}`;
+    const res = await fetch(fileUrl);
+    if (!res.ok) {
+      throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
+    }
+
+    // Convert to ArrayBuffer → Buffer → Base64
+    const arrayBuffer = await res.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const base64Body = buffer.toString('base64');
+
+    // Determine content type
+    const contentType = res.headers.get('Content-Type') || 'application/octet-stream';
+
     return {
-      statusCode: 302,
+      statusCode: 200,
+      isBase64Encoded: true,
       headers: {
         ...headers,
-        Location: `https://chips-gifs.com/gifs/${gifName}`,
+        'Content-Type': contentType,
         'Content-Disposition': `attachment; filename="${gifName}"`
-      }
+      },
+      body: base64Body
     };
 
   } catch (err) {
     console.error('🧨 Uncaught error in deliver_gif.js:', err.message);
     return {
       statusCode: 500,
-      headers: { ...headers, 'Content-Type': 'application/json' },
+      headers: {
+        ...headers,
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({ error: 'Server error' })
     };
   }
