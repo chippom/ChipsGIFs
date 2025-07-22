@@ -3,19 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Updated meta description and keywords -->
   <meta name="description" content="Hand-picked political satire GIFs, memes, and animations you won't find elsewhere! Laugh at the best moments in politics with this exclusive collection.">
   <meta name="keywords" content="political GIFs, satire GIFs, political humor, Trump GIF, Biden meme, funny political images, chip's GIFs, animated satire">
   <meta name="author" content="Chip Pommert">
-  <!-- Updated, more specific title -->
   <title>Page 2: Political Satire GIF Gallery | My GIF Showcase</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="canonical" href="https://chips-gifs.com/page_2.html" />
-  <!-- OpenGraph meta for social sharing -->
   <meta property="og:title" content="The Best Political Satire GIFs | Chips-GIFs Page 2" />
   <meta property="og:description" content="Laugh at the wildest moments in politics with these one-of-a-kind satire GIFs. From Trump gags to Biden memes—exclusive and new every week." />
   <meta property="og:url" content="https://chips-gifs.com/page_2.html" />
   <meta property="og:image" content="https://chips-gifs.com/featured_political.gif" />
+
+  <!-- Header styling -->
   <style>
     .header {
       display: flex;
@@ -54,6 +53,7 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
   </style>
+
   <!-- Google Tag Manager -->
   <script>
     (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -66,43 +66,79 @@
 </head>
 
 <body>
-<!-- Google Tag Manager (noscript) -->
-<noscript>
-  <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NG2VZ7J8"
-  height="0" width="0" style="display:none;visibility:hidden"></iframe>
-</noscript>
-<!-- End Google Tag Manager (noscript) -->
+  <!-- Google Tag Manager (noscript) -->
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NG2VZ7J8"
+            height="0" width="0" style="display:none;visibility:hidden"></iframe>
+  </noscript>
+  <!-- End Google Tag Manager (noscript) -->
 
-<header class="header">
-  <div class="site-title">
-    <h1 class="title">Political Satire: GIFs That Roast the Powerful</h1>
-    <img src="gifs/Parental_Advisery_3.gif" alt="Parental Advisory" class="icon" width="150" height="150">
+  <header class="header">
+    <div class="site-title">
+      <h1 class="title">Political Satire: GIFs That Roast the Powerful</h1>
+      <img src="gifs/Parental_Advisery_3.gif" alt="Parental Advisory" class="icon" width="150" height="150">
+    </div>
+    <p class="instructions">Click on any GIF below for the full-size, unfiltered version.</p>
+  </header>
+
+  <div class="unique-intro">
+    <strong>Welcome to the ultimate political GIF battleground!</strong><br>
+    Every animation in this gallery takes a playful jab at real events, trending figures, and the daily circus in Washington and beyond. From Trump’s lightning moment to Biden’s latest blunder, these GIFs are sharp, fearless, and 100% original.<br><br>
+    <span style="font-size:18px;">See a favorite? Share it—or just enjoy the ride through our funniest, wildest political spoofs. Only found right here on Page 2!</span>
   </div>
-  <p class="instructions">Click on any GIF below for the full-size, unfiltered version.</p>
-</header>
 
-<div class="unique-intro">
-  <strong>Welcome to the ultimate political GIF battleground!</strong><br>
-  Every animation in this gallery takes a playful jab at real events, trending figures, and the daily circus in Washington and beyond. From Trump’s lightning moment to Biden’s latest blunder, these GIFs are sharp, fearless, and 100% original.<br><br>
-  <span style="font-size:18px;">See a favorite? Share it—or just enjoy the ride through our funniest, wildest political spoofs. Only found right here on Page 2!</span>
-</div>
+  <div class="pagination">
+    <a href="index.html">Previous</a>
+    <span>Page 2 of 4</span>
+    <a href="page_3.html">Next</a>
+  </div>
 
-<div class="pagination">
-  <a href="index.html">Previous</a>
-  <span>Page 2 of 4</span>
-  <a href="page_3.html">Next</a>
-</div>
+  <!-- Top Dark-Mode Toggle & Follow button -->
+  <div style="text-align: right; margin: 10px;">
+    <button id="toggleDarkMode">Toggle Dark Mode</button>
+    <a href="https://bsky.app/profile/chips-gifs.com" target="_blank">
+      <button id="followMeButton">Follow Me</button>
+    </a>
+  </div>
 
-<div style="text-align: right; margin: 10px;">
+  <main>
+    <div class="gif-container">
+      <!-- Add more gif-item entries here -->
+    </div>
+
+    <!-- Navigation Links -->
+    <nav>
+      <a href="page_1.html" class="nav-button">Previous Page</a>
+      <a href="page_3.html" class="nav-button">Next Page</a>
+    </nav>
+  </main>
+
+  <footer>
+    <p>Created by Chip Pommert</p>
+    <a href="https://buymeacoffee.com/chippom" target="_blank">
+      <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+           alt="Buy Me A Coffee"
+           style="height: 40px !important; width: 150px !important;">
+    </a>
+  </footer>
+
+  <div class="contact-button-container">
+    <a href="mailto:Chippom2@gmail.com" id="contactMeButton">Contact Me</a>
+  </div>
+
+  <!-- Overlay Element -->
+  <div id="overlay" style="display:none">
+    <img id="overlay-img" alt="GIF Preview">
+  </div>
+
+  <!-- Bottom Dark-Mode Toggle (optional—you can remove if you only want one) -->
   <button id="toggleDarkMode">Toggle Dark Mode</button>
-  <a href="https://bsky.app/profile/chips-gifs.com" target="_blank">
-    <button id="followMeButton">Follow Me</button>
-  </a>
-</div>
 
-<main>
-  <div class="gif-container">
-    <!-- Example GIF items go here -->
+  <!-- Unified site script -->
+  <script src="scripts.js"></script>
+</body>
+</html>
+
 
  <div class="gif-item">
           <img src="gifs/Stop_Lying_1_trans.gif" alt="Stop_Lying_banner_transparent" class="gif-thumbnail" loading="lazy">
@@ -802,12 +838,12 @@
 </div>
 
 <!-- Overlay Element -->
-<div id="overlay">
+<div id="overlay" style="display:none">
     <img id="overlay-img" alt="GIF Preview">
 </div>
 
 <!-- Dark Mode Toggle -->
-<button id="dark-mode-toggle">Toggle Dark Mode</button>
+<button id="toggleDarkMode">Toggle Dark Mode</button>
 
 <!-- JavaScript for functionality -->
 <script src="scripts.js"></script>
