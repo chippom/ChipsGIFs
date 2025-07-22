@@ -115,43 +115,7 @@
 
   <main>
     <div class="gif-container">
-
       <!-- Add more gif-item entries here -->
-      <div class="gif-item">
-          <img src="gifs/Stop_Lying_1_trans.gif" alt="Stop_Lying_banner_transparent" class="gif-thumbnail" loading="lazy">
-          <button class="download-btn" data-gif="Stop_Lying_1_trans.gif">Download</button>
-          <span class="download-count">Downloads: 0</span>
-     </div>
-<div class="gif-item">
-          <img src="gifs/I call BS_2_trans.gif" alt="I call BS transparent" class="gif-thumbnail" loading="lazy">
-          <button class="download-btn" data-gif="I call BS_2_trans.gif">Download</button>
-          <span class="download-count">Downloads: 0</span>
-     </div>
-<div class="gif-item">
-          <img src="gifs/Thomas_Jefferson_Quote_5.gif" alt="Thomas_Jefferson_Quote" class="gif-thumbnail" loading="lazy">
-          <button class="download-btn" data-gif="Thomas_Jefferson_Quote_5.gif">Download</button>
-          <span class="download-count">Downloads: 0</span>
-     </div>
- <div class="gif-item">
-          <img src="gifs/parental_advisery_2.gif" alt="parental_advisery" class="gif-thumbnail" loading="lazy">
-          <button class="download-btn" data-gif="parental_advisery_2.gif">Download</button>
-          <span class="download-count">Downloads: 0</span>
-     </div>
- <div class="gif-item">
-          <img src="gifs/Always lying_1_trans.gif" alt="why_you_always_lying_in_big_type" loading="lazy">
-          <button class="download-btn" data-gif="Always lying_1_trans.gif">Download</button>
-          <span class="download-count">Downloads: 0</span>
-    </div>
-<div class="gif-item">
-          <img src="gifs/Plato_Price of indifference_1.gif" alt="Plato_Price of indifference" loading="lazy">
-          <button class="download-btn" data-gif="Plato_Price of indifference_1.gif">Download</button>
-          <span class="download-count">Downloads: 0</span>
-    </div>
-<div class="gif-item">
-          <img src="gifs/Peace_1a.gif" alt="Peace" class="gif-thumbnail" loading="lazy">
-          <button class="download-btn" data-gif="Peace_1a.gif">Download</button>
-          <span class="download-count">Downloads: 0</span>
-    </div>
  <div class="gif-item">
           <img src="gifs/pot_Emblem_1.gif" alt="pot_Emblem" class="gif-thumbnail" loading="lazy">
           <button class="download-btn" data-gif="pot_Emblem_1.gif">Download</button>
@@ -795,11 +759,11 @@
 <!-- Add more gif-item entries here -->
     </div>
 
-    <!-- Navigation Links -->
+  <!-- Navigation Links -->
     <nav class="pagination">
-      <a href="index.html">Previous</a>
+      <a href="page_1.html" aria-label="Go to Page 1">Previous</a>
       <span>Page 2 of 4</span>
-      <a href="page_3.html">Next</a>
+      <a href="page_3.html" aria-label="Go to Page 3">Next</a>
     </nav>
   </main>
 
@@ -815,19 +779,19 @@
   </footer>
 
   <div class="contact-button-container">
-    <a href="mailto:Chippom2@gmail.com" id="contactMeButton">Contact Me</a>
+    <a href="mailto:Chippom2@gmail.com" id="contactMeButton" aria-label="Email Chip">Contact Me</a>
   </div>
 
-  <!-- Overlay Element -->
-  <div id="overlay" style="display:none">
-    <img id="overlay-img" alt="GIF Preview">
+  <!-- Overlay Viewer for Full-Size GIFs -->
+  <div id="overlay" class="fullsize-overlay" style="display:none;">
+    <img id="overlay-img" class="fullsize-image" src="" alt="Full-size GIF">
   </div>
 
   <!-- Bottom controls -->
   <div style="text-align: right; margin: 10px;">
-    <button id="toggleDarkMode">Toggle Dark Mode</button>
+    <button id="toggleDarkMode" aria-label="Toggle Dark Mode">Toggle Dark Mode</button>
     <a href="https://bsky.app/profile/chips-gifs.com" target="_blank">
-      <button id="followMeButton">Follow Me</button>
+      <button id="followMeButton" aria-label="Follow Chip on Bluesky">Follow Me</button>
     </a>
   </div>
 
@@ -835,3 +799,4 @@
   <script src="scripts.js"></script>
 </body>
 </html>
+
