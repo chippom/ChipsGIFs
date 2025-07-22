@@ -1,10 +1,9 @@
-# netlify.toml
-
+# 📦 Netlify Build Settings
 [build]
-  publish   = "."                     # deploy from the repo root
-  functions = "netlify/functions"     # your functions folder
+  publish   = "."                     # Deploy from the repo root
+  functions = "netlify/functions"     # Serverless functions folder
 
-# Redirects to your Netlify Functions
+# 🚀 Redirects to Netlify Functions
 [[redirects]]
   from    = "/logVisitor"
   to      = "/.netlify/functions/logVisitor"
@@ -29,8 +28,19 @@
   status  = 200
   force   = true
 
-# Ensure scripts.js always revalidates
+# 🧼 Force Fresh Load for Critical Scripts
 [[headers]]
   for = "/scripts.js"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/styles.css"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# 📁 Optional: Future asset freshness control
+# [[headers]]
+#   for = "/your-other-script-or-style.css"
+#   [headers.values]
+#     Cache-Control = "public, max-age=0, must-revalidate"
