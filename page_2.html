@@ -14,7 +14,6 @@
   <meta property="og:url" content="https://chips-gifs.com/page_2.html" />
   <meta property="og:image" content="https://chips-gifs.com/featured_political.gif" />
 
-  <!-- Header styling -->
   <style>
     .header {
       display: flex;
@@ -87,60 +86,11 @@
     <span style="font-size:18px;">See a favorite? Share it—or just enjoy the ride through our funniest, wildest political spoofs. Only found right here on Page 2!</span>
   </div>
 
-  <div class="pagination">
-    <a href="index.html">Previous</a>
-    <span>Page 2 of 4</span>
-    <a href="page_3.html">Next</a>
-  </div>
-
-  <!-- Top Dark-Mode Toggle & Follow button -->
-  <div style="text-align: right; margin: 10px;">
-    <button id="toggleDarkMode">Toggle Dark Mode</button>
-    <a href="https://bsky.app/profile/chips-gifs.com" target="_blank">
-      <button id="followMeButton">Follow Me</button>
-    </a>
-  </div>
-
   <main>
     <div class="gif-container">
+
       <!-- Add more gif-item entries here -->
-    </div>
-
-    <!-- Navigation Links -->
-    <nav>
-      <a href="page_1.html" class="nav-button">Previous Page</a>
-      <a href="page_3.html" class="nav-button">Next Page</a>
-    </nav>
-  </main>
-
-  <footer>
-    <p>Created by Chip Pommert</p>
-    <a href="https://buymeacoffee.com/chippom" target="_blank">
-      <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
-           alt="Buy Me A Coffee"
-           style="height: 40px !important; width: 150px !important;">
-    </a>
-  </footer>
-
-  <div class="contact-button-container">
-    <a href="mailto:Chippom2@gmail.com" id="contactMeButton">Contact Me</a>
-  </div>
-
-  <!-- Overlay Element -->
-  <div id="overlay" style="display:none">
-    <img id="overlay-img" alt="GIF Preview">
-  </div>
-
-  <!-- Bottom Dark-Mode Toggle (optional—you can remove if you only want one) -->
-  <button id="toggleDarkMode">Toggle Dark Mode</button>
-
-  <!-- Unified site script -->
-  <script src="scripts.js"></script>
-</body>
-</html>
-
-
- <div class="gif-item">
+      <div class="gif-item">
           <img src="gifs/Stop_Lying_1_trans.gif" alt="Stop_Lying_banner_transparent" class="gif-thumbnail" loading="lazy">
           <button class="download-btn" data-gif="Stop_Lying_1_trans.gif">Download</button>
           <span class="download-count">Downloads: 0</span>
@@ -816,36 +766,45 @@
     <span class="download-count">Downloads: 0</span>
 </div>
 <!-- Add more gif-item entries here -->
-</div>
+    </div>
 
-<!-- Navigation Links -->
-<nav>
-    <a href="page_2.html" class="nav-button">Next Page</a>
-</nav>
-</main>
+    <!-- Navigation Links -->
+    <nav class="pagination">
+      <a href="index.html">Previous</a>
+      <span>Page 2 of 4</span>
+      <a href="page_3.html">Next</a>
+    </nav>
+  </main>
 
-<footer>
+  <footer>
     <p>Created by Chip Pommert</p>
     <a href="https://buymeacoffee.com/chippom" target="_blank">
-        <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
-             alt="Buy Me A Coffee"
-             style="height: 40px !important; width: 150px !important;">
+      <img
+        src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+        alt="Buy Me A Coffee"
+        style="height: 40px !important; width: 150px !important;"
+      >
     </a>
-</footer>
+  </footer>
 
-<div class="contact-button-container">
+  <div class="contact-button-container">
     <a href="mailto:Chippom2@gmail.com" id="contactMeButton">Contact Me</a>
-</div>
+  </div>
 
-<!-- Overlay Element -->
-<div id="overlay" style="display:none">
+  <!-- Overlay Element -->
+  <div id="overlay" style="display:none">
     <img id="overlay-img" alt="GIF Preview">
-</div>
+  </div>
 
-<!-- Dark Mode Toggle -->
-<button id="toggleDarkMode">Toggle Dark Mode</button>
+  <!-- Bottom controls -->
+  <div style="text-align: right; margin: 10px;">
+    <button id="toggleDarkMode">Toggle Dark Mode</button>
+    <a href="https://bsky.app/profile/chips-gifs.com" target="_blank">
+      <button id="followMeButton">Follow Me</button>
+    </a>
+  </div>
 
-<!-- JavaScript for functionality -->
-<script src="scripts.js"></script>
+  <!-- JavaScript for functionality -->
+  <script src="scripts.js"></script>
 </body>
 </html>
