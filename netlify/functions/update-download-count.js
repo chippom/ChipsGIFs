@@ -6,94 +6,78 @@ const supabase = createClient(
 );
 
 export async function handler(event) {
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Content-Type': 'application/json',
+    'Cache-Control': 'no-store',
+    'X-Content-Type-Options': 'nosniff'
+  };
+
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
-      body: 'Method Not Allowed',
+      headers,
+      body: JSON.stringify({ error: 'Method Not Allowed' })
     };
   }
 
-  let gifName;
-  let page;
-  let location;
-
+  let data;
   try {
-    const body = JSON.parse(event.body);
-    gifName = body.gif_name;
-    page = body.page || 'unspecified';
-    location = body.location || 'unknown';
-  } catch {
+    data = JSON.parse(event.body);
+  } catch (err) {
     return {
       statusCode: 400,
-      body: 'Invalid JSON body',
+      headers,
+      body: JSON.stringify({ error: 'Invalid JSON' })
     };
   }
 
-  if (!gifName) {
+  const { gif_name } = data;
+  if (!gif_name) {
     return {
       statusCode: 400,
-      body: 'gif_name is required',
+      headers,
+      body: JSON.stringify({ error: 'Missing gif_name' })
     };
   }
 
+  const now = new Date();
+  const timestamp = now.toISOString();
+  const easternTime = now.toLocaleString("en-US", {
+    timeZone: "America/New_York",
+    hour12: true
+  });
+
   try {
-    // Check for existing row
-    const { data: existingRow, error: selectError } = await supabase
+    // Upsert the download count
+    const { error } = await supabase
       .from('downloads')
-      .select('id, count')
-      .eq('gif_name', gifName)
-      .single();
-
-    if (selectError && selectError.code !== 'PGRST116') {
-      console.error('Select error:', selectError.message);
-      throw selectError;
-    }
-
-    if (!existingRow) {
-      // No existing entry — insert new row
-      const { error: insertError } = await supabase
-        .from('downloads')
-        .insert([{
-          gif_name: gifName,
+      .upsert([
+        {
+          gif_name,
           count: 1,
-          page,
-          location,
-          timestamp: new Date().toISOString()
-        }]);
+          timestamp,
+          eastern_time: easternTime
+        }
+      ], { onConflict: ['gif_name'], ignoreDuplicates: false });
 
-      if (insertError) throw insertError;
+    if (error) throw error;
 
-      console.log(`🆕 Inserted new row for "${gifName}" with count 1`);
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ count: 1 }),
-      };
-    }
+    // Increment if row already exists
+    await supabase.rpc('increment_download_count', { gif_name_param: gif_name });
 
-    // Row exists — update count
-    const newCount = existingRow.count + 1;
-
-    const { error: updateError } = await supabase
-      .from('downloads')
-      .update({
-        count: newCount,
-        timestamp: new Date().toISOString()
-      })
-      .eq('id', existingRow.id);
-
-    if (updateError) throw updateError;
-
-    console.log(`🔁 Updated "${gifName}" count to ${newCount}`);
     return {
       statusCode: 200,
-      body: JSON.stringify({ count: newCount }),
+      headers,
+      body: JSON.stringify({ message: 'Download count updated' })
     };
 
   } catch (err) {
-    console.error('❌ Error updating download count:', err.message);
+    console.error('❌ update-download-count error:', err.message);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to update download count' }),
+      headers,
+      body: JSON.stringify({ error: 'Internal server error' })
     };
   }
 }

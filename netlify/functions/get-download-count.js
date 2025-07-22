@@ -8,7 +8,9 @@ const supabase = createClient(
 export async function handler(event) {
   const headers = {
     'Access-Control-Allow-Origin': '*',
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'Cache-Control': 'no-store',
+    'X-Content-Type-Options': 'nosniff'
   };
 
   if (event.httpMethod !== 'GET') {
@@ -36,22 +38,30 @@ export async function handler(event) {
       .single();
 
     let count = 0;
-
-    // If no matching row found, return 0
     if (error) {
       if (error.code === 'PGRST116') {
         count = 0; // Row not found
       } else {
-        throw error; // Unhandled error
+        throw error;
       }
     } else {
       count = typeof data.count === 'number' ? data.count : 0;
     }
 
+    // 🕒 Add human-readable timestamp in Eastern Time
+    const easternTime = new Date().toLocaleString("en-US", {
+      timeZone: "America/New_York",
+      hour12: true
+    });
+
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({ count })
+      body: JSON.stringify({
+        count,
+        gif_name: gifName,
+        eastern_time: easternTime
+      })
     };
 
   } catch (err) {

@@ -52,8 +52,11 @@ export async function handler(event) {
 
   const now = new Date();
   const timestamp = now.toISOString();
+  const easternTime = now.toLocaleString("en-US", {
+    timeZone: "America/New_York",
+    hour12: true
+  });
 
-  // Get location for gif_downloads only
   let location = 'lookup disabled';
   try {
     const ip = event.headers['x-nf-client-connection-ip'] || 'unknown';
@@ -68,7 +71,6 @@ export async function handler(event) {
     console.warn('Geo lookup failed:', err.message);
   }
 
-  // Log to visitor_logs (no location required)
   try {
     await supabase.from('visitor_logs').insert([{
       visitor_id,
@@ -76,19 +78,20 @@ export async function handler(event) {
       page: page || referrer || 'unknown',
       referrer: referrer || 'none',
       timestamp,
+      eastern_time: easternTime,
       gif_name
     }]);
   } catch (err) {
     console.error('visitor_logs insert error:', err.message);
   }
 
-  // Optionally log gif_downloads if there is a gif_name and visitor_id
   if (gif_name && visitor_id) {
     try {
       await supabase.from('gif_downloads').insert([{
         gif_name,
         visitor_id,
         timestamp,
+        eastern_time: easternTime,
         location,
         page: page || referrer || 'unknown'
       }]);
@@ -97,12 +100,12 @@ export async function handler(event) {
     }
   }
 
-  // Optionally log gif_download_summary if there is a gif_name
   if (gif_name) {
     try {
       await supabase.from('gif_download_summary').insert([{
         gif_name,
         timestamp,
+        eastern_time: easternTime,
         referrer: referrer || 'none'
       }]);
     } catch (err) {
