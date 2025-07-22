@@ -44,7 +44,7 @@ export async function handler(event) {
       const timestamp = new Date().toISOString();
       const page = event.headers.referer || 'direct-link';
 
-      await supabase
+      const { data, error } = await supabase
         .from('gif_downloads')
         .insert([{
           gif_name: gifName,
@@ -52,8 +52,15 @@ export async function handler(event) {
           page,
           method: 'fallback'
         }]);
+
+      if (error) {
+        console.error('❌ gif_downloads insert error:', error.message);
+      } else {
+        console.log('✅ gif_downloads insert success:', data);
+      }
+
     } catch (logError) {
-      console.warn('🟠 Logging fallback download failed:', logError.message);
+      console.warn('🟠 Uncaught logging error:', logError.message);
     }
 
     // Fetch the GIF as binary and return it base64‐encoded
