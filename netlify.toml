@@ -1,10 +1,10 @@
 # netlify.toml
 
 [build]
-  publish   = "public"                   # change if your site’s output folder is different
-  functions = "netlify/functions"        # your serverless functions directory
+  publish   = "."                     # deploy from the repo root
+  functions = "netlify/functions"     # your functions folder
 
-# Redirect friendly paths to your Netlify Functions
+# Redirects to your Netlify Functions
 [[redirects]]
   from    = "/logVisitor"
   to      = "/.netlify/functions/logVisitor"
@@ -29,7 +29,7 @@
   status  = 200
   force   = true
 
-# Ensure browsers and the Netlify Edge always revalidate scripts.js
+# Ensure scripts.js always revalidates
 [[headers]]
   for = "/scripts.js"
   [headers.values]
