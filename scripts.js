@@ -69,7 +69,10 @@ function initDarkMode() {
   const toggle = document.getElementById("toggleDarkMode");
   toggle?.addEventListener("click", () => {
     document.body.classList.toggle("dark-mode");
-    localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
+    localStorage.setItem(
+      "darkMode",
+      document.body.classList.contains("dark-mode")
+    );
   });
 
   if (localStorage.getItem("darkMode") === "true") {
@@ -114,7 +117,9 @@ function initDownloadHandlers() {
         });
 
         // C) Fetch via deliver_gif and trigger real download
-        const res = await fetch(`/.netlify/functions/deliver_gif?gif_name=${encodeURIComponent(gifName)}`);
+        const res = await fetch(
+          `/.netlify/functions/deliver_gif?gif_name=${encodeURIComponent(gifName)}`
+        );
         if (!res.ok) throw new Error(res.statusText);
         const blob = await res.blob();
         const url  = URL.createObjectURL(blob);
@@ -127,7 +132,9 @@ function initDownloadHandlers() {
         URL.revokeObjectURL(url);
 
         // D) Refresh on-page button count
-        const countRes  = await fetch(`/.netlify/functions/get-download-count?gif_name=${encodeURIComponent(gifName)}`);
+        const countRes  = await fetch(
+          `/.netlify/functions/get-download-count?gif_name=${encodeURIComponent(gifName)}`
+        );
         const countData = await countRes.json();
         countEl.textContent = `Downloads: ${countData.count}`;
       }
@@ -172,19 +179,24 @@ function initContextMenuLogging() {
 
     img.addEventListener("contextmenu", logBoth);
     img.addEventListener("auxclick", e => {
-      if (e.button === 1) logBoth;
+      if (e.button === 1) logBoth();
     });
   });
 }
 
 
-// 6) Cookie-consent banner
+// 6) Cookie-consent banner (guard added)
 function initConsentBanner() {
+  // Prevent double banner if function fires twice
+  if (document.getElementById("consent-banner")) return;
+
+  // If already accepted, re-enable download buttons and exit
   if (localStorage.getItem("cookiesAccepted") === "true") {
     document.querySelectorAll(".download-btn").forEach(btn => btn.disabled = false);
     return;
   }
 
+  // Otherwise, disable downloads and show the banner
   document.querySelectorAll(".download-btn").forEach(btn => btn.disabled = true);
   const banner = document.createElement("div");
   banner.id  = "consent-banner";
