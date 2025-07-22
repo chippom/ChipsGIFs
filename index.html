@@ -66,6 +66,12 @@
   </noscript>
   <!-- End Google Tag Manager (noscript) -->
 
+  <!-- Consent Banner -->
+  <div id="consent-banner" style="display:none;">
+    We use cookies to improve your experience. By using our site, you accept our cookie policy.
+    <button onclick="acceptCookies()">Accept</button>
+  </div>
+
   <!-- 🎯 START HEADER SECTION -->
   <header class="header">
     <div class="site-title">
@@ -779,7 +785,28 @@
   <img id="overlay-img" class="fullsize-image" src="" alt="Full-size GIF">
 </div>
 
+<!-- 🛡️ CONSENT BANNER -->
+<div id="consent-banner" style="display:none;">
+  We use cookies to improve your experience. By using our site, you accept our cookie policy.
+  <button onclick="acceptCookies()">Accept</button>
+</div>
+
 <!-- ⚙️ SCRIPT LOADING -->
 <script src="scripts.js"></script>
+
+<script>
+  window.addEventListener('load', () => {
+    const banner = document.getElementById('consent-banner');
+    if (!localStorage.getItem('consentGiven')) {
+      banner.style.display = 'block';
+    }
+  });
+
+  function acceptCookies() {
+    localStorage.setItem('consentGiven', 'true');
+    document.getElementById('consent-banner').style.display = 'none';
+  }
+</script>
+
 </body>
 </html>        
