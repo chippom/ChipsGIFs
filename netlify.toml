@@ -50,3 +50,28 @@ for = "/*.png"
 for = "/robots.txt"
   [headers.values]
   Cache-Control = "public, max-age=31536000, immutable"
+
+# 👉 Function Redirects for Netlify Serverless Functions
+[[redirects]]
+  from = "/logVisitor"
+  to = "/.netlify/functions/logVisitor"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/update-download-count"
+  to = "/.netlify/functions/update_download_count"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/deliver_gif"
+  to = "/.netlify/functions/deliver_gif"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/get-download-count"
+  to = "/.netlify/functions/get_download_count"
+  status = 200
+  force = true
