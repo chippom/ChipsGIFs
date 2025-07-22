@@ -1,1 +1,1 @@
-document.querySelectorAll(".gif-item img").forEach(function(img,index){img.dataset.gif=img.src;if(index<6){img.src=img.dataset.gif}else{io.observe(img)}});
+document.querySelectorAll(".gif-item img").forEach(function(img,i){var s=img.src;img.dataset.gif=s;if(i<6){img.src=s}else{io.observe(img)}});var io=new IntersectionObserver(function(e){e.forEach(function(t){if(t.isIntersecting){var m=t.target;m.dataset.gif&&m.src!==m.dataset.gif&&(m.src=m.dataset.gif,io.unobserve(m))}})},{rootMargin:"800px"});
