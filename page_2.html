@@ -58,23 +58,57 @@
       text-align: center;
       margin: 20px 0;
       padding: 10px;
-      background-color: #f4f4f4;
+      background-color: #222;
     }
     .pagination a {
       margin: 0 10px;
       text-decoration: none;
-      color: #007bff;
+      color: #0066cc;
       padding: 8px 16px;
-      border: 1px solid #007bff;
+      border: 1px solid #0066cc;
       border-radius: 4px;
       background: #fff;
     }
     .pagination a:hover {
-      background: #007bff;
+      background: #0066cc;
       color: #fff;
     }
     .pagination span {
       font-weight: bold;
+      color: #fff;
+    }
+    body.dark-mode .pagination {
+      background-color: #fff;
+    }
+    body.dark-mode .pagination a {
+      color: #009966;
+      border-color: #009966;
+    }
+    body.dark-mode .pagination a:hover {
+      background-color: #009966;
+      color: #fff;
+    }
+    #toggleDarkMode, #followMeButton {
+      margin-left: 10px;
+      padding: 8px 14px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #0066cc;
+      color: #fff;
+      transition: background 0.3s ease;
+    }
+    body.dark-mode #toggleDarkMode,
+    body.dark-mode #followMeButton {
+      background: #009966;
+    }
+    #toggleDarkMode:hover,
+    #followMeButton:hover,
+    body.dark-mode #toggleDarkMode:hover,
+    body.dark-mode #followMeButton:hover {
+      background: #004999;
+      color: #fff;
     }
   </style>
 
@@ -104,16 +138,24 @@
     <p class="instructions">Click on any GIF below for the full-size, unfiltered version.</p>
   </header>
 
+  <!-- 🌗 Toggle + Follow Buttons -->
+  <div style="text-align: right; margin: 12px 16px;">
+    <button id="toggleDarkMode">🌓 Toggle Theme</button>
+    <a href="https://bsky.app/profile/chips-gifs.com" target="_blank">
+      <button id="followMeButton">Follow Me</button>
+    </a>
+  </div>
+
   <!-- 📣 Unique Page Intro -->
   <div class="unique-intro">
-    <strong>Welcome to the ultimate political GIF battleground!</strong><br>
-    Every animation in this gallery takes a playful jab at real events, trending figures, and the daily circus in Washington and beyond. From Trump’s lightning moment to Biden’s latest blunder, these GIFs are sharp, fearless, and 100% original.<br><br>
+    <strong>Dark mode—because chaos always looks better after sunset.</strong><br>
+    Welcome to the ultimate political GIF battleground! Every animation in this gallery takes a playful jab at real events, trending figures, and the daily circus in Washington and beyond. From Trump’s lightning moment to Biden’s latest blunder, these GIFs are sharp, fearless, and 100% original.<br><br>
     <span style="font-size:18px;">See a favorite? Share it—or just enjoy the ride through our funniest, wildest political spoofs. Only found right here on Page 2!</span>
   </div>
 
   <!-- 🔗 Top Pagination Navigation -->
   <div class="pagination">
-    <a href="page_1.html">1</a>
+    <a href="index.html">1</a>
     <span>2</span>
     <a href="page_3.html">3</a>
     <a href="page_4.html">4</a>
@@ -763,31 +805,29 @@
     <button class="download-btn" data-gif="Serenity prayer_2 .gif">Download</button>
     <span class="download-count">Downloads: 0</span>
 </div>
-<!-- 🎬 Add more gif-item entries here -->
-    </div>
-
-  <!-- 🔄 Bottom Pagination Navigation -->
-    <nav class="pagination">
-      <a href="page_1.html" aria-label="Go to Page 1">Previous</a>
-      <span>Page 2 of 4</span>
-      <a href="page_3.html" aria-label="Go to Page 3">Next</a>
-    </nav>
+    </div> <!-- End .gif-container -->
   </main>
 
+  <!-- 🔄 Bottom Pagination Navigation -->
+  <nav class="pagination">
+    <a href="index.html" aria-label="Go to Page 1">Previous</a>
+    <span>Page 2 of 4</span>
+    <a href="page_3.html" aria-label="Go to Page 3">Next</a>
+  </nav>
+
   <!-- 🧾 Site Footer -->
-  <footer>
+  <footer style="padding-bottom: 60px;">
     <p>Created by Chip Pommert</p>
     <a href="https://buymeacoffee.com/chippom" target="_blank">
       <img
         src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
         alt="Buy Me A Coffee"
-        style="height: 40px !important; width: 150px !important;"
-      >
+        style="height: 40px !important; width: 150px !important;">
     </a>
   </footer>
 
   <!-- 📮 Contact Button -->
-  <div class="contact-button-container">
+  <div class="contact-button-container" style="margin-bottom: 30px;">
     <a href="mailto:Chippom2@gmail.com" id="contactMeButton" aria-label="Email Chip">Contact Me</a>
   </div>
 
@@ -796,15 +836,30 @@
     <img id="overlay-img" class="fullsize-image" src="" alt="Full-size GIF">
   </div>
 
-  <!-- ⚙️ Bottom Control Buttons -->
-  <div style="text-align: right; margin: 10px;">
-    <button id="toggleDarkMode" aria-label="Toggle Dark Mode">Toggle Dark Mode</button>
+  <!-- 🌗 Bottom Controls -->
+  <div style="text-align: right; margin: 12px 16px;">
+    <button id="toggleDarkMode">🌓 Toggle Theme</button>
     <a href="https://bsky.app/profile/chips-gifs.com" target="_blank">
-      <button id="followMeButton" aria-label="Follow Chip on Bluesky">Follow Me</button>
+      <button id="followMeButton">Follow Me</button>
     </a>
   </div>
 
-  <!-- 🔧 Scripts -->
+  <!-- 🔧 Dark Mode Script -->
+  <script>
+    const toggleButton = document.getElementById('toggleDarkMode');
+    toggleButton?.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      localStorage.setItem('prefersDark', document.body.classList.contains('dark-mode'));
+    });
+
+    window.addEventListener('load', () => {
+      if (localStorage.getItem('prefersDark') === 'true') {
+        document.body.classList.add('dark-mode');
+      }
+    });
+  </script>
+
+  <!-- 🚀 Scripts -->
   <script src="scripts.js"></script>
 </body>
 </html>
