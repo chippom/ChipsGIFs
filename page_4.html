@@ -16,89 +16,21 @@
   <meta property="og:image" content="https://chips-gifs.com/featured_ukraine420.gif" />
 
   <style>
-    body.dark-mode {
-      background-color: #000;
-      color: #eee;
-    }
-    .header {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      padding: 10px;
-      background-color: #333;
-      color: #fff;
-    }
-    .site-title {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .icon {
+    .site-title img {
+      max-width: 120px;
+      height: auto;
+      object-fit: contain;
+      vertical-align: middle;
       margin-left: 10px;
     }
-    .title {
-      font-size: 36px;
-      font-weight: bold;
-    }
-    .instructions {
-      margin-top: 10px;
-      font-size: 20px;
-    }
-    .unique-intro {
-      margin: 32px auto 14px auto;
-      max-width: 800px;
-      font-size: 20px;
-      background: #e8d6ff;
-      color: #241254;
-      border-radius: 10px;
-      padding: 22px 26px 15px 26px;
-      font-style: italic;
-      box-shadow: 0 2px 12px rgba(128, 90, 200, 0.10);
-    }
-    .satire-highlight {
-      font-size: 17px;
-      color: #c73d18;
-      margin-top: 12px;
-      padding-left: 16px;
-      border-left: 4px solid #f1a661;
-    }
-    .pagination {
+
+    .header-buttons {
       text-align: center;
-      margin: 20px 0;
-      padding: 10px;
-      background-color: #222;
+      margin-bottom: 20px;
     }
-    .pagination a {
+
+    .header-buttons button {
       margin: 0 10px;
-      text-decoration: none;
-      padding: 8px 16px;
-      border-radius: 4px;
-      background: #fff;
-      border: 1px solid #0066cc;
-      color: #0066cc;
-    }
-    .pagination a:hover {
-      background: #0066cc;
-      color: #fff;
-    }
-    .pagination span {
-      font-weight: bold;
-      color: #fff;
-    }
-    body.dark-mode .pagination {
-      background-color: #fff;
-    }
-    body.dark-mode .pagination a {
-      color: #009966;
-      border-color: #009966;
-    }
-    body.dark-mode .pagination a:hover {
-      background-color: #009966;
-      color: #fff;
-    }
-    #toggleDarkMode, #followMeButton {
-      margin-left: 10px;
       padding: 8px 14px;
       font-size: 16px;
       border: none;
@@ -108,15 +40,32 @@
       color: #fff;
       transition: background 0.3s ease;
     }
-    body.dark-mode #toggleDarkMode,
-    body.dark-mode #followMeButton {
+
+    body.dark-mode {
+      background-color: #000;
+      color: #eee;
+    }
+
+    body.dark-mode .header-buttons button {
       background: #009966;
     }
-    #toggleDarkMode:hover,
-    #followMeButton:hover,
-    body.dark-mode #toggleDarkMode:hover,
-    body.dark-mode #followMeButton:hover {
+
+    .header-buttons button:hover {
       background: #004999;
+      color: #fff;
+    }
+
+    body.dark-mode .pagination {
+      background-color: #fff;
+    }
+
+    body.dark-mode .pagination a {
+      color: #009966;
+      border-color: #009966;
+    }
+
+    body.dark-mode .pagination a:hover {
+      background-color: #009966;
       color: #fff;
     }
   </style>
@@ -138,23 +87,32 @@
       height="0" width="0" style="display:none;visibility:hidden"></iframe>
   </noscript>
 
-  <!-- 🌗 Toggle + Follow Buttons -->
-  <div style="text-align: right; margin: 12px 16px;">
+  <!-- 🔝 Page Header -->
+  <header class="header">
+    <div class="site-title">
+      <h1 class="title">420, Satire & Meme Warfare: Roasting Trump, Musk & More</h1>
+      <img src="gifs/parental_advisery_1.gif" alt="Parental Advisory: Rated Meme Madness After 4:20" class="icon">
+    </div>
+    <p class="instructions">Click a GIF for full impact—best enjoyed with snacks and sarcasm.</p>
+  </header>
+
+  <!-- 🔗 Pagination Navigation -->
+  <div class="pagination">
+    <a href="index.html">1</a>
+    <a href="page_2.html">2</a>
+    <a href="page_3.html">3</a>
+    <span>4</span>
+  </div>
+
+  <!-- 🌗 Centered Control Buttons -->
+  <div class="header-buttons">
     <button id="toggleDarkMode">🌓 Toggle Theme</button>
     <a href="https://bsky.app/profile/chips-gifs.com" target="_blank">
       <button id="followMeButton">Follow Me</button>
     </a>
   </div>
 
-  <header class="header">
-    <div class="site-title">
-      <h1 class="title">420, Satire & Meme Warfare: Roasting Trump, Musk & More</h1>
-      <img src="gifs/parental_advisery_1.gif" alt="Parental Advisory" class="icon" width="150" height="150">
-    </div>
-    <p class="instructions">Click a GIF for full impact—best enjoyed with snacks and sarcasm.</p>
-  </header>
-
-  <!-- Unique Intro Block -->
+  <!-- 💨 Unique Intro Block -->
   <div class="unique-intro">
     <strong>Dark mode—because even memes prefer midnight.</strong><br>
     This page blasts you with hard-hitting 420 energy and razor-sharp satire—where political holy cows get barbecued, and memes fly higher than SpaceX.<br><br>
@@ -171,13 +129,7 @@
     </span>
   </div>
 
-  <div class="pagination">
-    <a href="index.html">1</a>
-    <a href="page_2.html">2</a>
-    <a href="page_3.html">3</a>
-    <span>4</span>
-  </div>
-
+  <!-- 🎬 START MAIN GIF CONTAINER -->
   <main>
     <div class="gif-container">
 

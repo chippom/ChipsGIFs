@@ -18,6 +18,7 @@
     body.dark-mode .pagination {
       background-color: #fff;
     }
+
     .header {
       display: flex;
       flex-direction: column;
@@ -27,22 +28,32 @@
       background-color: #333;
       color: #fff;
     }
+
     .site-title {
       display: flex;
+      flex-wrap: wrap;
       justify-content: center;
       align-items: center;
+      gap: 1rem;
     }
-    .icon {
-      margin-left: 10px;
-    }
+
     .title {
       font-size: 36px;
       font-weight: bold;
     }
+
+    .icon {
+      max-width: 120px;
+      height: auto;
+      object-fit: contain;
+      vertical-align: middle;
+    }
+
     .instructions {
       margin-top: 10px;
       font-size: 20px;
     }
+
     .unique-intro {
       margin: 30px auto 10px auto;
       max-width: 800px;
@@ -54,6 +65,7 @@
       font-style: italic;
       box-shadow: 0 2px 10px rgba(0,0,0,0.07);
     }
+
     .satire-highlight {
       font-size: 18px;
       color: #aa2222;
@@ -61,13 +73,15 @@
       padding-left: 16px;
       border-left: 4px solid #f08080;
     }
+
     .pagination {
       text-align: center;
-      margin: 20px 0;
+      margin: 20px 0 10px;
       padding: 10px;
       background-color: #222;
       transition: background 0.3s ease;
     }
+
     .pagination a {
       margin: 0 10px;
       text-decoration: none;
@@ -77,20 +91,29 @@
       border: 1px solid #0066cc;
       color: #0066cc;
     }
+
     .pagination a:hover {
       background: #0066cc;
       color: #fff;
     }
+
     body.dark-mode .pagination a {
       border-color: #009966;
       color: #009966;
     }
+
     body.dark-mode .pagination a:hover {
       background-color: #009966;
       color: #fff;
     }
-    #toggleDarkMode, #followMeButton {
-      margin-left: 10px;
+
+    .header-buttons {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .header-buttons button {
+      margin: 0 10px;
       padding: 8px 14px;
       font-size: 16px;
       border: none;
@@ -100,14 +123,12 @@
       color: #fff;
       transition: background 0.3s ease;
     }
-    body.dark-mode #toggleDarkMode,
-    body.dark-mode #followMeButton {
+
+    body.dark-mode .header-buttons button {
       background: #009966;
     }
-    #toggleDarkMode:hover,
-    #followMeButton:hover,
-    body.dark-mode #toggleDarkMode:hover,
-    body.dark-mode #followMeButton:hover {
+
+    .header-buttons button:hover {
       background: #004999;
       color: #fff;
     }
@@ -131,10 +152,24 @@
   <header class="header">
     <div class="site-title">
       <h1 class="title">Political Satire & Meme Mayhem: Your First Dose</h1>
-      <img src="gifs/weed_parental_advisery_1.gif" alt="Parental Advisory For kids with Stoner parents" class="icon" width="150" height="150">
+      <img src="gifs/weed_parental_advisery_1.gif" alt="Parental Advisory For kids with Stoner parents" class="icon">
     </div>
     <p class="instructions">Click on any GIF below for the full-size, unfiltered version.</p>
   </header>
+
+  <div class="pagination">
+    <a href="page_2.html">2</a>
+    <span>1</span>
+    <a href="page_3.html">3</a>
+    <a href="page_4.html">4</a>
+  </div>
+
+  <div class="header-buttons">
+    <button id="toggleDarkMode">🌓 Toggle Theme</button>
+    <a href="https://bsky.app/profile/chips-gifs.com" target="_blank">
+      <button id="followMeButton">Follow Me</button>
+    </a>
+  </div>
 
   <div class="unique-intro">
     <strong>This is the front door to the madness.</strong><br>
@@ -145,23 +180,9 @@
     </span>
   </div>
 
-  <div class="pagination">
-    <a href="page_2.html">2</a>
-    <span>1</span>
-    <a href="page_3.html">3</a>
-    <a href="page_4.html">4</a>
-  </div>
-
-  <div style="text-align: right; margin: 12px 16px;">
-    <button id="toggleDarkMode">🌓 Toggle Theme</button>
-    <a href="https://bsky.app/profile/chips-gifs.com" target="_blank">
-      <button id="followMeButton">Follow Me</button>
-    </a>
-  </div>
-
   <main>
     <div class="gif-container">
-      <!-- 🔸 Insert ~200 GIF entries here -->
+      <!-- 🔸 Your GIF entries go here -->
 
   <main>
     <div class="gif-container">
@@ -815,14 +836,16 @@
         <span class="download-count">Downloads: 0</span>
     </div>
 <!-- 🎬 END MAIN GIF CONTAINER -->
-      </div> <!-- End .gif-container -->
+    </div> <!-- End .gif-container -->
   </main>
 
-  <!-- 🔗 Page Navigation -->
-  <nav style="margin-bottom: 20px;">
-    <a href="page_3.html" class="nav-button">Previous Page</a>
-    <a href="index.html" class="nav-button">Home</a>
-  </nav>
+  <!-- 🔗 Updated Page Navigation -->
+  <div class="pagination">
+    <a href="page_2.html">2</a>
+    <span>1</span>
+    <a href="page_3.html">3</a>
+    <a href="page_4.html">4</a>
+  </div>
 
   <!-- 🧾 Site Footer -->
   <footer style="padding-bottom: 60px;">
