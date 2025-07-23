@@ -14,8 +14,10 @@
   <meta property="og:url" content="https://chips-gifs.com/index.html" />
   <meta property="og:image" content="https://chips-gifs.com/featured_home.gif" />
 
-  <!-- 🎨 Inline Styles -->
   <style>
+    body.dark-mode .pagination {
+      background-color: #fff;
+    }
     .header {
       display: flex;
       flex-direction: column;
@@ -63,27 +65,54 @@
       text-align: center;
       margin: 20px 0;
       padding: 10px;
-      background-color: #f4f4f4;
+      background-color: #222;
+      transition: background 0.3s ease;
     }
     .pagination a {
       margin: 0 10px;
       text-decoration: none;
-      color: #007bff;
       padding: 8px 16px;
-      border: 1px solid #007bff;
       border-radius: 4px;
       background: #fff;
+      border: 1px solid #0066cc;
+      color: #0066cc;
     }
     .pagination a:hover {
-      background: #007bff;
+      background: #0066cc;
       color: #fff;
     }
-    .pagination span {
-      font-weight: bold;
+    body.dark-mode .pagination a {
+      border-color: #009966;
+      color: #009966;
+    }
+    body.dark-mode .pagination a:hover {
+      background-color: #009966;
+      color: #fff;
+    }
+    #toggleDarkMode, #followMeButton {
+      margin-left: 10px;
+      padding: 8px 14px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #0066cc;
+      color: #fff;
+      transition: background 0.3s ease;
+    }
+    body.dark-mode #toggleDarkMode,
+    body.dark-mode #followMeButton {
+      background: #009966;
+    }
+    #toggleDarkMode:hover,
+    #followMeButton:hover,
+    body.dark-mode #toggleDarkMode:hover,
+    body.dark-mode #followMeButton:hover {
+      background: #004999;
+      color: #fff;
     }
   </style>
 
-  <!-- 📊 Google Tag Manager -->
   <script>
     (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -94,13 +123,11 @@
 </head>
 
 <body>
-  <!-- 📊 GTM NoScript Fallback -->
   <noscript>
     <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NG2VZ7J8"
             height="0" width="0" style="display:none;visibility:hidden"></iframe>
   </noscript>
 
-  <!-- 🔝 Page Header -->
   <header class="header">
     <div class="site-title">
       <h1 class="title">Political Satire & Meme Mayhem: Your First Dose</h1>
@@ -109,7 +136,6 @@
     <p class="instructions">Click on any GIF below for the full-size, unfiltered version.</p>
   </header>
 
-  <!-- 📣 Unique Page Intro -->
   <div class="unique-intro">
     <strong>This is the front door to the madness.</strong><br>
     From smoke-filled satire to billionaire takedowns, Page 1 serves as your all-access pass to every flavor of absurdity this GIF gallery offers.<br><br>
@@ -119,12 +145,18 @@
     </span>
   </div>
 
-  <!-- 🔗 Top Pagination Navigation -->
   <div class="pagination">
     <a href="page_2.html">2</a>
     <span>1</span>
     <a href="page_3.html">3</a>
     <a href="page_4.html">4</a>
+  </div>
+
+  <div style="text-align: right; margin: 12px 16px;">
+    <button id="toggleDarkMode">🌓 Toggle Theme</button>
+    <a href="https://bsky.app/profile/chips-gifs.com" target="_blank">
+      <button id="followMeButton">Follow Me</button>
+    </a>
   </div>
 
   <main>
@@ -783,17 +815,17 @@
         <span class="download-count">Downloads: 0</span>
     </div>
 <!-- 🎬 END MAIN GIF CONTAINER -->
-    </div> <!-- End .gif-container -->
+      </div> <!-- End .gif-container -->
   </main>
 
   <!-- 🔗 Page Navigation -->
-  <nav>
+  <nav style="margin-bottom: 20px;">
     <a href="page_3.html" class="nav-button">Previous Page</a>
     <a href="index.html" class="nav-button">Home</a>
   </nav>
 
   <!-- 🧾 Site Footer -->
-  <footer>
+  <footer style="padding-bottom: 60px;">
     <p>Created by Chip Pommert</p>
     <a href="https://buymeacoffee.com/chippom" target="_blank">
       <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
@@ -803,7 +835,7 @@
   </footer>
 
   <!-- 📮 Contact Button -->
-  <div class="contact-button-container">
+  <div class="contact-button-container" style="margin-bottom: 30px;">
     <a href="mailto:Chippom2@gmail.com" id="contactMeButton" aria-label="Email Chip">Contact Me</a>
   </div>
 
@@ -835,4 +867,4 @@
 
   <script src="scripts.js"></script>
 </body>
-</html>       
+</html>     
