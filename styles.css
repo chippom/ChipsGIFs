@@ -17,20 +17,31 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow-x: auto; /* Allow horizontal scroll if content overflows */
+  overflow-x: hidden; /* prevent unwanted horizontal scroll */
   display: flex;
   flex-direction: column;
-}
-
-body {
-  font-family: Arial, sans-serif;
-  line-height: 1.6;
-  padding: 0;
-  padding-top: 60px;
   background-color: var(--background-color);
   color: var(--text-color);
   transition: background-color 0.3s ease, color 0.3s ease;
-  flex: 1;
+}
+
+body.dark-mode {
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
+}
+
+body.dark-mode header,
+body.dark-mode footer {
+  background-color: var(--dark-header-footer);
+}
+
+body.dark-mode #consent-banner {
+  background-color: #333;
+  color: #fff;
+}
+
+body.dark-mode .pagination {
+  background-color: #fff;
 }
 
 main {
@@ -50,7 +61,7 @@ header, footer {
 footer {
   margin-top: auto;
   width: 100%;
-  padding: 1rem 0 40px 0; /* Extra bottom padding for safe UI spacing */
+  padding: 1rem 0 40px 0;
 }
 
 footer p {
@@ -315,52 +326,68 @@ body.dark-mode #consent-banner {
   color: #fff;
 }
 
+@media (max-width: 768px) {
+  .gif-item {
+    width: calc(50% - 1rem);
+  }
+}
+
 /* 🗂 PAGINATION BAR */
 .pagination {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   justify-content: center;
-  gap: 16px;
-  margin: 20px 0;
-  padding: 10px 0;
-  background-color: #f4f4f4;
-  flex-wrap: wrap;
   align-items: center;
+  gap: 16px;
+  margin: 20px 0 10px 0;
+  padding: 16px 0;
+  background: #222;
+  box-sizing: border-box;
+  /* to prevent unwanted horizontal scroll */
+  overflow-x: visible;
 }
 
 .pagination a, .pagination span {
-  display: inline-block;
-  margin: 0;
-  text-decoration: none;
   padding: 8px 16px;
   border-radius: 4px;
-}
-
-.pagination a {
+  font-weight: bold;
+  text-decoration: none;
+  color: #0066cc;
   background: #fff;
-  border: 1px solid #007bff;
-  color: #007bff;
+  border: 1px solid #0066cc;
+  /* remove margin here, use gap on container */
 }
 
 .pagination a:hover {
-  background-color: #007bff;
+  background-color: #0066cc;
   color: #fff;
 }
 
 .pagination span {
-  font-weight: bold;
-  color: #333;
-  transition: color 0.3s ease;
+  background: #004a99;
+  color: #eee;
+  cursor: default;
 }
 
-/* 🌙 DARK MODE OVERRIDES */
-body.dark-mode {
-  background-color: var(--dark-bg);
-  color: var(--dark-text);
+body.dark-mode .pagination {
+  background-color: #fff;
 }
 
-body.dark-mode header,
-body.dark-mode footer {
-  background-color: var(--dark-header-footer);
+body.dark-mode .pagination a {
+  background: #fff;
+  color: #009966;
+  border-color: #009966;
 }
 
-/* If you have more CSS here, simply append it after this */
+body.dark-mode .pagination a:hover {
+  background-color: #009966;
+  color: #fff;
+}
+
+body.dark-mode .pagination span {
+  background: #007a43;
+  color: #b4f3c8;
+}
