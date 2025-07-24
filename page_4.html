@@ -521,58 +521,61 @@
                 <span class="download-count">Downloads: 0</span>
             </div>
 
-      </div> <!-- close .gif-container -->
-  </main>
+</div> <!-- close .gif-container -->
+</main>
 
-  <!-- 📮 Contact Me Button -->
+<!-- Contact + Bottom Pagination Fixed Wrapper -->
+<div class="contact-pagination-wrapper">
   <div class="contact-button-container">
-    <a href="mailto:Chippom2@gmail.com" id="contactMeButton">Contact Me</a>
+    <a href="mailto:Chippom2@gmail.com" id="contactMeButton" aria-label="Email Chip">Contact Me</a>
   </div>
 
-  <!-- 🔄 Bottom Pagination Bar -->
   <div class="pagination">
-    <a href="page_3.html">3</a>
+    <a href="page_3.html" aria-label="Go to Page 3">3</a>
     <span>4</span>
-    <a href="index.html">Home</a>
+    <a href="index.html" aria-label="Go to Home">Home</a>
   </div>
+</div>
 
-  <!-- 🧾 Site Footer -->
-  <footer>
-    <p>Created by Chip Pommert</p>
-    <a href="https://buymeacoffee.com/chippom" target="_blank">
-      <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
-           alt="Buy Me A Coffee"
-           style="height: 40px !important; width: 150px !important; margin-top: 8px; margin-bottom: 12px;">
-    </a>
-  </footer>
+<!-- 🧾 Site Footer -->
+<footer>
+  <p>Created by Chip Pommert</p>
+  <a href="https://buymeacoffee.com/chippom" target="_blank">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         style="height: 40px !important; width: 150px !important; margin-top: 8px; margin-bottom: 12px;">
+  </a>
+</footer>
 
-  <!-- 🖼️ Overlay Viewer -->
-  <div id="overlay" class="fullsize-overlay" style="display:none;">
-    <img id="overlay-img" class="fullsize-image" src="" alt="Full-size GIF">
-  </div>
+<!-- 🖼️ Overlay Viewer -->
+<div id="overlay" class="fullsize-overlay" style="display:none;">
+  <img id="overlay-img" class="fullsize-image" src="" alt="Full-size GIF">
+</div>
 
-  <!-- 🌗 Consent Banner -->
-  <div id="consent-banner" style="display:none;">
-    We use cookies to improve your experience. By using our site, you accept our cookie policy.
-    <button onclick="acceptCookies()">Accept</button>
-  </div>
+<!-- 🌗 Consent Banner -->
+<div id="consent-banner" style="display:none;">
+  We use cookies to improve your experience. By using our site, you accept our cookie policy.
+  <button onclick="acceptCookies()">Accept</button>
+</div>
 
-  <!-- 🔧 Dark Mode Script -->
-  <script>
+<!-- 🔧 Dark Mode Script -->
+<script>
+  window.addEventListener('DOMContentLoaded', function() {
     const toggleButton = document.getElementById('toggleDarkMode');
-    toggleButton?.addEventListener('click', () => {
-      document.body.classList.toggle('dark-mode');
-      localStorage.setItem('prefersDark', document.body.classList.contains('dark-mode'));
-    });
+    if (toggleButton) {
+      toggleButton.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('prefersDark', document.body.classList.contains('dark-mode'));
+      });
+    }
+    if (localStorage.getItem('prefersDark') === 'true') {
+      document.body.classList.add('dark-mode');
+    }
+  });
+</script>
 
-    window.addEventListener('load', () => {
-      if (localStorage.getItem('prefersDark') === 'true') {
-        document.body.classList.add('dark-mode');
-      }
-    });
-  </script>
-
-  <!-- 🚀 Scripts -->
-  <script src="scripts.js"></script>
+<!-- 🚀 Scripts -->
+<script src="scripts.js"></script>
 </body>
 </html>
+
