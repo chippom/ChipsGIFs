@@ -807,61 +807,58 @@
     <span class="download-count">Downloads: 0</span>
 </div>
 
-    </div> <!-- End .gif-container -->
-  </main>
+      </div> <!-- End .gif-container -->
+    </main>
 
-  <!-- 🔗 Page Navigation -->
-  <nav style="text-align: center; margin-bottom: 20px;">
-    <a href="page_2.html" class="nav-button">Previous Page</a>
-    <span style="margin: 0 12px;">Page 3 of 4</span>
-    <a href="page_4.html" class="nav-button">Next Page</a>
-  </nav>
+    <!-- TOP PAGE NAVIGATION BAR (if you want both top and bottom, you can move this up) -->
+    <div class="pagination">
+      <a href="page_2.html">2</a>
+      <span>3</span>
+      <a href="page_4.html">4</a>
+    </div>
 
-  <!-- 📮 Contact Button -->
-  <div class="contact-button-container" style="text-align: center; margin-bottom: 30px;">
-    <a href="mailto:Chippom2@gmail.com" id="contactMeButton" aria-label="Email Chip">Contact Me</a>
-  </div>
+    <!-- (Optional: Bottom Navigation Buttons, can be omitted if you only want one bar) -->
 
-  <!-- 🧾 Site Footer -->
-  <footer style="padding-bottom: 30px;">
-    <p>Created by Chip Pommert</p>
-    <a href="https://buymeacoffee.com/chippom" target="_blank">
-      <img
-        src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
-        alt="Buy Me A Coffee"
-        style="height: 40px !important; width: 150px !important;">
-    </a>
-  </footer>
+    <!-- Contact Me Button (stays between main content and footer) -->
+    <div class="contact-button-container">
+      <a href="mailto:Chippom2@gmail.com" id="contactMeButton" aria-label="Email Chip">Contact Me</a>
+    </div>
 
-  <!-- 🖼 Overlay Viewer for Full-Size GIFs -->
-  <div id="overlay" class="fullsize-overlay" style="display:none;">
-    <img id="overlay-img" class="fullsize-image" src="" alt="Full-size GIF">
-  </div>
+    <!-- Site Footer -->
+    <footer>
+      <p>Created by Chip Pommert</p>
+      <a href="https://buymeacoffee.com/chippom" target="_blank">
+        <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+             alt="Buy Me A Coffee"
+             style="height: 40px !important; width: 150px !important; margin-top: 8px; margin-bottom: 12px;">
+      </a>
+    </footer>
 
-  <!-- 🌗 Bottom Controls -->
-  <div style="text-align: right; margin: 12px 16px;">
-    <button id="toggleDarkMode">🌓 Toggle Theme</button>
-    <a href="https://bsky.app/profile/chips-gifs.com" target="_blank">
-      <button id="followMeButton">Follow Me</button>
-    </a>
-  </div>
+    <!-- Overlay Viewer (don't touch for dark mode overlays) -->
+    <div id="overlay" class="fullsize-overlay" style="display:none;">
+      <img id="overlay-img" class="fullsize-image" src="" alt="Full-size GIF">
+    </div>
+    
+    <!-- Consent Banner (untouched) -->
+    <div id="consent-banner" style="display:none;">
+      We use cookies to improve your experience. By using our site, you accept our cookie policy.
+      <button onclick="acceptCookies()">Accept</button>
+    </div>
 
-  <!-- 🔧 Dark Mode Script -->
-  <script>
-    const toggleButton = document.getElementById('toggleDarkMode');
-    toggleButton?.addEventListener('click', () => {
-      document.body.classList.toggle('dark-mode');
-      localStorage.setItem('prefersDark', document.body.classList.contains('dark-mode'));
-    });
+    <!-- Script Loading (do not edit or move) -->
+    <script>
+      window.addEventListener('load', () => {
+        const banner = document.getElementById('consent-banner');
+        if (!localStorage.getItem('consentGiven')) {
+          banner.style.display = 'block';
+        }
+      });
 
-    window.addEventListener('load', () => {
-      if (localStorage.getItem('prefersDark') === 'true') {
-        document.body.classList.add('dark-mode');
+      function acceptCookies() {
+        localStorage.setItem('consentGiven', 'true');
+        document.getElementById('consent-banner').style.display = 'none';
       }
-    });
-  </script>
-
-  <!-- 🚀 Scripts -->
-  <script src="scripts.js"></script>
-</body>
+    </script>
+    <script src="scripts.js"></script>
+  </body>
 </html>
