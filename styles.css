@@ -294,6 +294,11 @@ footer img {
   z-index: 2000 !important;
 }
 
+body.dark-mode #consent-banner {
+  background-color: #333;
+  color: #fff;
+}
+
 /* 🗂 PAGINATION BAR */
 .pagination {
   text-align: center;
@@ -307,14 +312,20 @@ footer img {
 .pagination a {
   margin: 0 10px;
   text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  background: #fff;
+  border: 1px solid #007bff;
   color: #007bff;
 }
 
 .pagination a:hover {
-  text-decoration: underline;
+  background-color: #007bff;
+  color: #fff;
 }
 
 .pagination span {
+  font-weight: bold;
   color: #333;
   transition: color 0.3s ease;
 }
@@ -337,28 +348,4 @@ body.dark-mode .gif-item img {
 body.dark-mode .download-btn,
 body.dark-mode #contactMeButton,
 body.dark-mode #toggleDarkMode,
-body.dark-mode #followMeButton {
-  background-color: #45a049;
-  color: var(--dark-text);
-}
-
-body.dark-mode .pagination span {
-  color: #333;
-}
-
-body.dark-mode #consent-banner {
-  background-color: #333;
-  color: #fff;
-}
-
-body.dark-mode .pagination a {
-  border-color: #009966;
-  color: #009966;
-}
-
-body.dark-mode .pagination a:hover {
-  background-color: #009966;
-  color: #fff;
-}
-
-/* 📱
+body.dark-mode #follow
