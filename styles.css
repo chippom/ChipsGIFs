@@ -48,6 +48,7 @@ main {
   flex: 1;
   display: flex;
   flex-direction: column;
+  padding-bottom: 160px; /* Leaves room for fixed footer and contact/nav bar */
 }
 
 /* 🧱 HEADER & FOOTER */
@@ -59,18 +60,16 @@ header, footer {
 }
 
 footer {
-  margin-top: auto;
+  position: fixed;
+  bottom: 0;
+  left: 0;
   width: 100vw;
-  max-width: 100vw;
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
   padding: 1rem 0 40px 0;
+  background-color: var(--header-footer-bg);
+  color: var(--header-footer-text);
   box-sizing: border-box;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
+  text-align: center;
+  z-index: 1000;
 }
 
 footer p {
@@ -208,13 +207,23 @@ footer img {
   margin-bottom: 1.25rem;
   position: relative;
   z-index: 10;
+  background-color: var(--primary-color);
+  color: #fff;
+  border-radius: 0.3125rem;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+#contactMeButton:hover {
+  background-color: #388e3c;
 }
 
 .contact-button-container {
   text-align: center;
-  margin: 1.25rem 0 30px;
-  position: relative;
-  z-index: 10;
+  margin: 40px auto 20px;
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
 }
 
 /* 🌟 STAR EFFECT */

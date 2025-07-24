@@ -878,63 +878,57 @@
     </div>
 
     
-    </div> <!-- End .gif-container -->
-  </main>
+    </div> <!-- end gif entries -->
 
-  <!-- Bottom Pagination Bar -->
-  <div class="pagination" style="margin-top: 0;">
-    <a href="page_2.html">2</a>
-    <span>1</span>
-    <a href="page_3.html">3</a>
-    <a href="page_4.html">4</a>
-  </div>
+    <!-- Contact Me Button under the GIFs and before pagination/footer -->
+    <div class="contact-button-container">
+      <a href="mailto:Chippom2@gmail.com" id="contactMeButton" aria-label="Email Chip">Contact Me</a>
+    </div>
 
-  <!-- Contact Me Button -->
-  <div class="contact-button-container" style="text-align: center; margin: 20px auto;">
-    <a href="mailto:Chippom2@gmail.com" id="contactMeButton" aria-label="Email Chip"
-      >Contact Me</a
-    >
-  </div>
+    <!-- Bottom Pagination Bar -->
+    <div class="pagination">
+      <a href="page_2.html">2</a>
+      <span>1</span>
+      <a href="page_3.html">3</a>
+      <a href="page_4.html">4</a>
+    </div>
 
-  <!-- Footer -->
-  <footer style="text-align: center; padding: 1rem 0 40px 0;">
-    <p>Created by Chip Pommert</p>
-    <a href="https://buymeacoffee.com/chippom" target="_blank"
-      ><img
-        src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
-        alt="Buy Me A Coffee"
-        style="height: 40px !important; width: 150px !important; margin-top: 8px; margin-bottom: 12px;"
-    /></a>
-  </footer>
+    <!-- Footer: made wide/flush for visual full-width bar -->
+    <footer>
+      <p>Created by Chip Pommert</p>
+      <a href="https://buymeacoffee.com/chippom" target="_blank">
+        <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+             alt="Buy Me A Coffee"
+             style="height: 40px !important; width: 150px !important; margin-top: 8px; margin-bottom: 12px;">
+      </a>
+    </footer>
 
-  <!-- Overlay Viewer -->
-  <div id="overlay" class="fullsize-overlay" style="display: none;">
-    <img id="overlay-img" class="fullsize-image" src="" alt="Full-size GIF" />
-  </div>
+    <!-- (DO NOT MOVE OR TOUCH BELOW THIS LINE) -->
+    <div id="overlay" class="fullsize-overlay" style="display:none;">
+      <img id="overlay-img" class="fullsize-image" src="" alt="Full-size GIF">
+    </div>
 
-  <!-- Consent Banner -->
-  <div id="consent-banner" style="display: none;">
-    We use cookies to improve your experience. By using our site, you accept our
-    cookie policy.
-    <button onclick="acceptCookies()">Accept</button>
-  </div>
+    <div id="consent-banner" style="display:none;">
+      We use cookies to improve your experience. By using our site, you accept our cookie policy.
+      <button onclick="acceptCookies()">Accept</button>
+    </div>
 
-  <!-- Scripts -->
-  <script>
-    window.addEventListener("load", () => {
-      const banner = document.getElementById("consent-banner");
-      if (!localStorage.getItem("consentGiven")) {
-        banner.style.display = "block";
+    <script>
+      window.addEventListener("load", () => {
+        const banner = document.getElementById("consent-banner");
+        if (!localStorage.getItem("consentGiven")) {
+          banner.style.display = "block";
+        }
+      });
+
+      function acceptCookies() {
+        localStorage.setItem("consentGiven", "true");
+        document.getElementById("consent-banner").style.display = "none";
       }
-    });
-
-    function acceptCookies() {
-      localStorage.setItem("consentGiven", "true");
-      document.getElementById("consent-banner").style.display = "none";
-    }
-  </script>
-  <script src="scripts.js"></script>
-</body>
+    </script>
+    <script src="scripts.js"></script>
+  </body>
 </html>
+
 
     
