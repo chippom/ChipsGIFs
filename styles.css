@@ -12,21 +12,35 @@
   --dark-header-footer: #1e1e1e;
 }
 
+
 /* 🌐 GLOBAL RESET */
 html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 body {
   font-family: Arial, sans-serif;
   line-height: 1.6;
-  margin: 0;
   padding: 0;
   padding-top: 60px;
   background-color: var(--background-color);
   color: var(--text-color);
   transition: background-color 0.3s ease, color 0.3s ease;
+  flex: 1;
 }
+
+/* Flexbox layout for main content */
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 
 /* 🧱 HEADER & FOOTER */
 header, footer {
@@ -36,12 +50,11 @@ header, footer {
   padding: 1rem;
 }
 
+/* Footer fixes: removed position, bottom, z-index; add margin-top: auto and more bottom padding */
 footer {
-  position: relative;
-  bottom: 0;
+  margin-top: auto;
   width: 100%;
-  z-index: 0;
-  padding: 1rem 0 30px 0;
+  padding: 1rem 0 40px 0;
 }
 
 footer p {
@@ -51,6 +64,7 @@ footer p {
 footer img {
   margin-top: 5px;
 }
+
 
 /* 📝 INSTRUCTIONS TEXT */
 .instructions {
@@ -77,6 +91,7 @@ footer img {
     text-shadow: 0 0 20px rgba(255,255,255,0.9);
   }
 }
+
 
 /* 🖼️ GIF DISPLAY */
 .gif-container {
@@ -348,5 +363,4 @@ body.dark-mode footer {
   background-color: var(--dark-header-footer);
 }
 
-body.dark-mode .gif-item img {
-  box-shadow:
+/* If you have more CSS here, simply append it after this */
