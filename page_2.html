@@ -3,13 +3,13 @@
 <html lang="en">
 <head>
   <!-- 🧠 Meta Tags and SEO -->
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Hand-picked political satire GIFs, memes, and animations you won't find elsewhere! Laugh at the best moments in politics with this exclusive collection.">
-  <meta name="keywords" content="political GIFs, satire GIFs, political humor, Trump GIF, Biden meme, funny political images, chip's GIFs, animated satire">
-  <meta name="author" content="Chip Pommert">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Hand-picked political satire GIFs, memes, and animations you won't find elsewhere! Laugh at the best moments in politics with this exclusive collection." />
+  <meta name="keywords" content="political GIFs, satire GIFs, political humor, Trump GIF, Biden meme, funny political images, chip's GIFs, animated satire" />
+  <meta name="author" content="Chip Pommert" />
   <title>Page 2: Political Satire GIF Gallery | My GIF Showcase</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css" />
   <link rel="canonical" href="https://chips-gifs.com/page_2.html" />
   <meta property="og:title" content="The Best Political Satire GIFs | Chips-GIFs Page 2" />
   <meta property="og:description" content="Laugh at the wildest moments in politics with these one-of-a-kind satire GIFs. From Trump gags to Biden memes—exclusive and new every week." />
@@ -25,7 +25,7 @@
     })(window,document,'script','dataLayer','GTM-NG2VZ7J8');
   </script>
 
-  <!-- 🎨 Inline Fixes -->
+  <!-- 🎨 Inline Styling Adjusted -->
   <style>
     .site-title img {
       margin-left: 10px;
@@ -60,6 +60,34 @@
       background: #004999;
       color: #fff;
     }
+
+    /* Dark-themed intro box similar to index but color adjusted */
+    .unique-intro {
+      margin: 30px auto 10px auto;
+      max-width: 800px;
+      font-size: 20px;
+      background-color: #2a2a2a;    /* Dark background in light mode */
+      color: #ddd;                  /* Lighter text for contrast */
+      border-radius: 10px;
+      padding: 20px 24px;
+      font-style: italic;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Lighten background and darken text in dark mode */
+    body.dark-mode .unique-intro {
+      background-color: #444;
+      color: #eee;
+    }
+
+    .satire-highlight {
+      font-size: 18px;
+      color: #aa2222;
+      margin-top: 10px;
+      padding-left: 16px;
+      border-left: 4px solid #f08080;
+    }
   </style>
 </head>
 
@@ -74,7 +102,7 @@
   <header class="header">
     <div class="site-title">
       <h1 class="title">Political Satire: GIFs That Roast the Powerful</h1>
-      <img src="gifs/Parental_Advisery_3.gif" alt="a colorful parental advisory" class="icon">
+      <img src="gifs/Parental_Advisery_3.gif" alt="a colorful parental advisory" class="icon" />
     </div>
     <p class="instructions">Click on any GIF below for the full-size, unfiltered version.</p>
   </header>
@@ -97,15 +125,22 @@
 
   <!-- 📣 Unique Page Intro -->
   <div class="unique-intro">
-    <strong>Dark mode—because chaos always looks better after sunset.</strong><br>
-    Welcome to the ultimate political GIF battleground! Every animation in this gallery takes a playful jab at real events, trending figures, and the daily circus in Washington and beyond. From Trump’s lightning moment to Biden’s latest blunder, these GIFs are sharp, fearless, and 100% original.<br><br>
-    <span style="font-size:18px;">See a favorite? Share it—or just enjoy the ride through our funniest, wildest political spoofs. Only found right here on Page 2!</span>
+    <strong>Dark mode—because chaos always looks better after sunset.</strong><br />
+    Welcome to the ultimate political GIF battleground! Every animation in this gallery
+    takes a playful jab at real events, trending figures, and the daily circus in Washington
+    and beyond. From Trump’s lightning moment to Biden’s latest blunder, these GIFs are sharp,
+    fearless, and 100% original.<br /><br />
+    <span style="font-size:18px;">
+      See a favorite? Share it—or just enjoy the ride through our funniest, wildest political spoofs.
+      Only found right here on Page 2!
+    </span>
   </div>
 
   <!-- 📦 GIF Container -->
   <main>
     <div class="gif-container">
-      <!-- 🎬 Add more gif-item entries here -->
+      <!-- 🔸 Your GIF entries go here -->
+
  <div class="gif-item">
           <img src="gifs/pot_Emblem_1.gif" alt="pot_Emblem" class="gif-thumbnail" loading="lazy">
           <button class="download-btn" data-gif="pot_Emblem_1.gif">Download</button>
@@ -749,15 +784,22 @@
     </div> <!-- End .gif-container -->
   </main>
 
-  <!-- 🔄 Bottom Pagination Navigation -->
-  <nav class="pagination">
-    <a href="index.html" aria-label="Go to Page 1">Previous</a>
-    <span>Page 2 of 4</span>
-    <a href="page_3.html" aria-label="Go to Page 3">Next</a>
-  </nav>
+  <!-- Contact + Bottom Pagination Fixed Wrapper -->
+  <div class="contact-pagination-wrapper">
+    <div class="contact-button-container">
+      <a href="mailto:Chippom2@gmail.com" id="contactMeButton" aria-label="Email Chip">Contact Me</a>
+    </div>
+
+    <div class="pagination">
+      <a href="index.html" aria-label="Go to Page 1">1</a>
+      <span>2</span>
+      <a href="page_3.html" aria-label="Go to Page 3">3</a>
+      <a href="page_4.html" aria-label="Go to Page 4">4</a>
+    </div>
+  </div>
 
   <!-- 🧾 Site Footer -->
-  <footer style="padding-bottom: 60px;">
+  <footer>
     <p>Created by Chip Pommert</p>
     <a href="https://buymeacoffee.com/chippom" target="_blank">
       <img
@@ -767,22 +809,9 @@
     </a>
   </footer>
 
-  <!-- 📮 Contact Button -->
-  <div class="contact-button-container" style="margin-bottom: 30px;">
-    <a href="mailto:Chippom2@gmail.com" id="contactMeButton" aria-label="Email Chip">Contact Me</a>
-  </div>
-
   <!-- 🖼 Overlay Viewer for Full-Size GIFs -->
   <div id="overlay" class="fullsize-overlay" style="display:none;">
     <img id="overlay-img" class="fullsize-image" src="" alt="Full-size GIF">
-  </div>
-
-  <!-- 🌗 Bottom Controls -->
-  <div style="text-align: right; margin: 12px 16px;">
-    <button id="toggleDarkMode">🌓 Toggle Theme</button>
-    <a href="https://bsky.app/profile/chips-gifs.com" target="_blank">
-      <button id="followMeButton">Follow Me</button>
-    </a>
   </div>
 
   <!-- 🔧 Dark Mode Script -->
@@ -804,4 +833,5 @@
   <script src="scripts.js"></script>
 </body>
 </html>
+
 
