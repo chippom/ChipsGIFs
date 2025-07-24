@@ -51,11 +51,19 @@
       font-weight: bold;
     }
 
+    /* Make the icon responsive */
     .icon {
-      max-width: 120px;
+      width: 100%;           /* fill container width */
+      max-width: 160px;      /* a bit bigger max width */
       height: auto;
       object-fit: contain;
       vertical-align: middle;
+    }
+
+    @media (max-width: 600px) {
+      .icon {
+        max-width: 100px;    /* smaller on smaller screens */
+      }
     }
 
     .instructions {
@@ -91,6 +99,16 @@
       transition: background 0.3s ease;
     }
 
+    /* Corrected navigation order: 1,2,3,4 with current page as span */
+    .pagination span {
+      font-weight: bold;
+      color: #eee;
+      padding: 8px 16px;
+      border-radius: 4px;
+      background: #004a99;
+      margin: 0 10px;
+      display: inline-block;
+    }
     .pagination a {
       margin: 0 10px;
       text-decoration: none;
@@ -101,19 +119,12 @@
       color: #0066cc;
       font-weight: bold;
       transition: background-color 0.3s ease, color 0.3s ease;
+      display: inline-block;
     }
 
     .pagination a:hover {
       background: #0066cc;
       color: #fff;
-    }
-
-    .pagination span {
-      font-weight: bold;
-      color: #eee;
-      padding: 8px 16px;
-      border-radius: 4px;
-      background: #004a99;
     }
 
     body.dark-mode .pagination a {
@@ -193,8 +204,8 @@
 
   <!-- Top Pagination Bar -->
   <div class="pagination">
-    <a href="page_2.html">2</a>
     <span>1</span>
+    <a href="page_2.html">2</a>
     <a href="page_3.html">3</a>
     <a href="page_4.html">4</a>
   </div>
@@ -214,8 +225,7 @@
       Think of it as a sampler platter of political chaos, pop culture mockery,
       and meme-grade mayhem—handpicked by Chip with zero chill and full commitment
       to the roast.
-    </span
-    ><br /><br />
+    </span><br /><br />
     <span class="satire-highlight">
       “Why pick sides when you can pick GIFs? Scroll down, buckle up, and enjoy the spectacle.”
     </span>
@@ -224,6 +234,7 @@
   <main>
     <div class="gif-container">
       <!-- 🔸 Your GIF entries go here -->
+
 
   <main>
     <div class="gif-container">
@@ -877,58 +888,64 @@
         <span class="download-count">Downloads: 0</span>
     </div>
 
-    
-    </div> <!-- end gif entries -->
+</div> <!-- End .gif-container -->
+</main>
 
-    <!-- Contact Me Button under the GIFs and before pagination/footer -->
-    <div class="contact-button-container">
-      <a href="mailto:Chippom2@gmail.com" id="contactMeButton" aria-label="Email Chip">Contact Me</a>
-    </div>
+<!-- Contact Me Button -->
+<div class="contact-button-container">
+  <a href="mailto:Chippom2@gmail.com" id="contactMeButton" aria-label="Email Chip">Contact Me</a>
+</div>
 
-    <!-- Bottom Pagination Bar -->
-    <div class="pagination">
-      <a href="page_2.html">2</a>
-      <span>1</span>
-      <a href="page_3.html">3</a>
-      <a href="page_4.html">4</a>
-    </div>
+<!-- Bottom Pagination Bar -->
+<div class="pagination">
+  <a href="page_2.html">2</a>
+  <a href="page_3.html">3</a>
+  <a href="page_4.html">4</a>
+  <span>1</span>
+</div>
 
-    <!-- Footer: made wide/flush for visual full-width bar -->
-    <footer>
-      <p>Created by Chip Pommert</p>
-      <a href="https://buymeacoffee.com/chippom" target="_blank">
-        <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
-             alt="Buy Me A Coffee"
-             style="height: 40px !important; width: 150px !important; margin-top: 8px; margin-bottom: 12px;">
-      </a>
-    </footer>
+<!-- Footer -->
+<footer>
+  <p>Created by Chip Pommert</p>
+  <a href="https://buymeacoffee.com/chippom" target="_blank">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         style="height: 40px !important; width: 150px !important; margin-top: 8px; margin-bottom: 12px;" />
+  </a>
+</footer>
 
-    <!-- (DO NOT MOVE OR TOUCH BELOW THIS LINE) -->
-    <div id="overlay" class="fullsize-overlay" style="display:none;">
-      <img id="overlay-img" class="fullsize-image" src="" alt="Full-size GIF">
-    </div>
+<!-- Overlay Viewer -->
+<div id="overlay" class="fullsize-overlay" style="display:none;">
+  <img id="overlay-img" class="fullsize-image" src="" alt="Full-size GIF" />
+</div>
 
-    <div id="consent-banner" style="display:none;">
-      We use cookies to improve your experience. By using our site, you accept our cookie policy.
-      <button onclick="acceptCookies()">Accept</button>
-    </div>
+<!-- Consent Banner -->
+<div id="consent-banner" style="display:none;">
+  We use cookies to improve your experience. By using our site, you accept our cookie policy.
+  <button onclick="acceptCookies()">Accept</button>
+</div>
 
-    <script>
-      window.addEventListener("load", () => {
-        const banner = document.getElementById("consent-banner");
-        if (!localStorage.getItem("consentGiven")) {
-          banner.style.display = "block";
-        }
+<!-- Dark Mode Script -->
+<script>
+  window.addEventListener('DOMContentLoaded', function() {
+    const toggleButton = document.getElementById('toggleDarkMode');
+    if (toggleButton) {
+      toggleButton.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('prefersDark', document.body.classList.contains('dark-mode'));
       });
+    }
+    if (localStorage.getItem('prefersDark') === 'true') {
+      document.body.classList.add('dark-mode');
+    }
+  });
+</script>
 
-      function acceptCookies() {
-        localStorage.setItem("consentGiven", "true");
-        document.getElementById("consent-banner").style.display = "none";
-      }
-    </script>
-    <script src="scripts.js"></script>
-  </body>
+<!-- External Scripts -->
+<script src="scripts.js"></script>
+</body>
 </html>
+    
 
 
     

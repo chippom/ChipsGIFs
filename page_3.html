@@ -794,7 +794,7 @@
     <span class="download-count">Downloads: 0</span>
 </div>
 
-    </div> <!-- End .gif-container -->
+</div> <!-- End .gif-container -->
 </main>
 
 <!-- Contact Me Button just after GIFs, before pagination -->
@@ -804,6 +804,7 @@
 
 <!-- Bottom Pagination Bar -->
 <div class="pagination">
+  <a href="index.html">1</a>
   <a href="page_2.html">2</a>
   <span>3</span>
   <a href="page_4.html">4</a>
@@ -819,32 +820,44 @@
   </a>
 </footer>
 
-<!-- Overlay Viewer (do NOT move or change this part, essential for dark mode overlay to work) -->
+<!-- Overlay Viewer (do NOT move or touch to preserve dark mode/overlay functionality) -->
 <div id="overlay" class="fullsize-overlay" style="display:none;">
   <img id="overlay-img" class="fullsize-image" src="" alt="Full-size GIF">
 </div>
 
-<!-- Consent Banner (untouched, must remain in place) -->
+<!-- Consent Banner (do NOT move or duplicate; single, consistent instance sitewide) -->
 <div id="consent-banner" style="display:none;">
   We use cookies to improve your experience. By using our site, you accept our cookie policy.
   <button onclick="acceptCookies()">Accept</button>
 </div>
 
-<!-- Script Loading (do NOT move or edit this block) -->
+<!-- Script Loading (do NOT move or edit to ensure dark mode & banner operate correctly) -->
 <script>
-  window.addEventListener('load', () => {
+  window.addEventListener('DOMContentLoaded', function() {
+    const toggleButton = document.getElementById('toggleDarkMode');
+    if (toggleButton) {
+      toggleButton.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('prefersDark', document.body.classList.contains('dark-mode'));
+      });
+    }
+    if (localStorage.getItem('prefersDark') === 'true') {
+      document.body.classList.add('dark-mode');
+    }
+
+    // Consent banner logic
     const banner = document.getElementById('consent-banner');
-    if (!localStorage.getItem('consentGiven')) {
+    if (banner && !localStorage.getItem('consentGiven')) {
       banner.style.display = 'block';
     }
+    window.acceptCookies = function() {
+      localStorage.setItem('consentGiven', 'true');
+      document.getElementById('consent-banner').style.display = 'none';
+    };
   });
-
-  function acceptCookies() {
-    localStorage.setItem('consentGiven', 'true');
-    document.getElementById('consent-banner').style.display = 'none';
-  }
 </script>
 <script src="scripts.js"></script>
 </body>
 </html>
+
 
