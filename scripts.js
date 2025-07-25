@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
   fetchAndDisplayAllDownloadCounts();
 });
 
+
 // 1) Lazy-load GIFs below the fold
 function initLazyLoad() {
   const io = new IntersectionObserver(entries => {

@@ -49,7 +49,7 @@ export async function handler(event) {
   });
 
   try {
-    // Upsert the download count
+    // 🔥 FIXED: Upsert the download count using correct array of object!
     const { error } = await supabase
       .from('downloads')
       .upsert([
