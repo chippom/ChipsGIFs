@@ -23,70 +23,6 @@
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-NG2VZ7J8');
   </script>
-
-  <!-- 🎨 Local Style Fixes -->
-  <style>
-    .site-title img {
-      max-width: 120px;
-      height: auto;
-      object-fit: contain;
-      vertical-align: middle;
-      margin-left: 10px;
-    }
-
-    .header-buttons {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .header-buttons button {
-      margin: 0 10px;
-      padding: 8px 14px;
-      font-size: 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      background: #0066cc;
-      color: #fff;
-      transition: background 0.3s ease;
-    }
-
-    body.dark-mode .header-buttons button {
-      background: #009966;
-    }
-
-    .header-buttons button:hover {
-      background: #004999;
-      color: #fff;
-    }
-
-    /* 🧭 Unique green/420 intro box for Page 4 */
-    .unique-intro {
-      margin: 30px auto 10px auto;
-      max-width: 800px;
-      font-size: 20px;
-      background-color: #162a16;
-      color: #ccffcc;
-      border-radius: 10px;
-      padding: 20px 24px;
-      font-style: italic;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    body.dark-mode .unique-intro {
-      background-color: #2d4e2d;
-      color: #e8ffe8;
-    }
-
-    .satire-highlight {
-      font-size: 18px;
-      color: #85ff85;
-      margin-top: 10px;
-      padding-left: 16px;
-      border-left: 4px solid #00cc66;
-    }
-  </style>
 </head>
 
 <body>
@@ -96,8 +32,7 @@
             height="0" width="0" style="display:none;visibility:hidden"></iframe>
   </noscript>
 
-  <!-- 🔝 Page Header -->
-  <header class="header">
+  <header class="header" role="banner">
     <div class="site-title">
       <h1 class="title">420, Satire & Meme Warfare: Roasting Trump, Musk & More</h1>
       <img src="gifs/parental_advisery_1.gif"
@@ -107,23 +42,20 @@
     <p class="instructions">Click a GIF for full impact—best enjoyed with snacks and sarcasm.</p>
   </header>
 
-  <!-- 🔗 Pagination -->
-  <div class="pagination">
+  <nav class="pagination" aria-label="Page navigation">
     <a href="index.html">1</a>
     <a href="page_2.html">2</a>
     <a href="page_3.html">3</a>
-    <span>4</span>
-  </div>
+    <span aria-current="page">4</span>
+  </nav>
 
-  <!-- Controls -->
-  <div class="header-buttons">
-    <button id="toggleDarkMode">🌓 Toggle Theme</button>
-    <a href="https://bsky.app/profile/chips-gifs.com" target="_blank">
+  <div class="header-buttons" role="region" aria-label="Header action buttons">
+    <button id="toggleDarkMode" aria-pressed="false" aria-label="Toggle Dark Mode Theme">🌓 Toggle Theme</button>
+    <a href="https://bsky.app/profile/chips-gifs.com" target="_blank" rel="noopener noreferrer">
       <button id="followMeButton">Follow Me</button>
     </a>
   </div>
 
-  <!-- 💨 Unique Intro -->
   <div class="unique-intro">
     <strong>Dark mode—because even memes prefer midnight.</strong><br />
     This page blasts you with hard-hitting 420 energy and razor-sharp satire—where political holy cows get barbecued,
@@ -141,7 +73,10 @@
     </span>
   </div>
 
-  <!-- 🎬 START MAIN GIF CONTAINER -->
+  <main>
+    <div class="gif-container">
+      <!-- GIF content goes here -->
+
   <main>
   <div class="gif-container">
 
@@ -520,7 +455,6 @@
                 <button class="download-btn" data-gif="Hegsteth_DOD_1.gif">Download</button>
                 <span class="download-count">Downloads: 0</span>
             </div>
-
 </div> <!-- close .gif-container -->
 </main>
 

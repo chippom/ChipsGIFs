@@ -49,7 +49,7 @@ main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding-bottom: 110px; /* Leaves room for footer/nav */
+  padding-bottom: 110px; /* Leaves room for fixed footer and overlap */
 }
 
 /* 🧱 HEADER & FOOTER */
@@ -61,15 +61,21 @@ header, footer {
 }
 
 footer {
-  position: relative;
+  position: fixed;
+  bottom: 0;
+  left: 0;
   width: 100vw;
-  left: 50%;
-  transform: translateX(-50%);
   padding: 1rem 0 28px 0;
   box-sizing: border-box;
   z-index: 1000;
   margin: 0;
   text-align: center;
+  background-color: var(--header-footer-bg);
+  color: var(--header-footer-text);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
 }
 
 footer p {
@@ -358,11 +364,9 @@ body.dark-mode #consent-banner {
 
 /* 🗂 PAGINATION BAR */
 .pagination {
-  width: 100vw;
+  width: 100%;
   max-width: 100vw;
   position: relative;
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -371,11 +375,11 @@ body.dark-mode #consent-banner {
   padding: 16px 0;
   background: #222;
   box-sizing: border-box;
+  overflow-x: visible;
   margin-left: 0 !important;
   margin-right: 0 !important;
   padding-left: 0 !important;
   padding-right: 0 !important;
-  overflow-x: visible;
 }
 
 .pagination a,
