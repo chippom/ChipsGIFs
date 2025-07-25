@@ -24,7 +24,6 @@
   <meta property="og:image" content="https://chips-gifs.com/featured_home.gif" />
 
   <style>
-    /* Header Styles */
     body {
       margin: 0;
       padding: 0;
@@ -32,7 +31,6 @@
       color: var(--text-color, #333);
       font-family: Arial, sans-serif;
     }
-
     .header {
       background-color: #333;
       color: #fff;
@@ -41,7 +39,6 @@
       width: 100vw;
       box-sizing: border-box;
     }
-
     .site-title {
       display: flex;
       flex-wrap: wrap;
@@ -51,13 +48,11 @@
       max-width: 900px;
       margin: 0 auto;
     }
-
     .title {
       font-size: 2rem;
       font-weight: bold;
       margin: 0;
     }
-
     .icon {
       max-width: 160px;
       width: 100%;
@@ -65,13 +60,9 @@
       object-fit: contain;
       vertical-align: middle;
     }
-
     @media (max-width: 600px) {
-      .icon {
-        max-width: 100px;
-      }
+      .icon { max-width: 100px; }
     }
-
     .instructions {
       margin-top: 10px;
       font-size: 1.25rem;
@@ -89,7 +80,7 @@
     nav.pagination {
       max-width: 900px;
       margin: 20px auto 10px auto;
-      padding: 10px 0;
+      padding: 14px 0; /* unified vertical space */
       background-color: #222;
       display: flex;
       justify-content: center;
@@ -97,7 +88,6 @@
       border-radius: 6px;
       box-sizing: border-box;
     }
-
     nav.pagination span {
       font-weight: bold;
       color: #eee;
@@ -106,7 +96,6 @@
       background-color: #004a99;
       cursor: default;
     }
-
     nav.pagination a {
       padding: 8px 16px;
       border-radius: 4px;
@@ -117,33 +106,26 @@
       text-decoration: none;
       transition: background-color 0.3s ease, color 0.3s ease;
     }
-
     nav.pagination a:hover {
       background-color: #0066cc;
       color: #fff;
     }
-
     body.dark-mode nav.pagination {
       background-color: #fff;
     }
-
     body.dark-mode nav.pagination a {
       background: #fff;
       color: #009966;
       border-color: #009966;
     }
-
     body.dark-mode nav.pagination a:hover {
       background-color: #009966;
       color: #fff;
     }
-
     body.dark-mode nav.pagination span {
       background: #007a43;
       color: #b4f3c8;
     }
-
-    /* Header Buttons */
     .header-buttons {
       text-align: center;
       margin: 1rem auto 2rem auto;
@@ -151,7 +133,6 @@
       padding: 0 1rem;
       box-sizing: border-box;
     }
-
     .header-buttons button {
       margin: 0 10px;
       padding: 8px 14px;
@@ -163,16 +144,8 @@
       color: #fff;
       transition: background-color 0.3s ease;
     }
-
-    body.dark-mode .header-buttons button {
-      background-color: #009966;
-    }
-
-    .header-buttons button:hover {
-      background-color: #004999;
-    }
-
-    /* Unique Introduction Section */
+    body.dark-mode .header-buttons button { background-color: #009966; }
+    .header-buttons button:hover { background-color: #004999; }
     .unique-intro {
       background: #ffd2d2;
       color: #220000;
@@ -186,7 +159,6 @@
       text-align: center;
       line-height: 1.5;
     }
-
     .satire-highlight {
       color: #aa2222;
       border-left: 4px solid #f08080;
@@ -196,7 +168,6 @@
       display: block;
     }
   </style>
-
   <!-- Google Tag Manager -->
   <script>
     (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -259,6 +230,7 @@
   <main>
     <div class="gif-container">
       <!-- Your GIF entries go here -->
+
 
   <main>
     <div class="gif-container">
@@ -911,10 +883,9 @@
          <button class="download-btn" data-gif="Genesis_seed_bearing_plants_trans.gif">Download</button>
         <span class="download-count">Downloads: 0</span>
     </div>
-    <!-- End GIF container -->
-    </div>
+    </div> <!-- End GIF container -->
     
-    <!-- Pagination (scrolls with content, centered) -->
+    <!-- Pagination (centered, as you prefer) -->
     <nav class="pagination" aria-label="Page navigation">
       <span aria-current="page">1</span>
       <a href="page_2.html">2</a>
@@ -922,8 +893,8 @@
       <a href="page_4.html">4</a>
     </nav>
 
-    <!-- Contact Me Button (scrolls with page) -->
-    <div class="contact-button-container" style="position:relative; z-index:1100; margin-bottom:-40px;">
+    <!-- Contact Me Button (closer to footer now; adjust margin as needed) -->
+    <div class="contact-button-container" style="position:relative; z-index:1100; margin-bottom:-70px; text-align:center;">
       <a href="mailto:Chippom2@gmail.com" 
          id="contactMeButton" 
          aria-label="Email Chip">Contact Me</a>
@@ -960,24 +931,11 @@
     <img id="overlay-img" class="fullsize-image" src="" alt="Full-size GIF" />
   </div>
 
-  <!-- Consent Banner (shown only if needed) -->
-  <!-- (Handled by scripts.js: will display as necessary) -->
+  <!-- Consent Banner (shown only if needed; handled by scripts.js) -->
 
-  <!-- Dark Mode Script (must be placed at bottom, before external JS) -->
-  <script>
-    const toggleButton = document.getElementById('toggleDarkMode');
-    toggleButton?.addEventListener('click', () => {
-      document.body.classList.toggle('dark-mode');
-      localStorage.setItem(
-        'darkMode',
-        document.body.classList.contains('dark-mode')
-      );
-    });
-    if (localStorage.getItem('darkMode') === 'true') {
-      document.body.classList.add('dark-mode');
-    }
-  </script>
+  <!-- Only external script needed for dark mode and site logic! -->
   <script src="scripts.js"></script>
 </body>
 </html>
+
     
