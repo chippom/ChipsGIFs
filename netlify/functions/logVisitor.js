@@ -72,6 +72,7 @@ export async function handler(event) {
   }
 
   try {
+    // Insert into visitor_logs, now including location
     await supabase.from('visitor_logs').insert([{
       visitor_id,
       useragent: userAgent,
@@ -79,7 +80,8 @@ export async function handler(event) {
       referrer: referrer || 'none',
       timestamp,
       eastern_time: easternTime,
-      gif_name
+      gif_name,
+      location
     }]);
   } catch (err) {
     console.error('visitor_logs insert error:', err.message);
