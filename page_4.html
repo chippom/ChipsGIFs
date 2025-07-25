@@ -23,8 +23,49 @@
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-NG2VZ7J8');
   </script>
+  <style>
+    .unique-intro {
+      margin: 40px auto 20px auto;
+      max-width: 800px;
+      font-size: 20px;
+      background: #eaeecb;           /* change box color as you like */
+      color: #222;
+      border-radius: 14px;
+      padding: 26px 32px;
+      border: 3px solid #89A542;     /* change border color as desired */
+      font-style: italic;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+    }
+    body.dark-mode .unique-intro {
+      background: #282e18;
+      color: #f4f4f4;
+      border-color: #97cf53;
+    }
+    .satire-highlight {
+      font-size: 18px;
+      color: #41840d;
+      margin-top: 14px;
+      padding-left: 16px;
+      border-left: 4px solid #aacc66;
+      display: block;
+    }
+    .header-buttons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      margin: 1.2rem auto 2rem auto;
+    }
+    .header-buttons button,
+    .header-buttons a > button {
+      margin: 0;
+    }
+    @media (max-width:600px) {
+      .header-buttons { flex-direction: column; gap: 12px; }
+    }
+  </style>
 </head>
-
 <body>
   <!-- 📊 GTM Fallback -->
   <noscript>
@@ -76,6 +117,7 @@
   <main>
     <div class="gif-container">
       <!-- GIF content goes here -->
+
 
   <main>
   <div class="gif-container">
@@ -455,75 +497,61 @@
                 <button class="download-btn" data-gif="Hegsteth_DOD_1.gif">Download</button>
                 <span class="download-count">Downloads: 0</span>
             </div>
-</div> <!-- close .gif-container -->
-</main>
+    </div> <!-- close .gif-container -->
+  </main>
 
-<!-- Contact + Bottom Pagination Fixed Wrapper -->
-<div class="contact-pagination-wrapper" style="padding-bottom: 110px;">
-  <div class="contact-button-container" style="position: relative; z-index: 1100; margin-bottom: -40px; text-align: center;">
-    <a href="mailto:Chippom2@gmail.com" id="contactMeButton" aria-label="Email Chip">Contact Me</a>
+  <!-- Contact + Pagination Wrapper -->
+  <div class="contact-pagination-wrapper" style="padding-bottom: 110px;">
+    <div class="contact-button-container" style="position: relative; z-index: 1100; margin-bottom: -70px; text-align: center;">
+      <a href="mailto:Chippom2@gmail.com" id="contactMeButton" aria-label="Email Chip">Contact Me</a>
+    </div>
+
+    <nav class="pagination" aria-label="Page navigation">
+      <a href="index.html">1</a>
+      <a href="page_2.html">2</a>
+      <a href="page_3.html">3</a>
+      <span aria-current="page">4</span>
+    </nav>
   </div>
 
-  <nav class="pagination" aria-label="Page navigation" style="text-align: center; margin-top: 10px;">
-    <a href="page_3.html" aria-label="Go to Page 3">3</a>
-    <span aria-current="page">4</span>
-    <a href="index.html" aria-label="Go to Home">Home</a>
-  </nav>
-</div>
+  <!-- Fixed Site Footer -->
+  <footer style="
+      position: fixed;
+      bottom: 0; left: 0; width: 100vw;
+      background-color: var(--header-footer-bg, #333);
+      color: var(--header-footer-text, #fff);
+      text-align: center;
+      padding: 10px 0 18px 0;
+      box-sizing: border-box;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;">
+    <p style="margin: 0;">Created by Chip Pommert</p>
+    <a href="https://buymeacoffee.com/chippom" target="_blank" rel="noopener noreferrer" style="display: inline-block;">
+      <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+           alt="Buy Me A Coffee"
+           style="height: 40px; width: 150px; margin-top: 8px; margin-bottom: 12px;">
+    </a>
+  </footer>
 
-<!-- 🧾 Site Footer -->
-<footer style="
-    position: fixed;
-    bottom: 0; left: 0; width: 100vw;
-    background-color: var(--header-footer-bg, #333);
-    color: var(--header-footer-text, #fff);
-    text-align: center;
-    padding: 10px 0 18px 0;
-    box-sizing: border-box;
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;">
-  <p style="margin: 0;">Created by Chip Pommert</p>
-  <a href="https://buymeacoffee.com/chippom" target="_blank" rel="noopener noreferrer" style="display: inline-block;">
-    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
-         alt="Buy Me A Coffee"
-         style="height: 40px; width: 150px; margin-top: 8px; margin-bottom: 12px;">
-  </a>
-</footer>
+  <!-- Overlay Viewer -->
+  <div id="overlay" class="fullsize-overlay" style="display:none;">
+    <img id="overlay-img" class="fullsize-image" src="" alt="Full-size GIF" />
+  </div>
 
-<!-- 🖼️ Overlay Viewer -->
-<div id="overlay" class="fullsize-overlay" style="display:none;">
-  <img id="overlay-img" class="fullsize-image" src="" alt="Full-size GIF" />
-</div>
+  <!-- Consent Banner (only shown if needed) -->
+  <div id="consent-banner" style="display:none;">
+    We use cookies to improve your experience. By using our site, you accept our cookie policy.
+    <button onclick="acceptCookies()">Accept</button>
+  </div>
 
-<!-- 🌗 Consent Banner -->
-<div id="consent-banner" style="display:none;">
-  We use cookies to improve your experience. By using our site, you accept our cookie policy.
-  <button onclick="acceptCookies()">Accept</button>
-</div>
-
-<!-- 🔧 Dark Mode Script -->
-<script>
-  window.addEventListener('DOMContentLoaded', function() {
-    const toggleButton = document.getElementById('toggleDarkMode');
-    if (toggleButton) {
-      toggleButton.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
-        localStorage.setItem('prefersDark', document.body.classList.contains('dark-mode'));
-      });
-    }
-    if (localStorage.getItem('prefersDark') === 'true') {
-      document.body.classList.add('dark-mode');
-    }
-  });
-</script>
-
-<!-- 🚀 Scripts -->
-<script src="scripts.js"></script>
+  <!-- Only the external scripts for dark mode and logic -->
+  <script src="scripts.js"></script>
 </body>
 </html>
+
 
 
