@@ -1,11 +1,18 @@
 // scripts.js
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Generate or get unique visitor ID from localStorage (new part)
+  let visitorId = localStorage.getItem('chips_visitor_id');
+  if (!visitorId) {
+    visitorId = crypto.randomUUID();
+    localStorage.setItem('chips_visitor_id', visitorId);
+  }
+
   initLazyLoad();
   initOverlay();
   initDarkMode();
-  initDownloadHandlers();
-  initContextMenuLogging();
+  initDownloadHandlers(visitorId);          // Pass visitorId
+  initContextMenuLogging(visitorId);        // Pass visitorId
   initConsentBanner();
   initStarTrails();
 
@@ -39,6 +46,7 @@ function initLazyLoad() {
   });
 }
 
+
 // 2) Full-screen overlay on GIF click (not download button)
 function initOverlay() {
   document.querySelectorAll(".gif-item").forEach(item => {
@@ -60,6 +68,7 @@ function initOverlay() {
   });
 }
 
+
 // 3) Dark mode toggle
 function initDarkMode() {
   const toggle = document.getElementById("toggleDarkMode");
@@ -72,8 +81,9 @@ function initDarkMode() {
   }
 }
 
+
 // 4) Button-click handler: update counts, log visitor, download GIF
-function initDownloadHandlers() {
+function initDownloadHandlers(visitorId) {
   document.querySelectorAll(".download-btn").forEach(btn => {
     btn.addEventListener("click", async () => {
       const originalText = btn.textContent;
@@ -93,12 +103,12 @@ function initDownloadHandlers() {
           body: JSON.stringify({ gif_name: gifName })
         });
 
-        // B) Log visitor & download event
+        // B) Log visitor & download event with generated visitorId
         await fetch("/.netlify/functions/logVisitor", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            visitor_id: "anonymous",
+            visitor_id: visitorId,
             userAgent: navigator.userAgent,
             page: window.location.pathname,
             referrer: document.referrer,
@@ -133,8 +143,9 @@ function initDownloadHandlers() {
   });
 }
 
+
 // 5) Right-click & middle-click logging
-function initContextMenuLogging() {
+function initContextMenuLogging(visitorId) {
   document.querySelectorAll(".gif-item img").forEach(img => {
     const logBoth = () => {
       const gifName = (img.dataset.gif || "").split("/").pop();
@@ -144,12 +155,12 @@ function initContextMenuLogging() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ gif_name: gifName })
       }).catch(console.error);
-      // Visitor + gif_downloads + summary
+      // Visitor + gif_downloads + summary with visitorId
       fetch("/.netlify/functions/logVisitor", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          visitor_id: "anonymous",
+          visitor_id: visitorId,
           userAgent: navigator.userAgent,
           page: window.location.pathname,
           referrer: document.referrer,
@@ -163,6 +174,7 @@ function initContextMenuLogging() {
     });
   });
 }
+
 
 // 6) Cookie-consent banner (guard added)
 function initConsentBanner() {
@@ -185,6 +197,7 @@ function initConsentBanner() {
     document.querySelectorAll(".download-btn").forEach(btn => btn.disabled = false);
   });
 }
+
 
 // 7) Star-trail mouse effect
 function initStarTrails() {
@@ -215,6 +228,7 @@ function initStarTrails() {
     index = (index + 1) % total;
   });
 }
+
 
 // NEW - fetch and update download counts on page load
 async function fetchAndDisplayAllDownloadCounts() {
