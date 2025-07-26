@@ -72,8 +72,8 @@ export async function handler(event) {
   }
 
   try {
-    // Insert into visitor_logs, now including location
-    await supabase.from('visitor_logs').insert([{
+    // UPSERT into visitor_logs to respect unique constraint on visitor_id
+    await supabase.from('visitor_logs').upsert([{
       visitor_id,
       useragent: userAgent,
       page: page || referrer || 'unknown',
@@ -82,13 +82,14 @@ export async function handler(event) {
       eastern_time: easternTime,
       gif_name,
       location
-    }]);
+    }], { onConflict: ['visitor_id'] });
   } catch (err) {
-    console.error('visitor_logs insert error:', err.message);
+    console.error('visitor_logs upsert error:', err.message);
   }
 
   if (gif_name && visitor_id) {
     try {
+      // Insert a new row for each download event
       await supabase.from('gif_downloads').insert([{
         gif_name,
         visitor_id,
@@ -104,6 +105,7 @@ export async function handler(event) {
 
   if (gif_name) {
     try {
+      // Insert into summary table for analytics or aggregations
       await supabase.from('gif_download_summary').insert([{
         gif_name,
         timestamp,
