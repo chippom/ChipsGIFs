@@ -30,14 +30,17 @@ body.dark-mode {
   background-color: var(--dark-bg);
   color: var(--dark-text);
 }
+
 body.dark-mode header,
 body.dark-mode footer {
   background-color: var(--dark-header-footer);
 }
+
 body.dark-mode #consent-banner {
   background-color: #333;
   color: #fff;
 }
+
 body.dark-mode .pagination {
   background-color: #fff;
 }
@@ -47,7 +50,7 @@ main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding-bottom: 110px; /* For fixed footer & Contact Me overlap, adjust if needed */
+  padding-bottom: 60px; /* Adjusted for footer height to correct nav/footer alignment */
 }
 
 /* 🧱 HEADER & FOOTER */
@@ -57,6 +60,7 @@ header, footer {
   text-align: center;
   padding: 1rem;
 }
+
 footer {
   position: fixed;
   bottom: 0;
@@ -74,9 +78,11 @@ footer {
   background-color: var(--header-footer-bg);
   color: var(--header-footer-text);
 }
+
 footer p {
   margin: 0;
 }
+
 footer img {
   margin-top: 5px;
 }
@@ -93,6 +99,7 @@ footer img {
   background-color: rgba(0,0,0,0.2);
   width: 100%;
 }
+
 @keyframes enhanced-pulse {
   0%, 100% {
     opacity: 0.7;
@@ -114,6 +121,7 @@ footer img {
   padding: 2rem;
   justify-content: center;
 }
+
 .gif-item {
   width: calc(33.33% - 1rem);
   min-width: 200px;
@@ -127,6 +135,7 @@ footer img {
   border: none;
   outline: none;
 }
+
 .gif-item img, .placeholder {
   width: 100%;
   height: 200px;
@@ -135,6 +144,7 @@ footer img {
   margin-bottom: 1rem;
   display: block;
 }
+
 .placeholder {
   background-color: transparent;
   border: none;
@@ -157,6 +167,7 @@ footer img {
   right: 0;
   box-sizing: border-box;
 }
+
 .download-btn,
 #contactMeButton,
 #toggleDarkMode,
@@ -170,27 +181,32 @@ footer img {
   border-radius: 0.3125rem;
   transition: background-color 0.3s ease;
 }
+
 .download-btn {
   margin-right: 0.625rem;
   width: 6.25rem;
   height: 1.875rem;
   text-align: center;
 }
+
 .download-btn:hover,
 #contactMeButton:hover,
 #toggleDarkMode:hover,
 #followMeButton:hover {
   background-color: #45a049;
 }
+
 .download-count {
   font-size: 0.75rem;
 }
+
 #toggleDarkMode,
 #followMeButton {
   padding: 0.9375rem 2rem;
   font-size: 1rem;
   margin: 0.25rem 0.125rem;
 }
+
 #contactMeButton {
   display: inline-block;
   padding: 0.625rem 1.25rem;
@@ -203,6 +219,7 @@ footer img {
   text-decoration: none;
   transition: background-color 0.3s ease;
 }
+
 #contactMeButton:hover {
   background-color: #388e3c;
 }
@@ -229,16 +246,19 @@ footer img {
   transition: opacity 0.5s ease-out;
   opacity: 0;
 }
+
 .star:before,
 .star:after {
   position: absolute;
   content: '\2726';
   font-size: 0.75rem;
 }
+
 .star:before {
   color: #fff0;
   text-shadow: 0 0 0.1875rem #fafaae;
 }
+
 .star:after {
   color: #ff0;
 }
@@ -256,9 +276,11 @@ footer img {
   align-items: center;
   z-index: 3000 !important;
 }
+
 .fullsize-overlay.active {
   display: flex !important;
 }
+
 .fullsize-image {
   max-width: 90%;
   max-height: 90%;
@@ -279,9 +301,11 @@ footer img {
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
+
 .nav-button:hover {
   background-color: #0056b3;
 }
+
 nav.pagination-nav {
   text-align: center;
   margin-bottom: 20px;
@@ -304,6 +328,7 @@ nav.pagination-nav {
   display: flex;
   align-items: center;
 }
+
 .site-title img {
   margin-left: 10px;
   width: 100%;
@@ -312,6 +337,7 @@ nav.pagination-nav {
   object-fit: contain;
   vertical-align: middle;
 }
+
 @media (max-width: 600px) {
   .site-title img {
     max-width: 100px;
@@ -330,10 +356,12 @@ nav.pagination-nav {
   text-align: center;
   z-index: 2000 !important;
 }
+
 body.dark-mode #consent-banner {
   background-color: #333;
   color: #fff;
 }
+
 @media (max-width: 768px) {
   .gif-item {
     width: calc(50% - 1rem);
@@ -342,15 +370,15 @@ body.dark-mode #consent-banner {
 
 /* 🗂 PAGINATION BAR */
 .pagination {
-  width: 100%; /* Changed from 100vw to 100% */
-  max-width: 100%; /* Changed from 100vw */
+  width: 100%; /* Full width for bottom nav bar */
+  max-width: 100%;
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 16px;
   margin: 10px 0 0 0; /* Removed bottom margin to prevent gap with footer */
-  padding: 12px 0; /* Reduced from 16px for tighter spacing */
+  padding: 12px 0; /* Slightly reduced from default */
   background: #222;
   box-sizing: border-box;
   overflow-x: visible;
@@ -360,6 +388,7 @@ body.dark-mode #consent-banner {
   padding-right: 0 !important;
   z-index: 1;
 }
+
 .pagination a,
 .pagination span {
   padding: 8px 16px;
@@ -370,27 +399,33 @@ body.dark-mode #consent-banner {
   background: #fff;
   border: 1px solid #0066cc;
 }
+
 .pagination span {
   background: #004a99;
   color: #eee;
   cursor: default;
 }
+
 .pagination a:hover {
   background-color: #0066cc;
   color: #fff;
 }
+
 body.dark-mode .pagination {
   background-color: #fff;
 }
+
 body.dark-mode .pagination a {
   background: #fff;
   color: #009966;
   border-color: #009966;
 }
+
 body.dark-mode .pagination a:hover {
   background-color: #009966;
   color: #fff;
 }
+
 body.dark-mode .pagination span {
   background: #007a43;
   color: #b4f3c8;
@@ -410,11 +445,13 @@ body.dark-mode .pagination span {
   box-shadow: 0 2px 12px rgba(0,0,0,0.12);
   transition: background 0.3s, color 0.3s, border-color 0.3s;
 }
+
 body.dark-mode .unique-intro {
   background: #282e18;
   color: #f4f4f4;
   border-color: #97cf53;
 }
+
 .satire-highlight {
   font-size: 18px;
   color: #41840d;
@@ -436,6 +473,7 @@ body.dark-mode .unique-intro {
   width: 100%;
   box-sizing: border-box;
 }
+
 @media (max-width: 600px) {
   .header-buttons {
     flex-direction: column;
