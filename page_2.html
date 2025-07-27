@@ -16,6 +16,7 @@
   <meta property="og:url" content="https://chips-gifs.com/page_2.html" />
   <meta property="og:image" content="https://chips-gifs.com/featured_political.gif" />
 
+
   <!-- 📊 Google Tag Manager -->
   <script>
     (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -24,6 +25,13 @@
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-NG2VZ7J8');
   </script>
+
+  <!-- PWA manifest and theme colors -->
+  <meta name="theme-color" content="#333333" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#39ff14" media="(prefers-color-scheme: dark)" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" sizes="180x180" />
+
 
   <!-- 🎨 Inline Styling Adjusted -->
   <style>
@@ -42,10 +50,12 @@
       }
     }
 
+
     .header-buttons {
       text-align: center;
       margin-bottom: 20px;
     }
+
 
     .header-buttons button {
       margin: 0 10px;
@@ -59,14 +69,17 @@
       transition: background 0.3s ease;
     }
 
+
     body.dark-mode .header-buttons button {
       background: #009966;
     }
+
 
     .header-buttons button:hover {
       background: #004999;
       color: #fff;
     }
+
 
     /* Dark-themed intro box similar to index but color adjusted */
     .unique-intro {
@@ -82,11 +95,13 @@
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
+
     /* Lighten background and darken text in dark mode */
     body.dark-mode .unique-intro {
       background-color: #444;
       color: #eee;
     }
+
 
     .satire-highlight {
       font-size: 18px;
@@ -95,6 +110,7 @@
       padding-left: 16px;
       border-left: 4px solid #f08080;
     }
+
 
     /* Pagination styling for consistent order and display */
     .pagination {
@@ -105,6 +121,7 @@
       transition: background 0.3s ease;
     }
 
+
     .pagination span {
       font-weight: bold;
       color: #eee;
@@ -114,6 +131,7 @@
       margin: 0 10px;
       display: inline-block;
     }
+
 
     .pagination a {
       margin: 0 10px;
@@ -128,10 +146,12 @@
       display: inline-block;
     }
 
+
     .pagination a:hover {
       background: #0066cc;
       color: #fff;
     }
+
 
     /* Dark mode pagination */
     body.dark-mode .pagination {
@@ -153,12 +173,14 @@
   </style>
 </head>
 
+
 <body>
   <!-- 📊 GTM NoScript Fallback -->
   <noscript>
     <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NG2VZ7J8"
             height="0" width="0" style="display:none;visibility:hidden"></iframe>
   </noscript>
+
 
   <!-- 🔝 Page Header -->
   <header class="header">
@@ -169,6 +191,7 @@
     <p class="instructions">Click on any GIF below for the full-size, unfiltered version.</p>
   </header>
 
+
   <!-- 🔗 Top Pagination Navigation -->
   <div class="pagination">
     <a href="index.html">1</a>
@@ -177,6 +200,7 @@
     <a href="page_4.html">4</a>
   </div>
 
+
   <!-- 🌗 Centered Control Buttons -->
   <div class="header-buttons">
     <button id="toggleDarkMode">🌓 Toggle Theme</button>
@@ -184,6 +208,7 @@
       <button id="followMeButton">Follow Me</button>
     </a>
   </div>
+
 
   <!-- 📣 Unique Page Intro -->
   <div class="unique-intro">
@@ -197,6 +222,7 @@
       Only found right here on Page 2!
     </span>
   </div>
+
 
   <main>
     <div class="gif-container">
