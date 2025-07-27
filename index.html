@@ -768,20 +768,31 @@
     </div>
 </div> <!-- End GIF container -->
 
-  <!-- Contact Me Button (just above bottom nav bar) -->
-  <div class="contact-button-container" style="position:relative; z-index:1100; margin: 20px auto 10px auto; text-align:center;">
-    <a href="mailto:Chippom2@gmail.com" 
-       id="contactMeButton" 
-       aria-label="Email Chip">Contact Me</a>
-  </div>
+<!-- Contact Me Button (just above bottom nav bar) -->
+<div class="contact-button-container" style="position:relative; z-index:1100; margin: 20px auto 10px auto; text-align:center;">
+  <a href="mailto:Chippom2@gmail.com" 
+     id="contactMeButton" 
+     aria-label="Email Chip">Contact Me</a>
+</div>
 
-  <!-- BOTTOM NAVIGATION BAR (flush, full width, no margin-bottom) -->
-  <nav class="pagination" aria-label="Page navigation">
-    <span aria-current="page">1</span>
-    <a href="page_2.html">2</a>
-    <a href="page_3.html">3</a>
-    <a href="page_4.html">4</a>
-  </nav>
+<!-- BOTTOM NAVIGATION BAR (flush, full width, no bottom margin) -->
+<nav class="pagination" aria-label="Page navigation" style="
+  width: 100%;
+  max-width: 100%;
+  margin: 10px 0 0 0; /* no bottom margin */
+  padding: 12px 0;
+  background: #222;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  box-sizing: border-box;
+  ">
+  <span aria-current="page">1</span>
+  <a href="page_2.html">2</a>
+  <a href="page_3.html">3</a>
+  <a href="page_4.html">4</a>
+</nav>
 </main>
 
 <!-- Fixed Footer (flush, smaller, always at bottom) -->
@@ -802,7 +813,7 @@
     ">
   <p style="margin:0;">Created by Chip Pommert</p>
   <a href="https://buymeacoffee.com/chippom" target="_blank" rel="noopener noreferrer"
-     style="display: inline-block;">
+       style="display: inline-block;">
     <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
          alt="Buy Me A Coffee"
          style="height: 32px; width: 120px; margin-top: 4px; margin-bottom: 4px;" />
