@@ -23,53 +23,22 @@
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-NG2VZ7J8');
   </script>
+  <!-- Use only global styles for .pagination and .pagination-top for consistent nav width -->
   <style>
-    .pagination-top {
-      width: 100%;
-      max-width: 900px !important;
-      margin-left: auto !important;
-      margin-right: auto !important;
-      border-radius: 8px;
-    }
-    .header-buttons {
+    /* Only overriding if local CSS still restricts nav width */
+    .pagination, .pagination-top {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      border-radius: 0 !important;
+      background-color: #222;
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 20px;
-      margin: 1.2rem auto 2rem auto;
-    }
-    .header-buttons button,
-    .header-buttons a > button {
-      margin: 0;
-    }
-    @media (max-width:600px) {
-      .header-buttons { flex-direction: column; gap: 12px; }
-    }
-    .unique-intro {
-      margin: 40px auto 20px auto;
-      max-width: 800px;
-      font-size: 20px;
-      background: #eaeecb;
-      color: #222;
-      border-radius: 14px;
-      padding: 26px 32px;
-      border: 3px solid #89A542;
-      font-style: italic;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.12);
-      transition: background 0.3s, color 0.3s, border-color 0.3s;
-    }
-    body.dark-mode .unique-intro {
-      background: #282e18;
-      color: #f4f4f4;
-      border-color: #97cf53;
-    }
-    .satire-highlight {
-      font-size: 18px;
-      color: #41840d;
-      margin-top: 14px;
-      padding-left: 16px;
-      border-left: 4px solid #aacc66;
-      display: block;
+      gap: 16px;
+      box-sizing: border-box;
+      padding: 12px 0;
     }
   </style>
 </head>
@@ -94,7 +63,7 @@
     </p>
   </header>
 
-  <!-- Top Pagination Bar (now centered as requested) -->
+  <!-- Top Pagination Bar (now full width and flush) -->
   <nav class="pagination pagination-top" aria-label="Page navigation">
     <span aria-current="page">1</span>
     <a href="page_2.html">2</a>
@@ -126,7 +95,6 @@
   <main>
     <div class="gif-container">
     <!-- Your GIF entries go here -->
-
 
   <main>
     <div class="gif-container">
@@ -779,59 +747,60 @@
          <button class="download-btn" data-gif="Genesis_seed_bearing_plants_trans.gif">Download</button>
         <span class="download-count">Downloads: 0</span>
     </div>
-    </div> <!-- End GIF container -->
-    
-    <!-- Pagination (centered, as you prefer) -->
-    <nav class="pagination" aria-label="Page navigation">
-      <span aria-current="page">1</span>
-      <a href="page_2.html">2</a>
-      <a href="page_3.html">3</a>
-      <a href="page_4.html">4</a>
-    </nav>
+</div> <!-- End GIF container -->
 
-    <!-- Contact Me Button (closer to footer now; adjust margin as needed) -->
-    <div class="contact-button-container" style="position:relative; z-index:1100; margin-bottom:-70px; text-align:center;">
-      <a href="mailto:Chippom2@gmail.com" 
-         id="contactMeButton" 
-         aria-label="Email Chip">Contact Me</a>
-    </div>
-  </main>
-  
-  <!-- Footer (fixed, always visible at bottom) -->
-  <footer style="
-      position: fixed;
-      bottom: 0; left: 0; width: 100vw;
-      background-color: var(--header-footer-bg, #333);
-      color: var(--header-footer-text, #fff);
-      text-align: center;
-      padding: 10px 0 18px 0;
-      box-sizing: border-box;
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      ">
-    <p style="margin:0;">Created by Chip Pommert</p>
-    <a href="https://buymeacoffee.com/chippom" target="_blank" rel="noopener noreferrer"
-       style="display: inline-block;">
-      <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
-           alt="Buy Me A Coffee"
-           style="height: 40px; width: 150px; margin-top: 4px; margin-bottom: 4px;" />
-    </a>
-  </footer>
-
-  <!-- Overlay Viewer -->
-  <div id="overlay" class="fullsize-overlay" style="display:none;">
-    <img id="overlay-img" class="fullsize-image" src="" alt="Full-size GIF" />
+  <!-- Contact Me Button (just above bottom nav bar) -->
+  <div class="contact-button-container" style="position:relative; z-index:1100; margin: 20px auto 10px auto; text-align:center;">
+    <a href="mailto:Chippom2@gmail.com" 
+       id="contactMeButton" 
+       aria-label="Email Chip">Contact Me</a>
   </div>
 
-  <!-- Consent Banner (shown only if needed; handled by scripts.js) -->
+  <!-- BOTTOM NAVIGATION BAR (flush, full width, no margin-bottom) -->
+  <nav class="pagination" aria-label="Page navigation">
+    <span aria-current="page">1</span>
+    <a href="page_2.html">2</a>
+    <a href="page_3.html">3</a>
+    <a href="page_4.html">4</a>
+  </nav>
+</main>
 
-  <!-- Only external script needed for dark mode and site logic! -->
-  <script src="scripts.js"></script>
+<!-- Fixed Footer (flush, smaller, always at bottom) -->
+<footer style="
+    position: fixed;
+    bottom: 0; left: 0; width: 100%;
+    background-color: var(--header-footer-bg, #333);
+    color: var(--header-footer-text, #fff);
+    text-align: center;
+    padding: 10px 0 10px 0;
+    box-sizing: border-box;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    ">
+  <p style="margin:0;">Created by Chip Pommert</p>
+  <a href="https://buymeacoffee.com/chippom" target="_blank" rel="noopener noreferrer"
+     style="display: inline-block;">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         style="height: 32px; width: 120px; margin-top: 4px; margin-bottom: 4px;" />
+  </a>
+</footer>
+
+<!-- Overlay Viewer -->
+<div id="overlay" class="fullsize-overlay" style="display:none;">
+  <img id="overlay-img" class="fullsize-image" src="" alt="Full-size GIF" />
+</div>
+
+<!-- Consent Banner (shown only if needed; handled by scripts.js) -->
+
+<!-- Only external script needed for dark mode and site logic! -->
+<script src="scripts.js"></script>
 </body>
 </html>
+
 
     

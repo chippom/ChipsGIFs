@@ -15,6 +15,7 @@
 /* 🌐 GLOBAL RESET */
 html, body {
   height: 100%;
+  width: 100%; /* Added to prevent horizontal overflow */
   margin: 0;
   padding: 0;
   overflow-x: hidden;
@@ -60,8 +61,8 @@ footer {
   position: fixed;
   bottom: 0;
   left: 0;
-  width: 100vw;
-  padding: 1rem 0 28px 0;
+  width: 100%; /* Changed from 100vw to 100% to prevent horizontal overflow */
+  padding: 1rem 0 1rem 0; /* Reduced bottom padding from 28px to 1rem for smaller height */
   box-sizing: border-box;
   z-index: 1000;
   margin: 0;
@@ -207,7 +208,6 @@ footer img {
 }
 
 /* Contact Me button special margin: use margin-bottom:-30px inline for page 4 for best spacing over nav bar */
-
 .contact-button-container {
   text-align: center;
   margin: 40px auto 20px;
@@ -342,8 +342,8 @@ body.dark-mode #consent-banner {
 
 /* 🗂 PAGINATION BAR */
 .pagination {
-  width: 100vw;
-  max-width: 100vw;
+  width: 100%; /* Changed from 100vw to 100% */
+  max-width: 100%; /* Changed from 100vw */
   position: relative;
   display: flex;
   justify-content: center;
