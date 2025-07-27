@@ -23,9 +23,8 @@
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-NG2VZ7J8');
   </script>
-  <!-- Use only global styles for .pagination and .pagination-top for consistent nav width -->
   <style>
-    /* Only overriding if local CSS still restricts nav width */
+    /* Ensure the pagination top nav bar is full width and flush */
     .pagination, .pagination-top {
       width: 100% !important;
       max-width: 100% !important;
@@ -39,6 +38,24 @@
       gap: 16px;
       box-sizing: border-box;
       padding: 12px 0;
+    }
+
+    /* Center and style the header-buttons container */
+    .header-buttons {
+      display: flex;
+      justify-content: center; /* Center horizontally */
+      align-items: center;
+      gap: 20px;
+      margin: 1.2rem auto 2rem auto;
+      max-width: 900px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    @media (max-width: 600px) {
+      .header-buttons {
+        flex-direction: column;
+        gap: 12px;
+      }
     }
   </style>
 </head>
@@ -63,7 +80,7 @@
     </p>
   </header>
 
-  <!-- Top Pagination Bar (now full width and flush) -->
+  <!-- Top Pagination Bar (full width and flush) -->
   <nav class="pagination pagination-top" aria-label="Page navigation">
     <span aria-current="page">1</span>
     <a href="page_2.html">2</a>
@@ -71,6 +88,7 @@
     <a href="page_4.html">4</a>
   </nav>
 
+  <!-- Centered Dark Mode and Follow Me Buttons under top nav -->
   <div class="header-buttons" role="region" aria-label="Header action buttons">
     <button id="toggleDarkMode" aria-pressed="false" aria-label="Toggle Dark Mode">🌓 Toggle Theme</button>
     <a href="https://bsky.app/profile/chips-gifs.com" target="_blank" rel="noopener noreferrer">
@@ -95,6 +113,7 @@
   <main>
     <div class="gif-container">
     <!-- Your GIF entries go here -->
+
 
   <main>
     <div class="gif-container">
