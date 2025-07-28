@@ -66,12 +66,13 @@ header, footer {
   padding: 1rem;
 }
 
+/* Footer styling with reduced font size and fixed height */
 footer {
   position: fixed;
   bottom: 0;
   left: 0;
-  width: 100%; /* Changed from 100vw to 100% for responsive width */
-  padding: 1rem 0 1rem 0; /* Reduced bottom padding for smaller height */
+  width: 100%; /* Responsive width */
+  padding: 1rem 0 1rem 0; /* Reduced bottom padding */
   box-sizing: border-box;
   z-index: 1000;
   margin: 0;
@@ -82,17 +83,84 @@ footer {
   gap: 0.5rem;
   background-color: var(--header-footer-bg);
   color: var(--header-footer-text);
-  height: 60px; /* Specify consistent footer height */
+  height: 60px; /* consistent footer height */
 }
 
 footer p {
   margin: 0;
-  font-size: 0.875rem; /* Reduced font size for footer text (approx 14px) */
+  font-size: 0.875rem; /* Reduce font size (~14px) */
   line-height: 1.3;
 }
 
 footer img {
   margin-top: 5px;
+}
+
+/* Responsive and flexible Site Title container for text and GIF beside it */
+.site-title {
+  display: flex;
+  align-items: center;  /* vertical center alignment */
+  flex-wrap: wrap;      /* allow wrapping on narrow screens */
+  gap: 1rem;            /* space between text and image */
+  max-width: 100%;
+}
+
+/* Title text styling within site-title */
+.site-title .title {
+  flex: 1 1 auto;       /* flexible growth and shrink */
+  min-width: 0;         /* prevent overflow */
+  font-size: 2rem;      /* base font size */
+  line-height: 1.2;
+}
+
+/* Title GIF icon styling */
+.site-title .icon {
+  width: 120px;            /* desktop default width */
+  max-width: 100%;
+  height: auto;            /* keep aspect ratio */
+  object-fit: contain;     /* contain within box */
+  vertical-align: middle;
+  transition: width 0.3s ease;
+  margin-left: 10px;
+  flex-shrink: 0;          /* prevent shrinking */
+  aspect-ratio: auto;      /* fallback, overridden by specific classes below */
+}
+
+/* Square GIF icons aspect ratio */
+.site-title .icon.square {
+  aspect-ratio: 1 / 1;
+}
+
+/* Rectangular GIF icons aspect ratio (example 4:3, adjust if needed) */
+.site-title .icon.rectangular {
+  aspect-ratio: 4 / 3;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+  .site-title .icon {
+    width: 90px;
+  }
+  .site-title .title {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .site-title {
+    justify-content: center;
+  }
+  .site-title .icon {
+    width: 60px;
+    margin-left: 0;
+    margin-bottom: 0.5rem;
+    max-width: 50%;
+  }
+  .site-title .title {
+    font-size: 1.2rem;
+    text-align: center;
+    flex-basis: 100%; /* stack title full width */
+  }
 }
 
 /* 📝 INSTRUCTIONS TEXT */
@@ -321,80 +389,17 @@ body:not(.dark-mode) #followMeButton {
   background-color: #0056b3;
 }
 
-nav.pagination-nav {
-  text-align: center;
-  margin-bottom: 20px;
-  position: relative;
-  z-index: 1;
-}
-
-/* Focus Outlines for Accessibility */
-.download-btn:focus,
-#contactMeButton:focus,
-#toggleDarkMode:focus,
-#followMeButton:focus,
-.nav-button:focus {
-  outline: 2px solid #000;
-  outline-offset: 2px;
-}
-
-/* 🏷️ TITLE + ICON */
-.site-title {
-  display: flex;
-  align-items: center;
-}
-
-.site-title img {
-  margin-left: 10px;
-  width: 100%;
-  max-width: 160px;
-  height: auto;
-  object-fit: contain;
-  vertical-align: middle;
-}
-
-@media (max-width: 600px) {
-  .site-title img {
-    max-width: 100px;
-  }
-}
-
-/* 🍪 CONSENT BANNER */
-#consent-banner {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background-color: #000;
-  color: #fff;
-  padding: 15px;
-  text-align: center;
-  z-index: 2000 !important;
-}
-
-body.dark-mode #consent-banner {
-  background-color: #333;
-  color: #fff;
-}
-
-@media (max-width: 768px) {
-  .gif-item {
-    width: calc(50% - 1rem);
-  }
-}
-
-/* 🗂 PAGINATION BAR */
-/* Fixed bottom pagination bar aligned exactly above footer */
+/* Pagination Navigation Bar fixed atop footer */
 .pagination {
-  position: fixed;      /* Fixed positioning */
-  bottom: 60px;         /* Height of footer (60px) */
+  position: fixed;      /* fixed positioning above footer */
+  bottom: 60px;         /* height of footer */
   left: 0;
   right: 0;
-  width: 100% !important;       /* Force full width */
-  max-width: 100% !important;   /* Remove any width limits */
-  margin: 0 !important;         /* Remove side margins */
-  padding-left: 0 !important;   /* Remove side padding */
-  padding-right: 0 !important;  /* Remove side padding */
+  width: 100% !important;       /* full width */
+  max-width: 100% !important;   /* no max width limits */
+  margin: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
   background: #222;
   box-sizing: border-box;
   display: flex;
@@ -402,7 +407,7 @@ body.dark-mode #consent-banner {
   align-items: center;
   gap: 16px;
   overflow-x: visible;
-  z-index: 1500; /* Above content, below footer */
+  z-index: 1500; /* Above content but below footer */
   border-radius: 0 !important;
 }
 
@@ -502,5 +507,5 @@ body.dark-mode .unique-intro {
 
 /* Adjust main padding-bottom if needed to match footer height */
 main {
-  padding-bottom: 120px; /* Updated from 60px to allow footer and pagination */
+  padding-bottom: 120px; /* updated for footer + pagination */
 }
