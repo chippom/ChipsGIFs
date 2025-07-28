@@ -1,15 +1,18 @@
 /* 🎨 THEME VARIABLES */
 :root {
-  --primary-color: #4CAF50;
-  --secondary-color: #007BFF;
-  --text-color: #333;
-  --background-color: #f4f4f4;
-  --header-footer-bg: #333;
-  --header-footer-text: #fff;
+  --primary-color: #4CAF50; /* green */
+  --secondary-color: #007BFF; /* blue */
+  --text-color: #333; /* dark grey for light mode text */
+  --background-color: #f4f4f4; /* light grey background */
+
+  --header-footer-bg: #333; /* dark header/footer background */
+  --header-footer-text: #fff; /* white header/footer text */
+
   --shadow-color: rgba(0,0,0,0.1);
-  --dark-bg: #121212;
-  --dark-text: #ffffff;
-  --dark-header-footer: #1e1e1e;
+
+  --dark-bg: #121212; /* dark mode background */
+  --dark-text: #39ff14; /* fluorescent green in dark mode for better contrast */
+  --dark-header-footer: #1e1e1e; /* dark grey header/footer in dark mode */
 }
 
 /* 🌐 GLOBAL RESET */
@@ -168,13 +171,14 @@ footer img {
   box-sizing: border-box;
 }
 
+/* Buttons shared styles */
 .download-btn,
 #contactMeButton,
 #toggleDarkMode,
 #followMeButton {
   background-color: var(--primary-color);
   border: none;
-  color: #fff;
+  color: #fff;  /* White text on green background for good contrast */
   padding: 0.3125rem 0.625rem;
   font-size: 0.75rem;
   cursor: pointer;
@@ -182,6 +186,7 @@ footer img {
   transition: background-color 0.3s ease;
 }
 
+/* Download button */
 .download-btn {
   margin-right: 0.625rem;
   width: 6.25rem;
@@ -193,13 +198,10 @@ footer img {
 #contactMeButton:hover,
 #toggleDarkMode:hover,
 #followMeButton:hover {
-  background-color: #45a049;
+  background-color: #45a049; /* Ensure this darker green also passes contrast */
 }
 
-.download-count {
-  font-size: 0.75rem;
-}
-
+/* The two bigger buttons */
 #toggleDarkMode,
 #followMeButton {
   padding: 0.9375rem 2rem;
@@ -207,6 +209,7 @@ footer img {
   margin: 0.25rem 0.125rem;
 }
 
+/* Contact Me button */
 #contactMeButton {
   display: inline-block;
   padding: 0.625rem 1.25rem;
@@ -214,14 +217,14 @@ footer img {
   position: relative;
   z-index: 10;
   background-color: var(--primary-color);
-  color: #fff;
+  color: #fff; /* White on green for contrast */
   border-radius: 0.3125rem;
   text-decoration: none;
   transition: background-color 0.3s ease;
 }
 
 #contactMeButton:hover {
-  background-color: #388e3c;
+  background-color: #388e3c; /* darker green for hover */
 }
 
 /* Contact Me button special margin: use margin-bottom:-30px inline for page 4 for best spacing over nav bar */
@@ -234,6 +237,13 @@ footer img {
   position: relative;
   z-index: 1100;
   /* No margin-bottom here! Control per-page via inline. */
+}
+
+/* Adjust toggle and follow me buttons' text colors for better contrast */
+body:not(.dark-mode) #toggleDarkMode,
+body:not(.dark-mode) #followMeButton {
+  color: #222222; /* dark text on light mode */
+  background-color: var(--secondary-color); /* still blue */
 }
 
 /* 🌟 STAR EFFECT */
@@ -452,14 +462,16 @@ body.dark-mode .unique-intro {
   border-color: #97cf53;
 }
 
+/* Adjusted satire highlight colors for better contrast */
 .satire-highlight {
   font-size: 18px;
-  color: #41840d;
+  color: #2a5500; /* darker green for better contrast on light bg */
   margin-top: 14px;
   padding-left: 16px;
   border-left: 4px solid #aacc66;
   display: block;
 }
+
 /* ---- END BOXED INTRO ---- */
 
 /* Header Buttons (fix for top page buttons alignment) */
