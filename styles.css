@@ -53,7 +53,9 @@ main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding-bottom: 60px; /* Adjusted for footer height to correct nav/footer alignment */
+
+  /* Increased bottom padding to allow space for fixed pagination and footer */
+  padding-bottom: 120px; /* Footer height (60px) + pagination height (approx 60px) */
 }
 
 /* 🧱 HEADER & FOOTER */
@@ -80,10 +82,13 @@ footer {
   gap: 0.5rem;
   background-color: var(--header-footer-bg);
   color: var(--header-footer-text);
+  height: 60px; /* Specify consistent footer height */
 }
 
 footer p {
   margin: 0;
+  font-size: 0.875rem; /* Reduced font size for footer text (approx 14px) */
+  line-height: 1.3;
 }
 
 footer img {
@@ -379,24 +384,26 @@ body.dark-mode #consent-banner {
 }
 
 /* 🗂 PAGINATION BAR */
+/* Fixed bottom pagination bar aligned exactly above footer */
 .pagination {
-  width: 100%; /* Full width for bottom nav bar */
-  max-width: 100%;
-  position: relative;
+  position: fixed;      /* Fixed positioning */
+  bottom: 60px;         /* Height of footer (60px) */
+  left: 0;
+  right: 0;
+  width: 100% !important;       /* Force full width */
+  max-width: 100% !important;   /* Remove any width limits */
+  margin: 0 !important;         /* Remove side margins */
+  padding-left: 0 !important;   /* Remove side padding */
+  padding-right: 0 !important;  /* Remove side padding */
+  background: #222;
+  box-sizing: border-box;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 16px;
-  margin: 10px 0 0 0; /* Removed bottom margin to prevent gap with footer */
-  padding: 12px 0; /* Slightly reduced from default */
-  background: #222;
-  box-sizing: border-box;
   overflow-x: visible;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-  z-index: 1;
+  z-index: 1500; /* Above content, below footer */
+  border-radius: 0 !important;
 }
 
 .pagination a,
@@ -495,5 +502,5 @@ body.dark-mode .unique-intro {
 
 /* Adjust main padding-bottom if needed to match footer height */
 main {
-  padding-bottom: 60px; /* Adjusted for footer height to correct nav/footer alignment */
+  padding-bottom: 120px; /* Updated from 60px to allow footer and pagination */
 }
