@@ -76,7 +76,6 @@ export async function handler(event) {
       if (!error && cached) {
         const age = new Date() - new Date(cached.timestamp);
         if (age < GEO_CACHE_TTL_MS) {
-          // Use cached data if fresh
           return {
             city: cached.city,
             region: cached.region,
@@ -129,9 +128,9 @@ export async function handler(event) {
   const geoInfo = await getLocationInfo(ip);
   const { locationStr: location, country } = geoInfo;
 
-  // Upsert visitor_logs table keyed by visitor_id
-  try {
-    await supabase.from('visitor_logs').upsert([{
+  // Prepare the promises for concurrent execution
+  const promises = [
+    supabase.from('visitor_logs').upsert([{
       visitor_id,
       useragent: userAgent,
       page: page || referrer || 'unknown',
@@ -142,15 +141,12 @@ export async function handler(event) {
       location,
       country,
       ip
-    }], { onConflict: ['visitor_id'] });
-  } catch (err) {
-    console.error('visitor_logs upsert error:', err.message);
-  }
+    }], { onConflict: ['visitor_id'] })
+  ];
 
-  // Upsert GIF download logs keyed by (gif_name, visitor_id) to avoid duplicates
   if (gif_name && visitor_id) {
-    try {
-      await supabase.from('gif_downloads').upsert([{
+    promises.push(
+      supabase.from('gif_downloads').upsert([{
         gif_name,
         visitor_id,
         timestamp,
@@ -159,27 +155,48 @@ export async function handler(event) {
         country,
         ip,
         page: page || referrer || 'unknown'
-      }], { onConflict: ['gif_name', 'visitor_id'] });
-    } catch (err) {
-      console.error('gif_downloads upsert error:', err.message);
-    }
+      }], { onConflict: ['gif_name', 'visitor_id'] })
+    );
+  } else {
+    // push resolved Promise if not supposed to insert to keep promises array consistent
+    promises.push(Promise.resolve());
   }
 
-  // Insert summary analytics log if gif_name present (kept as insert per previous)
   if (gif_name) {
-    try {
-      await supabase.from('gif_download_summary').insert([{
+    promises.push(
+      supabase.from('gif_download_summary').insert([{
         gif_name,
         timestamp,
         eastern_time: easternTime,
         referrer: referrer || 'none',
         country,
         ip
-      }]);
-    } catch (err) {
-      console.error('gif_download_summary insert error:', err.message);
-    }
+      }])
+    );
+  } else {
+    promises.push(Promise.resolve());
   }
+
+  // Run all DB calls concurrently and handle errors per call
+  const results = await Promise.allSettled(promises);
+
+  results.forEach((result, idx) => {
+    if (result.status === 'rejected') {
+      switch (idx) {
+        case 0:
+          console.error('visitor_logs upsert error:', result.reason);
+          break;
+        case 1:
+          console.error('gif_downloads upsert error:', result.reason);
+          break;
+        case 2:
+          console.error('gif_download_summary insert error:', result.reason);
+          break;
+        default:
+          console.error('Unknown DB operation error:', result.reason);
+      }
+    }
+  });
 
   // Return success response
   return {
