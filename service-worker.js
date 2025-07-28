@@ -46,7 +46,8 @@ self.addEventListener('fetch', event => {
             return cachedResponse;
           } 
           return fetch(event.request).then(networkResponse => {
-            cache.put(event.request, networkResponse.clone());
+            const responseClone = networkResponse.clone();
+            cache.put(event.request, responseClone);
             return networkResponse;
           });
         })
@@ -67,8 +68,9 @@ self.addEventListener('fetch', event => {
     event.respondWith(
       fetch(event.request)
         .then(networkResponse => {
+          const responseClone = networkResponse.clone();
           caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, networkResponse.clone());
+            cache.put(event.request, responseClone);
           });
           return networkResponse;
         })
