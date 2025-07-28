@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Generate or retrieve unique visitor ID
+  // Generate or get unique visitor ID from localStorage (new part)
   let visitorId = localStorage.getItem('chips_visitor_id');
   if (!visitorId) {
     visitorId = crypto.randomUUID();
@@ -9,27 +9,30 @@ document.addEventListener("DOMContentLoaded", () => {
   initLazyLoad();
   initOverlay();
   initDarkMode();
-  initDownloadHandlers(visitorId);
-  initContextMenuLogging(visitorId);
-  initOverlayContextLogging(visitorId);
+  initDownloadHandlers(visitorId);          // Pass visitorId
+  initContextMenuLogging(visitorId);        // Pass visitorId
+  initOverlayContextMenuLogging(visitorId); // New: right-click save on overlay image
   initConsentBanner();
   initStarTrails();
 
-  // Fetch and display download counts on page load
-  fetchAndDisplayCounts();
+  // NEW: fetch and update download counts on page load
+  fetchAndDisplayAllDownloadCounts();
 
   // Register service worker safely
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/service-worker.js')
         .then(registration => {
-          console.log('Service Worker registered:', registration.scope);
+          console.log('Service Worker registered with scope:', registration.scope);
         })
         .catch(error => {
           console.warn('Service Worker registration failed:', error);
         });
     });
   }
+
+  // Ensure pagination bars are full width
+  ensurePaginationFullWidth();
 });
 
 // 1) Lazy-load GIFs below the fold
@@ -45,11 +48,10 @@ function initLazyLoad() {
       }
     });
   }, { rootMargin: "800px" });
-
   document.querySelectorAll(".gif-item img").forEach((img, i) => {
     const original = img.src;
     img.dataset.gif = original;
-    if (i < 6) {
+    if (i < 6) { // Prime first few
       img.src = original;
     } else {
       img.src = "gifs/placeholder.jpg";
@@ -58,7 +60,7 @@ function initLazyLoad() {
   });
 }
 
-// 2) Full-screen overlay
+// 2) Full-screen overlay on GIF click (not download button)
 function initOverlay() {
   document.querySelectorAll(".gif-item").forEach(item => {
     item.addEventListener("click", e => {
@@ -79,14 +81,14 @@ function initOverlay() {
   });
 }
 
-// Track right-click saves on overlay image
-function initOverlayContextLogging(visitorId) {
+// New: Right-click context menu logging on overlay image for "Save As" detection
+function initOverlayContextMenuLogging(visitorId) {
   const overlayImg = document.getElementById("overlay-img");
   if (!overlayImg) return;
   overlayImg.addEventListener("contextmenu", () => {
     const gifUrl = overlayImg.src;
     const gifName = gifUrl.split("/").pop();
-    const data = JSON.stringify({ gif_name: gifName, visitor_id: visitorId, action: 'right-click-save' });
+    const data = JSON.stringify({ gif_name: gifName, visitor_id: visitorId, action: 'right-click-save-overlay' });
     if (navigator.sendBeacon) {
       navigator.sendBeacon('/.netlify/functions/logVisitor', data);
     } else {
@@ -111,7 +113,7 @@ function initDarkMode() {
   }
 }
 
-// 4) Download button handler
+// 4) Button-click handler: update counts, log visitor, download GIF
 function initDownloadHandlers(visitorId) {
   document.querySelectorAll(".download-btn").forEach(btn => {
     btn.addEventListener("click", async () => {
@@ -125,19 +127,19 @@ function initDownloadHandlers(visitorId) {
       const gifName = img.dataset.gif.split("/").pop();
 
       try {
-        // Increment download count backend call
-        const countData = JSON.stringify({ gif_name: gifName });
+        // A) Increment button-click total using sendBeacon if possible
+        const downloadCountData = JSON.stringify({ gif_name: gifName });
         if (navigator.sendBeacon) {
-          navigator.sendBeacon("/.netlify/functions/update-download-count", countData);
+          navigator.sendBeacon("/.netlify/functions/update-download-count", downloadCountData);
         } else {
           await fetch("/.netlify/functions/update-download-count", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: countData,
+            body: downloadCountData
           });
         }
 
-        // Log visitor and download event
+        // B) Log visitor & download event with generated visitorId
         const visitorData = JSON.stringify({
           visitor_id: visitorId,
           userAgent: navigator.userAgent,
@@ -145,17 +147,18 @@ function initDownloadHandlers(visitorId) {
           referrer: document.referrer,
           gif_name: gifName
         });
+
         if (navigator.sendBeacon) {
           navigator.sendBeacon("/.netlify/functions/logVisitor", visitorData);
         } else {
           await fetch("/.netlify/functions/logVisitor", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: visitorData,
+            body: visitorData
           });
         }
 
-        // Fetch GIF from backend and trigger real download
+        // C) Fetch via deliver_gif and trigger real download
         const res = await fetch(`/.netlify/functions/deliver_gif?gif_name=${encodeURIComponent(gifName)}`);
         if (!res.ok) throw new Error(res.statusText);
         const blob = await res.blob();
@@ -168,10 +171,10 @@ function initDownloadHandlers(visitorId) {
         a.remove();
         URL.revokeObjectURL(url);
 
-        // Refresh on-page download count
+        // D) Refresh on-page button count (no beacon needed here)
         const countRes = await fetch(`/.netlify/functions/get-download-count?gif_name=${encodeURIComponent(gifName)}`);
-        const countData = await countRes.json();
-        countEl.textContent = `Downloads: ${countData.count}`;
+        const countDataRes = await countRes.json();
+        countEl.textContent = `Downloads: ${countDataRes.count}`;
       } catch (err) {
         console.error("Download error:", err);
       } finally {
@@ -182,25 +185,25 @@ function initDownloadHandlers(visitorId) {
   });
 }
 
-// 5) Context menu and middle click logging on thumbnails
+// 5) Right-click & middle-click logging
 function initContextMenuLogging(visitorId) {
   document.querySelectorAll(".gif-item img").forEach(img => {
     const logBoth = () => {
       const gifName = (img.dataset.gif || "").split("/").pop();
-      const countData = JSON.stringify({ gif_name: gifName });
+      const contextMenuCountData = JSON.stringify({ gif_name: gifName });
 
-      // Update count
+      // Update button-count table using sendBeacon if available
       if (navigator.sendBeacon) {
-        navigator.sendBeacon("/.netlify/functions/update-download-count", countData);
+        navigator.sendBeacon("/.netlify/functions/update-download-count", contextMenuCountData);
       } else {
         fetch("/.netlify/functions/update-download-count", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: countData,
+          body: contextMenuCountData
         }).catch(console.error);
       }
 
-      // Log visitor
+      // Visitor + gif_downloads + summary with visitorId
       const visitorData = JSON.stringify({
         visitor_id: visitorId,
         userAgent: navigator.userAgent,
@@ -208,13 +211,14 @@ function initContextMenuLogging(visitorId) {
         referrer: document.referrer,
         gif_name: gifName
       });
+
       if (navigator.sendBeacon) {
         navigator.sendBeacon("/.netlify/functions/logVisitor", visitorData);
       } else {
         fetch("/.netlify/functions/logVisitor", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: visitorData,
+          body: visitorData
         }).catch(console.error);
       }
     };
@@ -225,7 +229,7 @@ function initContextMenuLogging(visitorId) {
   });
 }
 
-// 6) Cookie Consent Banner
+// 6) Cookie-consent banner (guard added)
 function initConsentBanner() {
   if (document.getElementById("consent-banner")) return;
   if (localStorage.getItem("cookiesAccepted") === "true") {
@@ -237,7 +241,7 @@ function initConsentBanner() {
   banner.id = "consent-banner";
   banner.innerHTML = `
     <p>We use cookies to ensure you get the best experience.</p>
-    <button>Accept</button>
+    <button>Accept Cookies</button>
   `;
   document.body.appendChild(banner);
   banner.querySelector("button").addEventListener("click", () => {
@@ -247,7 +251,7 @@ function initConsentBanner() {
   });
 }
 
-// 7) Star trails effect on mouse move
+// 7) Star-trail mouse effect
 function initStarTrails() {
   const container = document.createElement("div");
   container.style.position = "fixed";
@@ -265,7 +269,6 @@ function initStarTrails() {
     container.appendChild(star);
     stars.push(star);
   }
-
   document.addEventListener("mousemove", e => {
     const star = stars[index];
     star.style.left = `${e.clientX}px`;
@@ -278,8 +281,8 @@ function initStarTrails() {
   });
 }
 
-// Fetch and display counts for all GIFs on page load
-async function fetchAndDisplayCounts() {
+// NEW - fetch and update download counts on page load
+async function fetchAndDisplayAllDownloadCounts() {
   const gifItems = document.querySelectorAll(".gif-item");
   for (const item of gifItems) {
     const img = item.querySelector("img");
@@ -297,17 +300,16 @@ async function fetchAndDisplayCounts() {
           console.error(`Failed to fetch count for ${gifName}:`, res.statusText);
         }
       } catch (err) {
-        console.error(`Error fetching count for ${gifName}:`, err);
+        console.error(`Error fetching download count for ${gifName}:`, err);
       }
     }
   }
 }
 
-// --- Additional code to stretch bottom navigation bar full width ---
-
+// --- Added code to make bottom pagination bar stretch full width ---
 function ensurePaginationFullWidth() {
-  const bars = document.querySelectorAll('.pagination, .pagination-top');
-  bars.forEach(bar => {
+  const paginationBars = document.querySelectorAll('.pagination, .pagination-top');
+  paginationBars.forEach(bar => {
     bar.style.width = '100%';
     bar.style.maxWidth = '100%';
     bar.style.marginLeft = '0';
@@ -315,7 +317,3 @@ function ensurePaginationFullWidth() {
     bar.style.borderRadius = '0';
   });
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-  ensurePaginationFullWidth();
-});
