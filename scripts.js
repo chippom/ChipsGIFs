@@ -1,7 +1,5 @@
-// scripts.js
-
 document.addEventListener("DOMContentLoaded", () => {
-  // Generate or get unique visitor ID from localStorage (new part)
+  // Generate or retrieve unique visitor ID
   let visitorId = localStorage.getItem('chips_visitor_id');
   if (!visitorId) {
     visitorId = crypto.randomUUID();
@@ -11,21 +9,21 @@ document.addEventListener("DOMContentLoaded", () => {
   initLazyLoad();
   initOverlay();
   initDarkMode();
-  initDownloadHandlers(visitorId);          // Pass visitorId
-  initContextMenuLogging(visitorId);        // Pass visitorId
-  initOverlayContextMenuLogging(visitorId); // New: right-click save on overlay image
+  initDownloadHandlers(visitorId);
+  initContextMenuLogging(visitorId);
+  initOverlayContextLogging(visitorId);
   initConsentBanner();
   initStarTrails();
 
-  // NEW: fetch and update download counts on page load
-  fetchAndDisplayAllDownloadCounts();
+  // Fetch and display download counts on page load
+  fetchAndDisplayCounts();
 
   // Register service worker safely
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/service-worker.js')
         .then(registration => {
-          console.log('Service Worker registered with scope:', registration.scope);
+          console.log('Service Worker registered:', registration.scope);
         })
         .catch(error => {
           console.warn('Service Worker registration failed:', error);
@@ -47,10 +45,11 @@ function initLazyLoad() {
       }
     });
   }, { rootMargin: "800px" });
+
   document.querySelectorAll(".gif-item img").forEach((img, i) => {
     const original = img.src;
     img.dataset.gif = original;
-    if (i < 6) { // Prime first few
+    if (i < 6) {
       img.src = original;
     } else {
       img.src = "gifs/placeholder.jpg";
@@ -59,7 +58,7 @@ function initLazyLoad() {
   });
 }
 
-// 2) Full-screen overlay on GIF click (not download button)
+// 2) Full-screen overlay
 function initOverlay() {
   document.querySelectorAll(".gif-item").forEach(item => {
     item.addEventListener("click", e => {
@@ -80,14 +79,14 @@ function initOverlay() {
   });
 }
 
-// New: Right-click context menu logging on overlay image for "Save As" detection
-function initOverlayContextMenuLogging(visitorId) {
+// Track right-click saves on overlay image
+function initOverlayContextLogging(visitorId) {
   const overlayImg = document.getElementById("overlay-img");
   if (!overlayImg) return;
   overlayImg.addEventListener("contextmenu", () => {
     const gifUrl = overlayImg.src;
     const gifName = gifUrl.split("/").pop();
-    const data = JSON.stringify({ gif_name: gifName, visitor_id: visitorId, action: 'right-click-save-overlay' });
+    const data = JSON.stringify({ gif_name: gifName, visitor_id: visitorId, action: 'right-click-save' });
     if (navigator.sendBeacon) {
       navigator.sendBeacon('/.netlify/functions/logVisitor', data);
     } else {
@@ -112,7 +111,7 @@ function initDarkMode() {
   }
 }
 
-// 4) Button-click handler: update counts, log visitor, download GIF
+// 4) Download button handler
 function initDownloadHandlers(visitorId) {
   document.querySelectorAll(".download-btn").forEach(btn => {
     btn.addEventListener("click", async () => {
@@ -126,7 +125,7 @@ function initDownloadHandlers(visitorId) {
       const gifName = img.dataset.gif.split("/").pop();
 
       try {
-        // A) Increment button-click total using sendBeacon if possible
+        // Increment download count backend call
         const countData = JSON.stringify({ gif_name: gifName });
         if (navigator.sendBeacon) {
           navigator.sendBeacon("/.netlify/functions/update-download-count", countData);
@@ -134,11 +133,11 @@ function initDownloadHandlers(visitorId) {
           await fetch("/.netlify/functions/update-download-count", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: countData
+            body: countData,
           });
         }
 
-        // B) Log visitor & download event with generated visitorId
+        // Log visitor and download event
         const visitorData = JSON.stringify({
           visitor_id: visitorId,
           userAgent: navigator.userAgent,
@@ -146,18 +145,17 @@ function initDownloadHandlers(visitorId) {
           referrer: document.referrer,
           gif_name: gifName
         });
-
         if (navigator.sendBeacon) {
           navigator.sendBeacon("/.netlify/functions/logVisitor", visitorData);
         } else {
           await fetch("/.netlify/functions/logVisitor", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: visitorData
+            body: visitorData,
           });
         }
 
-        // C) Fetch via deliver_gif and trigger real download
+        // Fetch GIF from backend and trigger real download
         const res = await fetch(`/.netlify/functions/deliver_gif?gif_name=${encodeURIComponent(gifName)}`);
         if (!res.ok) throw new Error(res.statusText);
         const blob = await res.blob();
@@ -170,10 +168,10 @@ function initDownloadHandlers(visitorId) {
         a.remove();
         URL.revokeObjectURL(url);
 
-        // D) Refresh on-page button count (no beacon needed here)
+        // Refresh on-page download count
         const countRes = await fetch(`/.netlify/functions/get-download-count?gif_name=${encodeURIComponent(gifName)}`);
-        const countDataRes = await countRes.json();
-        countEl.textContent = `Downloads: ${countDataRes.count}`;
+        const countData = await countRes.json();
+        countEl.textContent = `Downloads: ${countData.count}`;
       } catch (err) {
         console.error("Download error:", err);
       } finally {
@@ -184,25 +182,25 @@ function initDownloadHandlers(visitorId) {
   });
 }
 
-// 5) Right-click & middle-click logging
+// 5) Context menu and middle click logging on thumbnails
 function initContextMenuLogging(visitorId) {
   document.querySelectorAll(".gif-item img").forEach(img => {
     const logBoth = () => {
       const gifName = (img.dataset.gif || "").split("/").pop();
       const countData = JSON.stringify({ gif_name: gifName });
 
-      // Update button-count table using sendBeacon if available
+      // Update count
       if (navigator.sendBeacon) {
         navigator.sendBeacon("/.netlify/functions/update-download-count", countData);
       } else {
         fetch("/.netlify/functions/update-download-count", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: countData
+          body: countData,
         }).catch(console.error);
       }
 
-      // Visitor + gif_downloads + summary with visitorId
+      // Log visitor
       const visitorData = JSON.stringify({
         visitor_id: visitorId,
         userAgent: navigator.userAgent,
@@ -210,14 +208,13 @@ function initContextMenuLogging(visitorId) {
         referrer: document.referrer,
         gif_name: gifName
       });
-
       if (navigator.sendBeacon) {
         navigator.sendBeacon("/.netlify/functions/logVisitor", visitorData);
       } else {
         fetch("/.netlify/functions/logVisitor", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: visitorData
+          body: visitorData,
         }).catch(console.error);
       }
     };
@@ -228,7 +225,7 @@ function initContextMenuLogging(visitorId) {
   });
 }
 
-// 6) Cookie-consent banner (guard added)
+// 6) Cookie Consent Banner
 function initConsentBanner() {
   if (document.getElementById("consent-banner")) return;
   if (localStorage.getItem("cookiesAccepted") === "true") {
@@ -240,7 +237,7 @@ function initConsentBanner() {
   banner.id = "consent-banner";
   banner.innerHTML = `
     <p>We use cookies to ensure you get the best experience.</p>
-    <button>Accept Cookies</button>
+    <button>Accept</button>
   `;
   document.body.appendChild(banner);
   banner.querySelector("button").addEventListener("click", () => {
@@ -250,7 +247,7 @@ function initConsentBanner() {
   });
 }
 
-// 7) Star-trail mouse effect
+// 7) Star trails effect on mouse move
 function initStarTrails() {
   const container = document.createElement("div");
   container.style.position = "fixed";
@@ -268,6 +265,7 @@ function initStarTrails() {
     container.appendChild(star);
     stars.push(star);
   }
+
   document.addEventListener("mousemove", e => {
     const star = stars[index];
     star.style.left = `${e.clientX}px`;
@@ -280,8 +278,8 @@ function initStarTrails() {
   });
 }
 
-// NEW - fetch and update download counts on page load
-async function fetchAndDisplayAllDownloadCounts() {
+// Fetch and display counts for all GIFs on page load
+async function fetchAndDisplayCounts() {
   const gifItems = document.querySelectorAll(".gif-item");
   for (const item of gifItems) {
     const img = item.querySelector("img");
@@ -299,8 +297,25 @@ async function fetchAndDisplayAllDownloadCounts() {
           console.error(`Failed to fetch count for ${gifName}:`, res.statusText);
         }
       } catch (err) {
-        console.error(`Error fetching download count for ${gifName}:`, err);
+        console.error(`Error fetching count for ${gifName}:`, err);
       }
     }
   }
 }
+
+// --- Additional code to stretch bottom navigation bar full width ---
+
+function ensurePaginationFullWidth() {
+  const bars = document.querySelectorAll('.pagination, .pagination-top');
+  bars.forEach(bar => {
+    bar.style.width = '100%';
+    bar.style.maxWidth = '100%';
+    bar.style.marginLeft = '0';
+    bar.style.marginRight = '0';
+    bar.style.borderRadius = '0';
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  ensurePaginationFullWidth();
+});
