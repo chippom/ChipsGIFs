@@ -13,6 +13,7 @@ export async function handler(event) {
     'X-Content-Type-Options': 'nosniff'
   };
 
+  // Only allow GET requests on this endpoint
   if (event.httpMethod !== 'GET') {
     return {
       statusCode: 405,
@@ -21,8 +22,9 @@ export async function handler(event) {
     };
   }
 
-  const gifName = event.queryStringParameters?.gif_name;
-  if (!gifName) {
+  // Read gif_name query parameter
+  const gif_name = event.queryStringParameters?.gif_name;
+  if (!gif_name) {
     return {
       statusCode: 400,
       headers,
@@ -31,35 +33,33 @@ export async function handler(event) {
   }
 
   try {
+    // Fetch the download count for the gif_name from the downloads table
     const { data, error } = await supabase
       .from('downloads')
       .select('count')
-      .eq('gif_name', gifName)
-      .single();
+      .eq('gif_name', gif_name)
+      .maybeSingle(); // returns null if no row found (cleaner than .single())
 
-    let count = 0;
     if (error) {
-      if (error.code === 'PGRST116') {
-        count = 0; // Row not found
-      } else {
-        throw error;
-      }
-    } else {
-      count = typeof data.count === 'number' ? data.count : 0;
+      throw error;
     }
 
-    // 🕒 Add human-readable timestamp in Eastern Time
+    // If no row yet, count is zero
+    const count = data?.count ?? 0;
+
+    // Generate a human-readable current Eastern Time for display only
     const easternTime = new Date().toLocaleString("en-US", {
       timeZone: "America/New_York",
       hour12: true
     });
 
+    // Respond with count and gif_name; note easternTime reflects current time, not last count update
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify({
+        gif_name,
         count,
-        gif_name: gifName,
         eastern_time: easternTime
       })
     };

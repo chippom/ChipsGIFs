@@ -5,19 +5,22 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
+// Cache TTL for IP geolocation results (7 days)
+const GEO_CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
 export async function handler(event) {
   const headers = {
     'Access-Control-Allow-Origin': '*',
-    'X-Content-Type-Options': 'nosniff',
+    'Content-Type': 'application/json',
     'Cache-Control': 'no-store',
-    'Content-Type': 'application/json'
+    'X-Content-Type-Options': 'nosniff'
   };
 
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
       headers,
-      body: JSON.stringify({ error: 'Method Not Allowed' })
+      body: JSON.stringify({ error: 'Method Not Allowed' }),
     };
   }
 
@@ -28,7 +31,7 @@ export async function handler(event) {
     return {
       statusCode: 400,
       headers,
-      body: JSON.stringify({ error: 'Invalid JSON' })
+      body: JSON.stringify({ error: 'Invalid JSON' }),
     };
   }
 
@@ -57,22 +60,77 @@ export async function handler(event) {
     hour12: true
   });
 
-  let location = 'lookup disabled';
-  try {
-    const ip = event.headers['x-nf-client-connection-ip'] || 'unknown';
-    const geoRes = await fetch(
-      `https://ipinfo.io/${ip}/json?token=${process.env.IPINFO_TOKEN}`
-    );
-    const geo = await geoRes.json();
-    if (geo.city && geo.region) {
-      location = `${geo.city}, ${geo.region}`;
+  // Get client IP from Netlify header (x-nf-client-connection-ip) or fallback to 'unknown'
+  const ip = event.headers['x-nf-client-connection-ip'] || 'unknown';
+
+  // Helper: get cached location or call IP geolocation API
+  async function getLocationInfo(ipAddress) {
+    // 1) Try cache in Supabase table ip_location_cache
+    try {
+      const { data: cached, error } = await supabase
+        .from('ip_location_cache')
+        .select()
+        .eq('ip', ipAddress)
+        .single();
+
+      if (!error && cached) {
+        const age = new Date() - new Date(cached.timestamp);
+        if (age < GEO_CACHE_TTL_MS) {
+          // Use cached data if fresh
+          return {
+            city: cached.city,
+            region: cached.region,
+            country: cached.country,
+            locationStr: [cached.city, cached.region, cached.country].filter(Boolean).join(', ') || 'unknown'
+          };
+        }
+      }
+    } catch (cacheErr) {
+      console.warn('Geo cache read error:', cacheErr.message);
     }
-  } catch (err) {
-    console.warn('Geo lookup failed:', err.message);
+
+    // 2) Cache miss or stale: call ipinfo.io API
+    try {
+      const geoRes = await fetch(
+        `https://ipinfo.io/${ipAddress}/json?token=${process.env.IPINFO_TOKEN}`
+      );
+      if (!geoRes.ok) {
+        throw new Error(`ipinfo.io API error status ${geoRes.status}`);
+      }
+      const geo = await geoRes.json();
+
+      const city = geo.city || null;
+      const region = geo.region || null;
+      const country = geo.country || null;
+      const locationStr = [city, region, country].filter(Boolean).join(', ') || 'unknown';
+
+      // Upsert cache
+      try {
+        await supabase.from('ip_location_cache').upsert([{
+          ip: ipAddress,
+          city,
+          region,
+          country,
+          location: locationStr,
+          timestamp: new Date().toISOString()
+        }], { onConflict: ['ip'] });
+      } catch (cacheWriteErr) {
+        console.warn('Geo cache write error:', cacheWriteErr.message);
+      }
+
+      return { city, region, country, locationStr };
+    } catch (apiErr) {
+      console.warn('Geo lookup failed:', apiErr.message);
+      return { city: null, region: null, country: null, locationStr: 'lookup disabled' };
+    }
   }
 
+  // Get location info (city, region, country) + location string
+  const geoInfo = await getLocationInfo(ip);
+  const { locationStr: location, country } = geoInfo;
+
+  // Upsert visitor_logs table keyed by visitor_id
   try {
-    // UPSERT into visitor_logs to respect unique constraint on visitor_id
     await supabase.from('visitor_logs').upsert([{
       visitor_id,
       useragent: userAgent,
@@ -81,42 +139,49 @@ export async function handler(event) {
       timestamp,
       eastern_time: easternTime,
       gif_name,
-      location
+      location,
+      country,
+      ip
     }], { onConflict: ['visitor_id'] });
   } catch (err) {
     console.error('visitor_logs upsert error:', err.message);
   }
 
+  // Upsert GIF download logs keyed by (gif_name, visitor_id) to avoid duplicates
   if (gif_name && visitor_id) {
     try {
-      // Insert a new row for each download event
-      await supabase.from('gif_downloads').insert([{
+      await supabase.from('gif_downloads').upsert([{
         gif_name,
         visitor_id,
         timestamp,
         eastern_time: easternTime,
         location,
+        country,
+        ip,
         page: page || referrer || 'unknown'
-      }]);
+      }], { onConflict: ['gif_name', 'visitor_id'] });
     } catch (err) {
-      console.error('gif_downloads log error:', err.message);
+      console.error('gif_downloads upsert error:', err.message);
     }
   }
 
+  // Insert summary analytics log if gif_name present (kept as insert per previous)
   if (gif_name) {
     try {
-      // Insert into summary table for analytics or aggregations
       await supabase.from('gif_download_summary').insert([{
         gif_name,
         timestamp,
         eastern_time: easternTime,
-        referrer: referrer || 'none'
+        referrer: referrer || 'none',
+        country,
+        ip
       }]);
     } catch (err) {
       console.error('gif_download_summary insert error:', err.message);
     }
   }
 
+  // Return success response
   return {
     statusCode: 200,
     headers,
