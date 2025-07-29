@@ -41,6 +41,9 @@ export async function handler(event) {
     };
   }
 
+  // Added log to trigger detection of file change without affecting logic
+  console.log(`Update-download-count called for gif_name: ${gif_name}`);
+
   const now = new Date();
   const timestamp = now.toISOString();
   const easternTime = now.toLocaleString("en-US", {
