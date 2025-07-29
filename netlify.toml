@@ -1,7 +1,7 @@
 [build]
-  base      = "ChipsGIFs"          # The folder where your project lives within the repo
-  publish   = "."                  # Publish directory relative to the base folder
-  functions = "netlify/functions" # Functions folder relative to base
+  base      = "ChipsGIFs"
+  publish   = "."
+  functions = "netlify/functions"
 
 [[redirects]]
   from    = "/logVisitor"
