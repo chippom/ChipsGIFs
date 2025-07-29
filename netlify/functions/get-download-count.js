@@ -13,7 +13,7 @@ export async function handler(event) {
     'X-Content-Type-Options': 'nosniff'
   };
 
-  if (event.httpMethod !== 'GET') {
+  if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
       headers,
@@ -21,40 +21,59 @@ export async function handler(event) {
     };
   }
 
-  const gif_name = event.queryStringParameters?.gif_name;
+  let data;
+  try {
+    data = JSON.parse(event.body);
+  } catch (err) {
+    return {
+      statusCode: 400,
+      headers,
+      body: JSON.stringify({ error: 'Invalid JSON' })
+    };
+  }
+
+  const { gif_name } = data;
   if (!gif_name) {
     return {
       statusCode: 400,
       headers,
-      body: JSON.stringify({ error: 'Missing gif_name parameter' })
+      body: JSON.stringify({ error: 'Missing gif_name' })
     };
   }
 
+  const now = new Date();
+  const timestamp = now.toISOString();
+  const easternTime = now.toLocaleString("en-US", {
+    timeZone: "America/New_York",
+    hour12: true
+  });
+
   try {
-    // Aggregate sum count over all rows by gif_name to guard against duplicates
-    const { data, error } = await supabase
+    // 🔥 FIXED: Upsert the download count using correct array of object!
+    const { error } = await supabase
       .from('downloads')
-      .select('count')
-      .eq('gif_name', gif_name);
+      .upsert([
+        {
+          gif_name,
+          count: 1,
+          timestamp,
+          eastern_time: easternTime
+        }
+      ], { onConflict: ['gif_name'], ignoreDuplicates: false });
 
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
 
-    const count = Array.isArray(data) ? data.reduce((sum, row) => sum + (row.count || 0), 0) : 0;
-
-    const easternTime = new Date().toLocaleString("en-US", {
-      timeZone: "America/New_York",
-      hour12: true
-    });
+    // Increment if row already exists
+    await supabase.rpc('increment_download_count', { gif_name_param: gif_name });
 
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({ gif_name, count, eastern_time: easternTime })
+      body: JSON.stringify({ message: 'Download count updated' })
     };
+
   } catch (err) {
-    console.error('❌ get-download-count error:', err.message);
+    console.error('❌ update-download-count error:', err.message);
     return {
       statusCode: 500,
       headers,
