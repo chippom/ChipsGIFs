@@ -1,6 +1,6 @@
 [build]
-  base      = "ChipsGIFs"          # The subfolder where your project lives, adjust if different
-  publish   = "."                  # Publish relative to base, if your build output is in the subfolder root
+  base      = "ChipsGIFs"          # The folder where your project lives within the repo
+  publish   = "."                  # Publish directory relative to the base folder
   functions = "netlify/functions" # Functions folder relative to base
 
 [[redirects]]
