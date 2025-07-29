@@ -1,9 +1,8 @@
-# 📦 Netlify Build Settings
 [build]
-  publish   = "."                     # Deploy from the repo root
-  functions = "netlify/functions"     # Serverless functions folder
+  base      = "ChipsGIFs"          # The subfolder where your project lives, adjust if different
+  publish   = "."                  # Publish relative to base, if your build output is in the subfolder root
+  functions = "netlify/functions" # Functions folder relative to base
 
-# 🚀 Redirects to Netlify Functions
 [[redirects]]
   from    = "/logVisitor"
   to      = "/.netlify/functions/logVisitor"
@@ -28,7 +27,6 @@
   status  = 200
   force   = true
 
-# 🧼 Force Fresh Load for Critical Scripts
 [[headers]]
   for = "/scripts.js"
   [headers.values]
@@ -38,9 +36,3 @@
   for = "/styles.css"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
-
-# 📁 Optional: Future asset freshness control
-# [[headers]]
-#   for = "/your-other-script-or-style.css"
-#   [headers.values]
-#     Cache-Control = "public, max-age=0, must-revalidate"
