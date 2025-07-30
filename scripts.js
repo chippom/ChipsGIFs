@@ -156,7 +156,7 @@ function initDownloadHandlers(visitorId) {
           });
         }
         // C) Fetch actual gif to trigger download
-        const res = await fetch(`/.netlify/functions/delivergif?gif_name=${encodeURIComponent(gifName)}`);
+        const res = await fetch(`/.netlify/functions/deliver_gif?gif_name=${encodeURIComponent(gifName)}`);
         if (!res.ok) throw new Error(res.statusText);
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
@@ -168,7 +168,7 @@ function initDownloadHandlers(visitorId) {
         a.remove();
         URL.revokeObjectURL(url);
         // D) Refresh counts - NOTE: updated to POST with JSON body to avoid 405 errors
-        const countRes = await fetch(`/.netlify/functions/get_download_count`, {
+        const countRes = await fetch(`/.netlify/functions/get-download-count`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ gif_name: gifName })
@@ -283,7 +283,7 @@ async function fetchAndDisplayAllDownloadCounts() {
     if (img?.dataset.gif) {
       const gifName = img.dataset.gif.split("/").pop();
       try {
-        const response = await fetch(`/.netlify/functions/get_download_count`, {
+        const response = await fetch(`/.netlify/functions/get-download-count`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ gif_name: gifName })
