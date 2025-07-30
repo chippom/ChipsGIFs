@@ -16,6 +16,7 @@ export async function handler(event) {
     'X-Content-Type-Options': 'nosniff'
   };
 
+  // Only allow POST requests
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
@@ -60,12 +61,12 @@ export async function handler(event) {
     hour12: true
   });
 
-  // Get client IP from Netlify header (x-nf-client-connection-ip) or fallback to 'unknown'
+  // Get client IP from Netlify header or fallback
   const ip = event.headers['x-nf-client-connection-ip'] || 'unknown';
 
-  // Helper: get cached location or call IP geolocation API
+  // Helper function: Get cached location or call IP geolocation API
   async function getLocationInfo(ipAddress) {
-    // 1) Try cache in Supabase table ip_location_cache
+    // 1) Check cache in Supabase table ip_location_cache
     try {
       const { data: cached, error } = await supabase
         .from('ip_location_cache')
@@ -88,7 +89,7 @@ export async function handler(event) {
       console.warn('Geo cache read error:', cacheErr.message);
     }
 
-    // 2) Cache miss or stale: call ipinfo.io API
+    // 2) Cache miss or stale, call ipinfo.io API
     try {
       const geoRes = await fetch(
         `https://ipinfo.io/${ipAddress}/json?token=${process.env.IPINFO_TOKEN}`
@@ -103,7 +104,7 @@ export async function handler(event) {
       const country = geo.country || null;
       const locationStr = [city, region, country].filter(Boolean).join(', ') || 'unknown';
 
-      // Upsert cache
+      // Upsert cache for future use
       try {
         await supabase.from('ip_location_cache').upsert([{
           ip: ipAddress,
@@ -124,12 +125,13 @@ export async function handler(event) {
     }
   }
 
-  // Get location info (city, region, country) + location string
+  // Get location info from cache or ipinfo.io
   const geoInfo = await getLocationInfo(ip);
   const { locationStr: location, country } = geoInfo;
 
-  // Prepare the promises for concurrent execution
+  // Prepare concurrent DB operation promises
   const promises = [
+    // Upsert visitor logs keyed by visitor_id to update existing or insert new
     supabase.from('visitor_logs').upsert([{
       visitor_id,
       useragent: userAgent,
@@ -145,6 +147,7 @@ export async function handler(event) {
   ];
 
   if (gif_name && visitor_id) {
+    // IMPORTANT FIX: Change .insert() to .upsert() on gif_downloads with composite unique keys
     promises.push(
       supabase.from('gif_downloads').upsert([{
         gif_name,
@@ -158,11 +161,11 @@ export async function handler(event) {
       }], { onConflict: ['gif_name', 'visitor_id'] })
     );
   } else {
-    // push resolved Promise if not supposed to insert to keep promises array consistent
     promises.push(Promise.resolve());
   }
 
   if (gif_name) {
+    // Insert into gif_download_summary analytics table (per-event insert)
     promises.push(
       supabase.from('gif_download_summary').insert([{
         gif_name,
@@ -177,7 +180,7 @@ export async function handler(event) {
     promises.push(Promise.resolve());
   }
 
-  // Run all DB calls concurrently and handle errors per call
+  // Run all DB operations concurrently and log any failures
   const results = await Promise.allSettled(promises);
 
   results.forEach((result, idx) => {
