@@ -13,7 +13,7 @@ export async function handler(event) {
     'X-Content-Type-Options': 'nosniff',
   };
 
-  if (event.httpMethod !== 'POST') {
+  if (event.httpMethod !== 'GET') {
     return {
       statusCode: 405,
       headers,
@@ -21,43 +21,33 @@ export async function handler(event) {
     };
   }
 
-  let data;
-  try {
-    data = JSON.parse(event.body);
-  } catch (err) {
-    return {
-      statusCode: 400,
-      headers,
-      body: JSON.stringify({ error: 'Invalid JSON' }),
-    };
-  }
-
-  const { gif_name } = data;
+  const gif_name = event.queryStringParameters?.gif_name;
   if (!gif_name) {
     return {
       statusCode: 400,
       headers,
-      body: JSON.stringify({ error: 'Missing gif_name' }),
+      body: JSON.stringify({ error: 'Missing gif_name parameter' }),
     };
   }
 
   try {
-    // Call your Postgres RPC to increment or insert count atomically
-    const { error } = await supabase.rpc('increment_download_count', { gif_name_param: gif_name });
+    const { data, error } = await supabase
+      .from('downloads')
+      .select('count')
+      .eq('gif_name', gif_name)
+      .single();
 
-    if (error) {
-      console.error('❌ increment_download_count RPC error:', error.message);
+    if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
       throw error;
     }
 
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({ message: 'Download count updated' }),
+      body: JSON.stringify({ count: data?.count ?? 0 }),
     };
-
   } catch (err) {
-    console.error('❌ update-download-count error:', err.message);
+    console.error('❌ get-download-count error:', err.message);
     return {
       statusCode: 500,
       headers,
