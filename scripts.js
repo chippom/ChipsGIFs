@@ -1,7 +1,7 @@
 // scripts.js
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Generate or get unique visitor ID from localStorage (new part)
+  // Generate or get unique visitor ID from localStorage
   let visitorId = localStorage.getItem('chips_visitor_id');
   if (!visitorId) {
     visitorId = crypto.randomUUID();
@@ -13,14 +13,12 @@ document.addEventListener("DOMContentLoaded", () => {
   initDarkMode();
   initDownloadHandlers(visitorId);          // Pass visitorId
   initContextMenuLogging(visitorId);        // Pass visitorId
-  initOverlayContextMenuLogging(visitorId); // New: right-click save on overlay image
+  initOverlayContextMenuLogging(visitorId); // Right-click save logging on overlay
   initConsentBanner();                       // Banner visible but no blocking
   initStarTrails();
 
-  // NEW: fetch and update download counts on page load
   fetchAndDisplayAllDownloadCounts();
 
-  // Register service worker safely
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/service-worker.js')
@@ -47,6 +45,7 @@ function initLazyLoad() {
       }
     });
   }, { rootMargin: "800px" });
+
   document.querySelectorAll(".gif-item img").forEach((img, i) => {
     const original = img.src;
     img.dataset.gif = original;
@@ -120,13 +119,18 @@ function initDownloadHandlers(visitorId) {
       btn.textContent = "Downloading…";
       btn.disabled = true;
 
-      const gifItem = btn.closest(".gif-item");
-      const img = gifItem.querySelector("img");
-      const countEl = gifItem.querySelector(".download-count");
-      const gifName = img.dataset.gif.split("/").pop();
-
       try {
-        // A) Increment button-click total using sendBeacon if possible
+        const gifItem = btn.closest(".gif-item");
+        const img = gifItem.querySelector("img");
+        const countEl = gifItem.querySelector(".download-count");
+
+        // Decode once to avoid double encoding issues, then encode properly for fetch URL
+        const rawGifName = decodeURIComponent(img.dataset.gif.split("/").pop());
+        const gifNameEncoded = encodeURIComponent(rawGifName);
+
+        const gifName = rawGifName; // for logging and count update
+
+        // A) Increment download count using POST as usual
         const countData = JSON.stringify({ gif_name: gifName });
         if (navigator.sendBeacon) {
           navigator.sendBeacon("/.netlify/functions/update-download-count", countData);
@@ -138,7 +142,7 @@ function initDownloadHandlers(visitorId) {
           });
         }
 
-        // B) Log visitor & download event with generated visitorId
+        // B) Log visitor & download event
         const visitorData = JSON.stringify({
           visitor_id: visitorId,
           userAgent: navigator.userAgent,
@@ -146,7 +150,6 @@ function initDownloadHandlers(visitorId) {
           referrer: document.referrer,
           gif_name: gifName
         });
-
         if (navigator.sendBeacon) {
           navigator.sendBeacon("/.netlify/functions/logVisitor", visitorData);
         } else {
@@ -157,25 +160,27 @@ function initDownloadHandlers(visitorId) {
           });
         }
 
-        // C) Fetch via deliver_gif and trigger real download
-        const res = await fetch(`/.netlify/functions/deliver_gif?gif_name=${encodeURIComponent(gifName)}`);
+        // C) Fetch GIF properly and trigger download
+        const res = await fetch(`/.netlify/functions/deliver_gif?gif_name=${gifNameEncoded}`);
         if (!res.ok) throw new Error(res.statusText);
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = gifName;
+        a.download = rawGifName;
         document.body.appendChild(a);
         a.click();
         a.remove();
-        // Delay URL revocation to avoid premature revoke
         setTimeout(() => URL.revokeObjectURL(url), 10000);
 
-        // D) Refresh on-page button count (no beacon needed here)
-        const countRes = await fetch(`/.netlify/functions/get-download-count?gif_name=${encodeURIComponent(gifName)}`);
+        // D) Refresh download count on page without beacon (GET request)
+        const countRes = await fetch(`/.netlify/functions/get-download-count?gif_name=${gifNameEncoded}`);
         const countDataRes = await countRes.json();
         const safeCount = countDataRes.count ?? 0;
-        countEl.textContent = `Downloads: ${safeCount}`;
+        if (countEl) {
+          countEl.textContent = `Downloads: ${safeCount}`;
+        }
+
       } catch (err) {
         console.error("Download error:", err);
       } finally {
@@ -186,14 +191,13 @@ function initDownloadHandlers(visitorId) {
   });
 }
 
-// 5) Right-click & middle-click logging
+// 5) Right-click & middle-click logging on GIFs
 function initContextMenuLogging(visitorId) {
   document.querySelectorAll(".gif-item img").forEach(img => {
     const logBoth = () => {
       const gifName = (img.dataset.gif || "").split("/").pop();
       const countData = JSON.stringify({ gif_name: gifName });
 
-      // Update button-count table using sendBeacon if available
       if (navigator.sendBeacon) {
         navigator.sendBeacon("/.netlify/functions/update-download-count", countData);
       } else {
@@ -204,7 +208,6 @@ function initContextMenuLogging(visitorId) {
         }).catch(console.error);
       }
 
-      // Visitor + gif_downloads + summary with visitorId
       const visitorData = JSON.stringify({
         visitor_id: visitorId,
         userAgent: navigator.userAgent,
@@ -230,7 +233,7 @@ function initContextMenuLogging(visitorId) {
   });
 }
 
-// 6) Cookie-consent banner - Visible but DOES NOT disable any buttons
+// 6) Consent banner - visible but does not disable buttons
 function initConsentBanner() {
   if (document.getElementById("consent-banner")) return;
 
@@ -246,8 +249,6 @@ function initConsentBanner() {
     localStorage.setItem("cookiesAccepted", "true");
     banner.style.display = "none";
   });
-
-  // Intentionally no disabling or enabling of download buttons here
 }
 
 // 7) Star-trail mouse effect
@@ -280,15 +281,16 @@ function initStarTrails() {
   });
 }
 
-// NEW - fetch and update download counts on page load
+// Fetch and update download counts on page load
 async function fetchAndDisplayAllDownloadCounts() {
   const gifItems = document.querySelectorAll(".gif-item");
   for (const item of gifItems) {
     const img = item.querySelector("img");
     if (img?.dataset.gif) {
-      const gifName = img.dataset.gif.split("/").pop();
+      const rawGifName = decodeURIComponent(img.dataset.gif.split("/").pop());
+      const gifNameEncoded = encodeURIComponent(rawGifName);
       try {
-        const res = await fetch(`/.netlify/functions/get-download-count?gif_name=${encodeURIComponent(gifName)}`);
+        const res = await fetch(`/.netlify/functions/get-download-count?gif_name=${gifNameEncoded}`);
         if (res.ok) {
           const data = await res.json();
           const countEl = item.querySelector(".download-count");
@@ -297,10 +299,10 @@ async function fetchAndDisplayAllDownloadCounts() {
             countEl.textContent = `Downloads: ${safeCount}`;
           }
         } else {
-          console.error(`Failed to fetch count for ${gifName}:`, res.statusText);
+          console.error(`Failed to fetch count for ${rawGifName}:`, res.statusText);
         }
       } catch (err) {
-        console.error(`Error fetching download count for ${gifName}:`, err);
+        console.error(`Error fetching download count for ${rawGifName}:`, err);
       }
     }
   }

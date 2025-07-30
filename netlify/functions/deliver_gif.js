@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { Buffer } from 'buffer'; // Ensure Buffer is available for local and Netlify envs
+import { Buffer } from 'buffer'; // Ensure Buffer is available in Netlify environment
 
 // Initialize Supabase client with service role key for full DB rights
 const supabase = createClient(
@@ -9,7 +9,7 @@ const supabase = createClient(
 
 // Helper to validate gifName parameter to allow only safe characters
 function isValidGifName(name) {
-  // Allow alphanumeric, dash, underscore, dot (mainly for ".gif" extension)
+  // Allow alphanumeric characters, dashes, underscores, dots (mainly for ".gif")
   return typeof name === 'string' && /^[a-zA-Z0-9_\-\.]+$/.test(name);
 }
 
@@ -25,23 +25,20 @@ export async function handler(event) {
     if (event.httpMethod !== 'GET') {
       return {
         statusCode: 405,
-        headers: {
-          ...headers,
-          'Content-Type': 'application/json',
-        },
+        headers: { ...headers, 'Content-Type': 'application/json' },
         body: JSON.stringify({ error: 'Method Not Allowed' }),
       };
     }
 
     // Validate required query param gif_name; sanitize input
-    const gifNameRaw = event.queryStringParameters?.gif_name || event.queryStringParameters?.gifname;
+    const gifNameRaw =
+      event.queryStringParameters?.gif_name ||
+      event.queryStringParameters?.gifname;
+
     if (!gifNameRaw || !isValidGifName(gifNameRaw)) {
       return {
         statusCode: 400,
-        headers: {
-          ...headers,
-          'Content-Type': 'application/json',
-        },
+        headers: { ...headers, 'Content-Type': 'application/json' },
         body: JSON.stringify({ error: 'Missing or invalid gif_name parameter' }),
       };
     }
@@ -98,11 +95,9 @@ export async function handler(event) {
       console.warn('🟠 Uncaught logging error:', logError.message);
     }
 
-    // --- Additional Inserts to Other Tables to Fix Missing Logging Issues ---
-
-    // Upsert visitor logs keyed on e.g., visitorid (if available) or use dummy for now
+    // Upsert visitor logs keyed on a visitorid (using 'anonymous' fallback here)
     try {
-      const visitorId = 'anonymous'; // Adjust as needed with real visitor IDs if available
+      const visitorId = 'anonymous'; // Adjust to real visitor IDs if available
       await supabase
         .from('visitor_logs')
         .upsert(
@@ -122,13 +117,13 @@ export async function handler(event) {
       console.error('❌ visitor_logs upsert error:', visitorErr.message);
     }
 
-    // Insert into gif_download_summary table for analytics/summary
+    // Insert into gif_download_summary table for analytics
     try {
       await supabase.from('gif_download_summary').insert([
         {
           gif_name: gifName,
           timestamp,
-          easternTime: new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }), // fixed camelCase here
+          easternTime: new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }),
           referrer: event.headers.referer || 'none',
           location,
           country,
@@ -138,19 +133,17 @@ export async function handler(event) {
       console.error('❌ gif_download_summary insert error:', summaryErr.message);
     }
 
-    // Fetch the actual GIF file from your storage
-    const fileUrl = `https://chips-gifs.com/gifs/${gifName}`;
+    // Fetch the actual GIF file from your storage (ensure fileName is properly decoded)
+    const decodedGifName = decodeURIComponent(gifName);
+    const fileUrl = `https://chips-gifs.com/gifs/${decodedGifName}`;
     console.log(`Fetching GIF from URL: ${fileUrl}`); // Debug log to track fetching URL
     const res = await fetch(fileUrl);
 
     if (res.status === 404) {
-      console.warn(`GIF not found: ${gifName}`);
+      console.warn(`GIF not found: ${decodedGifName}`);
       return {
         statusCode: 404,
-        headers: {
-          ...headers,
-          'Content-Type': 'application/json',
-        },
+        headers: { ...headers, 'Content-Type': 'application/json' },
         body: JSON.stringify({ error: 'GIF not found' }),
       };
     }
@@ -166,7 +159,7 @@ export async function handler(event) {
 
     const contentType = res.headers.get('Content-Type') || 'application/octet-stream';
 
-    console.log(`Serving GIF: ${gifName} with Content-Type: ${contentType}`);
+    console.log(`Serving GIF: ${decodedGifName} with Content-Type: ${contentType}`);
 
     return {
       statusCode: 200,
@@ -174,7 +167,7 @@ export async function handler(event) {
       headers: {
         ...headers,
         'Content-Type': contentType,
-        'Content-Disposition': `attachment; filename="${gifName}"`,
+        'Content-Disposition': `attachment; filename="${decodedGifName}"`,
       },
       body: base64Body,
     };
