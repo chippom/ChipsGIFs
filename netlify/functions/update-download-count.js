@@ -41,8 +41,7 @@ export async function handler(event) {
     };
   }
 
-  // Added log to trigger detection of file change without affecting logic
-  console.log(`Update-download-count called for gif_name: ${gif_name}`);
+  console.log(`update-download-count called for gif_name: ${gif_name}`);
 
   const now = new Date();
   const timestamp = now.toISOString();
@@ -52,29 +51,30 @@ export async function handler(event) {
   });
 
   try {
-    // 🔥 FIXED: Upsert the download count using correct array of object!
-    const { error } = await supabase
+    // Attempt to insert a new row only if it does not exist.
+    // Use insert with ignoreDuplicates: true to avoid overwriting existing count.
+    const { error: insertError } = await supabase
       .from('downloads')
-      .upsert([
+      .insert([
         {
           gif_name,
-          count: 1,
+          count: 0, // Insert with count 0 if new GIF
           timestamp,
-          eastern_time: easternTime
+          eastern_time: easternTime,
         }
-      ], { onConflict: ['gif_name'], ignoreDuplicates: false });
+      ], { ignoreDuplicates: true }); // Do not update existing rows here
 
-    if (error) throw error;
+    if (insertError) throw insertError;
 
-    // Increment if row already exists
-    await supabase.rpc('increment_download_count', { gif_name_param: gif_name });
+    // Now atomically increment the count for the gif_name via RPC
+    const { error: rpcError } = await supabase.rpc('increment_download_count', { gif_name_param: gif_name });
+    if (rpcError) throw rpcError;
 
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify({ message: 'Download count updated' })
     };
-
   } catch (err) {
     console.error('❌ update-download-count error:', err.message);
     return {
