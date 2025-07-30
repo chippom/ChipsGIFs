@@ -10,14 +10,14 @@ export async function handler(event) {
     'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/json',
     'Cache-Control': 'no-store',
-    'X-Content-Type-Options': 'nosniff'
+    'X-Content-Type-Options': 'nosniff',
   };
 
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
       headers,
-      body: JSON.stringify({ error: 'Method Not Allowed' })
+      body: JSON.stringify({ error: 'Method Not Allowed' }),
     };
   }
 
@@ -28,7 +28,7 @@ export async function handler(event) {
     return {
       statusCode: 400,
       headers,
-      body: JSON.stringify({ error: 'Invalid JSON' })
+      body: JSON.stringify({ error: 'Invalid JSON' }),
     };
   }
 
@@ -37,39 +37,23 @@ export async function handler(event) {
     return {
       statusCode: 400,
       headers,
-      body: JSON.stringify({ error: 'Missing gif_name' })
+      body: JSON.stringify({ error: 'Missing gif_name' }),
     };
   }
 
-  const now = new Date();
-  const timestamp = now.toISOString();
-  const easternTime = now.toLocaleString("en-US", {
-    timeZone: "America/New_York",
-    hour12: true
-  });
-
   try {
-    // 🔥 FIXED: Upsert the download count using correct array of object!
-    const { error } = await supabase
-      .from('downloads')
-      .upsert([
-        {
-          gif_name,
-          count: 1,
-          timestamp,
-          eastern_time: easternTime
-        }
-      ], { onConflict: ['gif_name'], ignoreDuplicates: false });
+    // Call your Postgres RPC to increment or insert count atomically
+    const { error } = await supabase.rpc('increment_download_count', { gif_name_param: gif_name });
 
-    if (error) throw error;
-
-    // Increment if row already exists
-    await supabase.rpc('increment_download_count', { gif_name_param: gif_name });
+    if (error) {
+      console.error('❌ increment_download_count RPC error:', error.message);
+      throw error;
+    }
 
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({ message: 'Download count updated' })
+      body: JSON.stringify({ message: 'Download count updated' }),
     };
 
   } catch (err) {
@@ -77,7 +61,7 @@ export async function handler(event) {
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: 'Internal server error' })
+      body: JSON.stringify({ error: 'Internal server error' }),
     };
   }
 }
