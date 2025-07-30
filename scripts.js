@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initDownloadHandlers(visitorId);          // Pass visitorId
   initContextMenuLogging(visitorId);        // Pass visitorId
   initOverlayContextMenuLogging(visitorId); // New: right-click save on overlay image
-  initConsentBanner();
+  initConsentBanner();                       // Banner visible but no blocking
   initStarTrails();
 
   // NEW: fetch and update download counts on page load
@@ -168,12 +168,12 @@ function initDownloadHandlers(visitorId) {
         document.body.appendChild(a);
         a.click();
         a.remove();
-        URL.revokeObjectURL(url);
+        // Delay URL revocation to avoid premature revoke
+        setTimeout(() => URL.revokeObjectURL(url), 10000);
 
         // D) Refresh on-page button count (no beacon needed here)
         const countRes = await fetch(`/.netlify/functions/get-download-count?gif_name=${encodeURIComponent(gifName)}`);
         const countDataRes = await countRes.json();
-        // Fix here: fallback count to 0 when undefined or null
         const safeCount = countDataRes.count ?? 0;
         countEl.textContent = `Downloads: ${safeCount}`;
       } catch (err) {
@@ -230,14 +230,10 @@ function initContextMenuLogging(visitorId) {
   });
 }
 
-// 6) Cookie-consent banner (guard added)
+// 6) Cookie-consent banner - Visible but DOES NOT disable any buttons
 function initConsentBanner() {
   if (document.getElementById("consent-banner")) return;
-  if (localStorage.getItem("cookiesAccepted") === "true") {
-    document.querySelectorAll(".download-btn").forEach(btn => btn.disabled = false);
-    return;
-  }
-  document.querySelectorAll(".download-btn").forEach(btn => btn.disabled = true);
+
   const banner = document.createElement("div");
   banner.id = "consent-banner";
   banner.innerHTML = `
@@ -245,11 +241,13 @@ function initConsentBanner() {
     <button>Accept Cookies</button>
   `;
   document.body.appendChild(banner);
+
   banner.querySelector("button").addEventListener("click", () => {
     localStorage.setItem("cookiesAccepted", "true");
     banner.style.display = "none";
-    document.querySelectorAll(".download-btn").forEach(btn => btn.disabled = false);
   });
+
+  // Intentionally no disabling or enabling of download buttons here
 }
 
 // 7) Star-trail mouse effect
@@ -295,7 +293,6 @@ async function fetchAndDisplayAllDownloadCounts() {
           const data = await res.json();
           const countEl = item.querySelector(".download-count");
           if (countEl) {
-            // Fix here: fallback count to 0 when undefined or null
             const safeCount = data.count ?? 0;
             countEl.textContent = `Downloads: ${safeCount}`;
           }
