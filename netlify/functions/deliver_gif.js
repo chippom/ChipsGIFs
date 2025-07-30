@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { Buffer } from 'buffer'; // Ensure Buffer is available for local and Netlify envs
 
 // Initialize Supabase client with service role key for full DB rights
 const supabase = createClient(
@@ -6,7 +7,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-// Helper to validate gifName parameter to allow only safe characters    
+// Helper to validate gifName parameter to allow only safe characters
 function isValidGifName(name) {
   // Allow alphanumeric, dash, underscore, dot (mainly for ".gif" extension)
   return typeof name === 'string' && /^[a-zA-Z0-9_\-\.]+$/.test(name);
@@ -54,7 +55,10 @@ export async function handler(event) {
     let location = 'lookup disabled';
     let country = 'unknown';
     try {
-      const ip = event.headers['x-nf-client-connection-ip'] || event.headers['x-forwarded-for'] || 'unknown';
+      const ip =
+        event.headers['x-nf-client-connection-ip'] ||
+        event.headers['x-forwarded-for'] ||
+        'unknown';
       if (ip !== 'unknown' && process.env.IPINFOTOKEN) {
         const geoRes = await fetch(`https://ipinfo.io/${ip}/json?token=${process.env.IPINFOTOKEN}`);
         if (geoRes.ok) {
@@ -97,11 +101,8 @@ export async function handler(event) {
     // --- Additional Inserts to Other Tables to Fix Missing Logging Issues ---
 
     // Upsert visitor logs keyed on e.g., visitorid (if available) or use dummy for now
-    // Assuming you have visitor identification logic elsewhere,
-    // Here just inserting anonymous visitor log with page info and gifName
     try {
-      // Dummy visitorId until you add visitor logic; can be removed or integrated as needed
-      const visitorId = 'anonymous'; 
+      const visitorId = 'anonymous'; // Adjust as needed with real visitor IDs if available
       await supabase
         .from('visitor_logs')
         .upsert(
@@ -127,7 +128,7 @@ export async function handler(event) {
         {
           gif_name: gifName,
           timestamp,
-          easterntime: new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }),
+          easternTime: new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }), // fixed camelCase here
           referrer: event.headers.referer || 'none',
           location,
           country,
@@ -137,9 +138,23 @@ export async function handler(event) {
       console.error('❌ gif_download_summary insert error:', summaryErr.message);
     }
 
-    // Fetch the actual GIF file from your storage and return as base64 encoded for download
+    // Fetch the actual GIF file from your storage
     const fileUrl = `https://chips-gifs.com/gifs/${gifName}`;
+    console.log(`Fetching GIF from URL: ${fileUrl}`); // Debug log to track fetching URL
     const res = await fetch(fileUrl);
+
+    if (res.status === 404) {
+      console.warn(`GIF not found: ${gifName}`);
+      return {
+        statusCode: 404,
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ error: 'GIF not found' }),
+      };
+    }
+
     if (!res.ok) {
       throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
     }
@@ -149,8 +164,9 @@ export async function handler(event) {
     const buffer = Buffer.from(arrayBuffer);
     const base64Body = buffer.toString('base64');
 
-    // Determine content type from fetched file headers or default
     const contentType = res.headers.get('Content-Type') || 'application/octet-stream';
+
+    console.log(`Serving GIF: ${gifName} with Content-Type: ${contentType}`);
 
     return {
       statusCode: 200,
@@ -162,7 +178,6 @@ export async function handler(event) {
       },
       body: base64Body,
     };
-
   } catch (err) {
     // Final catch-all for unexpected errors
     console.error('🧨 Uncaught error in deliver_gif.js:', err.message);
