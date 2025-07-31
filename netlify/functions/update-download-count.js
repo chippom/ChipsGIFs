@@ -43,32 +43,10 @@ export async function handler(event) {
 
   console.log(`update-download-count called for gif_name: ${gif_name}`);
 
-  const now = new Date();
-  const timestamp = now.toISOString();
-  const easternTime = now.toLocaleString("en-US", {
-    timeZone: "America/New_York",
-    hour12: true
-  });
-
   try {
-    // Attempt to insert a new row only if it does not exist.
-    // Use insert with ignoreDuplicates: true to avoid overwriting existing count.
-    const { error: insertError } = await supabase
-      .from('downloads')
-      .insert([
-        {
-          gif_name,
-          count: 0, // Insert with count 0 if new GIF
-          timestamp,
-          eastern_time: easternTime,
-        }
-      ], { ignoreDuplicates: true }); // Do not update existing rows here
-
-    if (insertError) throw insertError;
-
-    // Now atomically increment the count for the gif_name via RPC
-    const { error: rpcError } = await supabase.rpc('increment_download_count', { gif_name_param: gif_name });
-    if (rpcError) throw rpcError;
+    // *** This is the ONLY call you need to the downloads table:
+    const { error } = await supabase.rpc('increment_download_count', { gif_name_param: gif_name });
+    if (error) throw error;
 
     return {
       statusCode: 200,
@@ -76,7 +54,7 @@ export async function handler(event) {
       body: JSON.stringify({ message: 'Download count updated' })
     };
   } catch (err) {
-    console.error('❌ update-download-count error:', err.message);
+    console.error('❌ update-download-count error:', err.message || err);
     return {
       statusCode: 500,
       headers,
