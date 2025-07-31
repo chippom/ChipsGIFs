@@ -124,14 +124,12 @@ function initDownloadHandlers(visitorId) {
         const img = gifItem.querySelector("img");
         const countEl = gifItem.querySelector(".download-count");
 
-        // Decode once to avoid double encoding issues, then encode properly for fetch URL
-        const rawGifName = decodeURIComponent(img.dataset.gif.split("/").pop());
+        // Safely extract gif name and trim whitespace
+        const rawGifName = decodeURIComponent(img.dataset.gif.split("/").pop()).trim();
         const gifNameEncoded = encodeURIComponent(rawGifName);
 
-        const gifName = rawGifName; // for logging and count update
-
-        // A) Increment download count using POST as usual
-        const countData = JSON.stringify({ gif_name: gifName });
+        // A) Increment download count using POST JSON
+        const countData = JSON.stringify({ gif_name: rawGifName });
         if (navigator.sendBeacon) {
           navigator.sendBeacon("/.netlify/functions/update-download-count", countData);
         } else {
@@ -148,7 +146,7 @@ function initDownloadHandlers(visitorId) {
           userAgent: navigator.userAgent,
           page: window.location.pathname,
           referrer: document.referrer,
-          gif_name: gifName
+          gif_name: rawGifName
         });
         if (navigator.sendBeacon) {
           navigator.sendBeacon("/.netlify/functions/logVisitor", visitorData);
@@ -160,25 +158,36 @@ function initDownloadHandlers(visitorId) {
           });
         }
 
-        // C) Fetch GIF properly and trigger download
+        // C) Fetch GIF from deliver_gif endpoint and trigger download
         const res = await fetch(`/.netlify/functions/deliver_gif?gif_name=${gifNameEncoded}`);
         if (!res.ok) throw new Error(res.statusText);
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
+
         const a = document.createElement("a");
         a.href = url;
         a.download = rawGifName;
         document.body.appendChild(a);
         a.click();
         a.remove();
+
+        // Cleanup blob URL after a delay
         setTimeout(() => URL.revokeObjectURL(url), 10000);
 
         // D) Refresh download count on page without beacon (GET request)
-        const countRes = await fetch(`/.netlify/functions/get-download-count?gif_name=${gifNameEncoded}`);
-        const countDataRes = await countRes.json();
-        const safeCount = countDataRes.count ?? 0;
-        if (countEl) {
-          countEl.textContent = `Downloads: ${safeCount}`;
+        try {
+          const countRes = await fetch(`/.netlify/functions/get-download-count?gif_name=${gifNameEncoded}`);
+          if (countRes.ok) {
+            const countDataRes = await countRes.json();
+            const safeCount = countDataRes.count ?? 0;
+            if (countEl) {
+              countEl.textContent = `Downloads: ${safeCount}`;
+            }
+          } else {
+            console.error(`Failed to refresh download count:`, countRes.statusText);
+          }
+        } catch (refreshErr) {
+          console.error("Error refreshing download count:", refreshErr);
         }
 
       } catch (err) {
@@ -195,7 +204,9 @@ function initDownloadHandlers(visitorId) {
 function initContextMenuLogging(visitorId) {
   document.querySelectorAll(".gif-item img").forEach(img => {
     const logBoth = () => {
-      const gifName = (img.dataset.gif || "").split("/").pop();
+      const gifNameRaw = (img.dataset.gif || "").split("/").pop();
+      const gifName = decodeURIComponent(gifNameRaw).trim();
+
       const countData = JSON.stringify({ gif_name: gifName });
 
       if (navigator.sendBeacon) {
@@ -287,7 +298,7 @@ async function fetchAndDisplayAllDownloadCounts() {
   for (const item of gifItems) {
     const img = item.querySelector("img");
     if (img?.dataset.gif) {
-      const rawGifName = decodeURIComponent(img.dataset.gif.split("/").pop());
+      const rawGifName = decodeURIComponent(img.dataset.gif.split("/").pop()).trim();
       const gifNameEncoded = encodeURIComponent(rawGifName);
       try {
         const res = await fetch(`/.netlify/functions/get-download-count?gif_name=${gifNameEncoded}`);
