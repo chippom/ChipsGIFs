@@ -11,10 +11,10 @@ document.addEventListener("DOMContentLoaded", () => {
   initLazyLoad();
   initOverlay();
   initDarkMode();
-  initDownloadHandlers(visitorId);          // Pass visitorId
-  initContextMenuLogging(visitorId);        // Pass visitorId
+  initDownloadHandlers(visitorId);           // Pass visitorId
+  initContextMenuLogging(visitorId);         // Pass visitorId
   initOverlayContextMenuLogging(visitorId); // Right-click save logging on overlay
-  initConsentBanner();                       // Banner visible but no blocking
+  initConsentBanner();                        // Banner visible but no blocking, fixed to remember acceptance
   initStarTrails();
 
   fetchAndDisplayAllDownloadCounts();
@@ -245,7 +245,13 @@ function initContextMenuLogging(visitorId) {
 }
 
 // 6) Consent banner - visible but does not disable buttons
+// *** FIXED: Checks localStorage to avoid showing again ***
 function initConsentBanner() {
+  // Check if cookies have already been accepted
+  if (localStorage.getItem("cookiesAccepted") === "true") {
+    return; // Do not show banner if accepted
+  }
+
   if (document.getElementById("consent-banner")) return;
 
   const banner = document.createElement("div");
