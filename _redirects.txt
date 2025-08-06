@@ -1,3 +1,0 @@
-/page_2.html   /page_2.html   200
-/404.html      /404.html      404
-/*              /index.html    200
