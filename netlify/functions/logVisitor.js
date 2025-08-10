@@ -16,7 +16,6 @@ export async function handler(event) {
     'X-Content-Type-Options': 'nosniff'
   };
 
-  // Only allow POST requests
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
@@ -61,12 +60,9 @@ export async function handler(event) {
     hour12: true
   });
 
-  // Get client IP from Netlify header or fallback
   const ip = event.headers['x-nf-client-connection-ip'] || 'unknown';
 
-  // Helper function: Get cached location or call IP geolocation API
   async function getLocationInfo(ipAddress) {
-    // 1) Check cache in Supabase table ip_location_cache
     try {
       const { data: cached, error } = await supabase
         .from('ip_location_cache')
@@ -89,7 +85,6 @@ export async function handler(event) {
       console.warn('Geo cache read error:', cacheErr.message);
     }
 
-    // 2) Cache miss or stale, call ipinfo.io API
     try {
       const geoRes = await fetch(
         `https://ipinfo.io/${ipAddress}/json?token=${process.env.IPINFO_TOKEN}`
@@ -104,7 +99,6 @@ export async function handler(event) {
       const country = geo.country || null;
       const locationStr = [city, region, country].filter(Boolean).join(', ') || 'unknown';
 
-      // Upsert cache for future use
       try {
         await supabase.from('ip_location_cache').upsert([{
           ip: ipAddress,
@@ -125,29 +119,25 @@ export async function handler(event) {
     }
   }
 
-  // Get location info from cache or ipinfo.io
   const geoInfo = await getLocationInfo(ip);
   const { locationStr: location, country } = geoInfo;
 
-  // Prepare concurrent DB operation promises
   const promises = [
-    // Upsert visitor logs keyed by visitor_id to update existing or insert new
+    // ✅ Changed to upsert by gif_name instead of visitor_id
     supabase.from('visitor_logs').upsert([{
-      visitor_id,
+      gif_name,
       useragent: userAgent,
       page: page || referrer || 'unknown',
       referrer: referrer || 'none',
       timestamp,
       eastern_time: easternTime,
-      gif_name,
       location,
       country,
       ip
-    }], { onConflict: ['visitor_id'] })
+    }], { onConflict: ['gif_name'] })
   ];
 
   if (gif_name && visitor_id) {
-    // IMPORTANT FIX: Change .insert() to .upsert() on gif_downloads with composite unique keys
     promises.push(
       supabase.from('gif_downloads').upsert([{
         gif_name,
@@ -165,7 +155,6 @@ export async function handler(event) {
   }
 
   if (gif_name) {
-    // Insert into gif_download_summary analytics table (per-event insert)
     promises.push(
       supabase.from('gif_download_summary').insert([{
         gif_name,
@@ -180,7 +169,6 @@ export async function handler(event) {
     promises.push(Promise.resolve());
   }
 
-  // Run all DB operations concurrently and log any failures
   const results = await Promise.allSettled(promises);
 
   results.forEach((result, idx) => {
@@ -201,7 +189,6 @@ export async function handler(event) {
     }
   });
 
-  // Return success response
   return {
     statusCode: 200,
     headers,
