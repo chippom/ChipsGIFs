@@ -1,4 +1,3 @@
-<!-- 🧭 Document Setup -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,11 +7,12 @@
   <meta name="description" content="Hand-picked political satire GIFs, memes, and animations you won't find elsewhere! Laugh at the best moments in politics with this exclusive collection." />
   <meta name="keywords" content="political GIFs, satire GIFs, political humor, Trump GIF, Biden meme, funny political images, chip's GIFs, animated satire" />
   <meta name="author" content="Chip Pommert" />
-  <title>Page 2: Political Satire GIF Gallery | My GIF Showcase</title>
+  <title>Page 2: Political Satire GIF Gallery | Chips GIF Showcase</title>
 
-  <!-- Updated stylesheet link with cache-busting version query string -->
+  <!-- GLOBAL stylesheet (cache busted) -->
   <link rel="stylesheet" href="styles.css?v=20250729" />
 
+  <!-- Canonical + OG -->
   <link rel="canonical" href="https://chips-gifs.com/page_2.html" />
   <meta property="og:title" content="The Best Political Satire GIFs | Chips-GIFs Page 2" />
   <meta property="og:description" content="Laugh at the wildest moments in politics with these one-of-a-kind satire GIFs. From Trump gags to Biden memes—exclusive and new every week." />
@@ -34,11 +34,9 @@
   <link rel="manifest" href="/manifest.json" />
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" sizes="180x180" />
 
-  <!-- 🎨 Inline Styling Adjusted -->
+  <!-- 🎨 Page‑unique styles (CLEANED: NO .pagination overrides here) -->
   <style>
-    /* Responsive parental advisory icon */
     .site-title img, .icon {
-      width: 100%;
       max-width: 160px;
       height: auto;
       object-fit: contain;
@@ -46,16 +44,13 @@
       margin-left: 10px;
     }
     @media (max-width: 600px) {
-      .site-title img, .icon {
-        max-width: 100px;
-      }
+      .site-title img, .icon { max-width: 100px; }
     }
 
     .header-buttons {
       text-align: center;
       margin-bottom: 20px;
     }
-
     .header-buttons button {
       margin: 0 10px;
       padding: 8px 14px;
@@ -67,35 +62,22 @@
       color: #fff;
       transition: background 0.3s ease;
     }
+    body.dark-mode .header-buttons button { background: #009966; }
+    .header-buttons button:hover { background: #004999; }
 
-    body.dark-mode .header-buttons button {
-      background: #009966;
-    }
-
-    .header-buttons button:hover {
-      background: #004999;
-      color: #fff;
-    }
-
-    /* Dark-themed intro box similar to index but color adjusted */
     .unique-intro {
       margin: 30px auto 10px auto;
       max-width: 800px;
       font-size: 20px;
-      background-color: #2a2a2a;    /* Dark background in light mode */
-      color: #ddd;                  /* Lighter text for contrast */
+      background-color: #2a2a2a;
+      color: #ddd;
       border-radius: 10px;
       padding: 20px 24px;
       font-style: italic;
       box-shadow: 0 2px 10px rgba(0,0,0,0.5);
       transition: background-color 0.3s ease, color 0.3s ease;
     }
-
-    /* Lighten background and darken text in dark mode */
-    body.dark-mode .unique-intro {
-      background-color: #444;
-      color: #eee;
-    }
+    body.dark-mode .unique-intro { background-color: #444; color: #eee; }
 
     .satire-highlight {
       font-size: 18px;
@@ -103,61 +85,6 @@
       margin-top: 10px;
       padding-left: 16px;
       border-left: 4px solid #f08080;
-    }
-
-    /* Pagination styling for consistent order and display */
-    .pagination {
-      text-align: center;
-      margin: 20px 0 10px;
-      padding: 10px;
-      background-color: #222;
-      transition: background 0.3s ease;
-    }
-
-    .pagination span {
-      font-weight: bold;
-      color: #eee;
-      padding: 8px 16px;
-      border-radius: 4px;
-      background: #004a99;
-      margin: 0 10px;
-      display: inline-block;
-    }
-
-    .pagination a {
-      margin: 0 10px;
-      text-decoration: none;
-      padding: 8px 16px;
-      border-radius: 4px;
-      background: #fff;
-      border: 1px solid #0066cc;
-      color: #0066cc;
-      font-weight: bold;
-      transition: background-color 0.3s ease, color 0.3s ease;
-      display: inline-block;
-    }
-
-    .pagination a:hover {
-      background: #0066cc;
-      color: #fff;
-    }
-
-    /* Dark mode pagination */
-    body.dark-mode .pagination {
-      background-color: #fff;
-    }
-    body.dark-mode .pagination a {
-      border-color: #009966;
-      color: #009966;
-      background: #fff;
-    }
-    body.dark-mode .pagination a:hover {
-      background-color: #009966;
-      color: #fff;
-    }
-    body.dark-mode .pagination span {
-      background: #007a43;
-      color: #b4f3c8;
     }
   </style>
 </head>
@@ -178,18 +105,18 @@
     <p class="instructions">Click on any GIF below for the full-size, unfiltered version.</p>
   </header>
 
-  <!-- 🔗 Top Pagination Navigation -->
-  <div class="pagination">
+  <!-- 🔗 Top Pagination Nav (corrected structure) -->
+  <nav class="pagination" aria-label="Page navigation">
     <a href="index.html">1</a>
-    <span>2</span>
+    <span aria-current="page">2</span>
     <a href="page_3.html">3</a>
     <a href="page_4.html">4</a>
-  </div>
+  </nav>
 
-  <!-- 🌗 Centered Control Buttons -->
+  <!-- 🌗 Header Buttons -->
   <div class="header-buttons">
     <button id="toggleDarkMode">🌓 Toggle Theme</button>
-    <a href="https://bsky.app/profile/chips-gifs.com" target="_blank">
+    <a href="https://bsky.app/profile/chips-gifs.com" target="_blank" rel="noopener noreferrer">
       <button id="followMeButton">Follow Me</button>
     </a>
   </div>
@@ -199,17 +126,17 @@
     <strong>Dark mode—because chaos always looks better after sunset.</strong><br />
     Welcome to the ultimate political GIF battleground! Every animation in this gallery
     takes a playful jab at real events, trending figures, and the daily circus in Washington
-    and beyond. From Trump’s lightning moment to Biden’s latest blunder, these GIFs are sharp,
-    fearless, and 100% original.<br /><br />
+    and beyond. <br /><br />
     <span style="font-size:18px;">
       See a favorite? Share it—or just enjoy the ride through our funniest, wildest political spoofs.
-      Only found right here on Page 2!
     </span>
   </div>
 
+  <!-- 📦 Content -->
   <main>
     <div class="gif-container">
-      <!-- 🔸 Your GIF entries go here -->
+      <!-- 🔸 Your GIF entries start here -->
+
 <div class="gif-item">
           <img src="gifs/pot_Emblem_1.gif" alt="pot_Emblem" class="gif-thumbnail" loading="lazy">
           <button class="download-btn" data-gif="pot_Emblem_1.gif">Download</button>
@@ -771,23 +698,23 @@
         <span class="download-count">Downloads: 0</span>
     </div>
 <div class="gif-item">
-        <img src="gifs/Keep_blazing_2.gif" alt="Keep_blazing" class="gif-thumbnail" loading="lazy">
+        <img src="gifs/Keep_blazing_2.gif" alt="A bat with a lazorbeam lights a joint and smoke rises saying Keep blazing Stay amazing" class="gif-thumbnail" loading="lazy">
          <button class="download-btn" data-gif="Keep_blazing_2.gif"> Download</button>
         <span class="download-count">Downloads: 0</span>
     </div>
 <div class="gif-item">
-        <img src="gifs/Keep_blazing_3.gif" alt="Keep_blazing" class="gif-thumbnail" loading="lazy">
+        <img src="gifs/Keep_blazing_3.gif" alt="smoke rising saying Keep blazing stay amazing" class="gif-thumbnail" loading="lazy">
          <button class="download-btn" data-gif="Keep_blazing_3.gif"> Download</button>
         <span class="download-count">Downloads: 0</span>
     </div>
 <div class="gif-item">
-        <img src="gifs/Keep_blazing_4.gif" alt="Keep_blazing" class="gif-thumbnail" loading="lazy">
+        <img src="gifs/Keep_blazing_4.gif" alt="smoke rising from a lighter saying Keep blazing stay amazing" class="gif-thumbnail" loading="lazy">
          <button class="download-btn" data-gif="Keep_blazing_4.gif"> Download</button>
         <span class="download-count">Downloads: 0</span>
     </div>
 <div class="gif-item">
-        <img src="gifs/Serenity prayer _2.gif" alt="Serenity prayer" class="gif-thumbnail" loading="lazy">
-         <button class="download-btn" data-gif="Serenity prayer _2.gif"> Download</button>
+        <img src="gifs/serenity_prayer_2.gif" alt="Alcoholics Anonymous version of the Serenity prayer" class="gif-thumbnail" loading="lazy">
+         <button class="download-btn" data-gif="serenity_prayer_2.gif"> Download</button>
         <span class="download-count">Downloads: 0</span>
     </div>
 <div class="gif-item">
@@ -846,61 +773,58 @@
     <span class="download-count">Downloads: 0</span>
 </div>
 <div class="gif-item">
-    <img src="gifs/Serenity prayer_2 .gif" alt="Serenity prayer_2" class="gif-thumbnail" loading="lazy">
-    <button class="download-btn" data-gif="Serenity prayer_2 .gif">Download</button>
+    <img src="gifs/full_serenity_prayer_3.gif" alt="the full version of the Serenity prayer" class="gif-thumbnail" loading="lazy">
+    <button class="download-btn" data-gif="full_serenity_prayer_3.gif">Download</button>
     <span class="download-count">Downloads: 0</span>
 </div>
-</div> <!-- End GIF container -->
 
-<!-- Contact Me Button ABOVE bottom nav bar -->
-<div class="contact-button-container" style="text-align:center; margin: 20px auto 10px;">
-  <a href="mailto:Chippom2@gmail.com" id="contactMeButton" aria-label="Email Chip">Contact Me</a>
+</div> <!-- End .gif-container -->
+
+<!-- Contact Me Button -->
+<div class="contact-button-container">
+    <a href="mailto:Chippom2@gmail.com" id="contactMeButton" aria-label="Email Chip">Contact Me</a>
 </div>
 
-<!-- Bottom Navigation Bar (page 2 already full width; keep existing styles) -->
+<!-- Pagination Bar -->
 <nav class="pagination" aria-label="Page navigation">
-  <a href="index.html">1</a>
-  <span aria-current="page">2</span>
-  <a href="page_3.html">3</a>
-  <a href="page_4.html">4</a>
+    <a href="index.html">1</a>
+    <span aria-current="page">2</span>
+    <a href="page_3.html">3</a>
+    <a href="page_4.html">4</a>
 </nav>
 </main>
 
-<!-- Footer fixed at bottom, smaller Buy Me A Coffee button -->
-<footer style="
-  position: fixed;
-  bottom: 0; left: 0; width: 100%;
-  background-color: var(--header-footer-bg, #333);
-  color: var(--header-footer-text, #fff);
-  text-align: center;
-  padding: 10px 0 10px 0;
-  box-sizing: border-box;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;">
-  <p style="margin:0;">Created by Chip Pommert</p>
-  <a href="https://buymeacoffee.com/chippom" target="_blank" rel="noopener noreferrer"
-     style="display: inline-block;">
-    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
-         alt="Buy Me A Coffee"
-         style="height: 32px; width: 120px; margin-top: 4px; margin-bottom: 4px;" />
-  </a>
+<!-- Footer -->
+<footer>
+    <p>Created by Chip Pommert</p>
+    <div style="max-width: 140px; width: 100%; display: flex; justify-content: center;">
+        <a href="https://buymeacoffee.com/chippom" target="_blank" rel="noopener noreferrer"
+           style="display: inline-block;">
+            <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+                 alt="Buy me a coffee"
+                 style="height: 32px; width: 120px; margin-top: 4px; margin-bottom: 4px;" />
+        </a>
+    </div>
 </footer>
 
 <!-- Overlay Viewer -->
 <div id="overlay" class="fullsize-overlay" style="display:none;">
-  <img id="overlay-img" class="fullsize-image" src="" alt="Full-size GIF" />
+    <img id="overlay-img" class="fullsize-image" src="" alt="Full-size GIF" />
 </div>
 
-<!-- Consent Banner (only shown if needed, handled by scripts.js) -->
+<!-- Consent Banner -->
+<div id="consent-banner" style="display:none;">
+    We use cookies to improve your experience. By using the site, you accept our cookie policy.
+    <button onclick="acceptCookies()">Accept</button>
+</div>
 
-<!-- Only external script needed for dark mode and site logic! -->
 <script src="scripts.js"></script>
 </body>
 </html>
+
+
+
+
 
 
 

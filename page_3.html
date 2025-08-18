@@ -8,9 +8,10 @@
   <meta name="author" content="Chip Pommert" />
   <title>Page 3: Satirical Madness Continues | Chips GIF Showcase</title>
 
-  <!-- Cache-busting version query added here on the CSS file -->
+  <!-- Global Stylesheet -->
   <link rel="stylesheet" href="styles.css?v=20250729" />
 
+  <!-- Canonical + OG -->
   <link rel="canonical" href="https://chips-gifs.com/page_3.html" />
   <meta property="og:title" content="Page 3: Satirical Madness | Chips-GIFs" />
   <meta property="og:description" content="Page 3 continues the chaos. Political dance-offs, gaffe montages, and fearless satire all in one place." />
@@ -26,12 +27,13 @@
     })(window,document,'script','dataLayer','GTM-NG2VZ7J8');
   </script>
 
-  <!-- PWA manifest and theme colors -->
+  <!-- PWA manifest + theme colors -->
   <meta name="theme-color" content="#333333" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#39ff14" media="(prefers-color-scheme: dark)" />
   <link rel="manifest" href="/manifest.json" />
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" sizes="180x180" />
 
+  <!-- 🎨 Page-specific styles (no .pagination overrides here) -->
   <style>
     .site-title img {
       margin-left: 10px;
@@ -45,7 +47,6 @@
       text-align: center;
       margin-bottom: 20px;
     }
-
     .header-buttons button {
       margin: 0 10px;
       padding: 8px 14px;
@@ -57,21 +58,14 @@
       color: #fff;
       transition: background 0.3s ease;
     }
-
-    body.dark-mode .header-buttons button {
-      background: #009966;
-    }
-
-    .header-buttons button:hover {
-      background: #004999;
-      color: #fff;
-    }
+    body.dark-mode .header-buttons button { background: #009966; }
+    .header-buttons button:hover { background: #004999; color: #fff; }
 
     .unique-intro {
       margin: 30px auto 10px auto;
       max-width: 800px;
       font-size: 20px;
-      background-color: #2a2a2a;  /* dark in light mode */
+      background-color: #2a2a2a;
       color: #ddd;
       border-radius: 10px;
       padding: 20px 24px;
@@ -79,11 +73,7 @@
       box-shadow: 0 2px 10px rgba(0,0,0,0.5);
       transition: background-color 0.3s ease, color 0.3s ease;
     }
-
-    body.dark-mode .unique-intro {
-      background-color: #444;
-      color: #eee;
-    }
+    body.dark-mode .unique-intro { background-color: #444; color: #eee; }
 
     .satire-highlight {
       font-size: 18px;
@@ -110,28 +100,28 @@
       <img src="gifs/Parental_Advisery_4a.gif"
            alt="colorful parental advisory"
            class="icon"
-           style="max-width: 120px; height: auto; object-fit: contain;">
+           style="max-width:120px; height:auto; object-fit:contain;">
     </div>
     <p class="instructions">Click on any GIF below for the full-size, unfiltered version.</p>
   </header>
 
-  <!-- 🔗 Page Navigation -->
-  <div class="pagination">
+  <!-- 🔗 Top Pagination Nav (clean and consistent) -->
+  <nav class="pagination" aria-label="Page navigation">
     <a href="index.html">1</a>
     <a href="page_2.html">2</a>
-    <span>3</span>
+    <span aria-current="page">3</span>
     <a href="page_4.html">4</a>
-  </div>
+  </nav>
 
   <!-- 🎛 Header Buttons -->
   <div class="header-buttons">
     <button id="toggleDarkMode">🌓 Toggle Theme</button>
-    <a href="https://bsky.app/profile/chips-gifs.com" target="_blank">
+    <a href="https://bsky.app/profile/chips-gifs.com" target="_blank" rel="noopener noreferrer">
       <button id="followMeButton">Follow Me</button>
     </a>
   </div>
 
-  <!-- 📣 Intro Blurb -->
+  <!-- 📣 Intro -->
   <div class="unique-intro">
     <strong>Welcome back to the circus—Page 3 delivers round two!</strong><br />
     From political dance-offs to gaffe montages, this gallery keeps pulling punches where it hurts.
@@ -141,10 +131,12 @@
     </span>
   </div>
 
-  <!-- 📦 GIF Content Wrapper -->
+  <!-- 📦 GIF Content -->
   <main>
     <div class="gif-container">
       <!-- 🔸 Your ~200 GIF entries start here -->
+
+
 <div class="gif-container">
 
   <div class="gif-item">
@@ -803,68 +795,49 @@
     <span class="download-count">Downloads: 0</span>
 </div>
 
-</div> <!-- End gif-container -->
+</div> <!-- End .gif-container -->
 
-<!-- Contact Me Button (moved above bottom nav bar) -->
-<div class="contact-button-container" style="position: relative; z-index: 1100; margin: 20px auto 10px auto; text-align: center;">
-  <a href="mailto:Chippom2@gmail.com" id="contactMeButton" aria-label="Email Chip">Contact Me</a>
+<!-- Contact Me Button -->
+<div class="contact-button-container">
+    <a href="mailto:Chippom2@gmail.com" id="contactMeButton" aria-label="Email Chip">Contact Me</a>
 </div>
 
-<!-- PAGINATION: solid bar, full width, dark background in light mode, white in dark mode -->
-<nav class="pagination" aria-label="Page navigation" style="
-  width: 100%;
-  max-width: 100%;
-  margin: 10px 0 0 0; /* no bottom margin */
-  padding: 12px 0;
-  background: #222;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 16px;
-  box-sizing: border-box;
-">
-  <a href="index.html">1</a>
-  <a href="page_2.html">2</a>
-  <span aria-current="page">3</span>
-  <a href="page_4.html">4</a>
+<!-- Pagination Bar -->
+<nav class="pagination" aria-label="Page navigation">
+    <a href="index.html">1</a>
+    <a href="page_2.html">2</a>
+    <span aria-current="page">3</span>
+    <a href="page_4.html">4</a>
 </nav>
 </main>
 
-<!-- Fixed Footer (width 100%, smaller Buy Me A Coffee button) -->
-<footer style="
-  position: fixed;
-  bottom: 0; left: 0; width: 100%;
-  background-color: var(--header-footer-bg, #333);
-  color: var(--header-footer-text, #fff);
-  text-align: center;
-  padding: 10px 0 10px 0;
-  box-sizing: border-box;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-">
-  <p style="margin: 0;">Created by Chip Pommert</p>
-  <a href="https://buymeacoffee.com/chippom" target="_blank" rel="noopener noreferrer" style="display: inline-block;">
-    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
-         alt="Buy Me A Coffee"
-         style="height: 32px; width: 120px; margin-top: 4px; margin-bottom: 4px;" />
-  </a>
+<!-- Footer -->
+<footer>
+    <p>Created by Chip Pommert</p>
+    <a href="https://buymeacoffee.com/chippom" target="_blank" rel="noopener noreferrer">
+        <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy me a coffee" />
+    </a>
 </footer>
 
 <!-- Overlay Viewer -->
 <div id="overlay" class="fullsize-overlay" style="display:none;">
-  <img id="overlay-img" class="fullsize-image" src="" alt="Full-size GIF" />
+    <img id="overlay-img" class="fullsize-image" src="" alt="Full-size GIF" />
 </div>
 
-<!-- Consent Banner (unchanged) -->
+<!-- Consent Banner -->
+<div id="consent-banner" style="display:none;">
+    We use cookies to improve your experience. By using the site, you accept our cookie policy.
+    <button onclick="acceptCookies()">Accept</button>
+</div>
 
-<!-- Only the global script handles dark mode and other interactions -->
 <script src="scripts.js"></script>
 </body>
 </html>
+
+
+
+
+
 
 
 
