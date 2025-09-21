@@ -1,4 +1,4 @@
-/* Deployment Version: 2 | Timestamp: 2025-09-21 15:40 EDT — Updated for improved layout of My coffee button
+/* Deployment Version: 2 | Timestamp: 2025-09-21 16:05 EDT — Updated My coffee button & intro gif centering
 
 /* 🎨 THEME VARIABLES */
 :root {
@@ -437,18 +437,9 @@ body.dark-mode .unique-intro {
   /* main .pagination:last-of-type {
     margin-bottom: 90px !important;
   } -- No longer necessary with proper main padding */
+}
 
-}
-.icon {
-  display: block;
-  max-width: 100%;
-  height: auto;
-  object-fit: contain;
-  margin: 0 auto;
-  aspect-ratio: 1 / 1; /* or 4 / 3 or 3 / 2 depending on your GIF shape */
-  width: clamp(120px, 20vw, 180px); /* scales with viewport */
-}
-/* 🔧 Override header GIF sizing for better visual balance */
+/* 🔧 Header GIF sizing and centering */
 .icon {
   display: block;
   object-fit: contain;
@@ -456,15 +447,18 @@ body.dark-mode .unique-intro {
   aspect-ratio: 1 / 1;
   width: clamp(180px, 28vw, 260px); /* Scales with viewport for stronger presence */
   height: auto;
+  text-align: center; /* fallback centering */
 }
+
+/* 🔧 Buy Me a Coffee button layout fix */
 img[alt="Buy Me A Coffee"] {
-  width: 220px;
-  height: 60px;
-  object-fit: contain;
   display: block;
   margin: 0 auto;
+  object-fit: contain;
+  width: 220px;
+  max-width: 100%;
+  height: auto;
 }
 
-
-
 /* --- End of CSS --- */
+
