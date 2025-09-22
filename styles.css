@@ -1,4 +1,4 @@
-/* Deployment Version: 2 | Timestamp: 2025-09-21 19:21 EDT — Updated My coffee button & intro gif centering */
+/* Deployment Version: 2 | Timestamp: 2025-08-17 21:40 EDT — Updated for improved bottom nav/button spacing */
 
 /* 🎨 THEME VARIABLES */
 :root {
@@ -52,7 +52,7 @@ main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding-bottom: 90px;
+  padding-bottom: 90px; /* Matches footer height to prevent content underlap */
   box-sizing: border-box;
   margin-right: 0;
   min-height: calc(100vh - 90px);
@@ -72,7 +72,7 @@ footer {
   left: 0;
   right: 0;
   height: 90px;
-  padding: 1rem 0;
+  padding: 1rem 0 1rem 0;
   box-sizing: border-box;
   z-index: 1000;
   margin: 0;
@@ -93,12 +93,11 @@ footer p {
   line-height: 1.2;
 }
 
-footer img[alt="Buy Me A Coffee"] {
+footer img {
+  margin-top: 2px;
+  margin-bottom: 2px;
   height: 32px;
   width: 120px;
-  margin: 2px auto;
-  object-fit: contain;
-  display: block;
 }
 
 /* 📝 INSTRUCTIONS TEXT */
@@ -225,7 +224,7 @@ footer img[alt="Buy Me A Coffee"] {
 #contactMeButton {
   display: inline-block;
   padding: 0.625rem 1.25rem;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.25rem;       /* UPDATED: Tighten space below button */
   position: relative;
   z-index: 10;
   background-color: var(--primary-color);
@@ -239,9 +238,10 @@ footer img[alt="Buy Me A Coffee"] {
   background-color: #388e3c;
 }
 
+/* Contact Button container to keep it above nav and footer without overlap */
 .contact-button-container {
   text-align: center;
-  margin: 0 auto 0.5rem auto;
+  margin: 0 auto 0.5rem auto;   /* UPDATED: Remove top margin, reduce bottom margin */
   width: 100%;
   max-width: 100vw;
   box-sizing: border-box;
@@ -325,7 +325,7 @@ footer img[alt="Buy Me A Coffee"] {
 .pagination {
   width: 100vw;
   max-width: 100vw;
-  margin: 0.25rem 0 0 0;
+  margin: 0.25rem 0 0 0;      /* UPDATED: Reduce margin-top for tight stacking below button */
   padding: 12px 0;
   background: var(--pagination-bg, #222);
   display: flex;
@@ -439,40 +439,6 @@ body.dark-mode .unique-intro {
   } -- No longer necessary with proper main padding */
 }
 
-/* 🔧 Header GIF sizing and centering */
-.site-title,
-.site-title h1 {
-  text-align: center;
-}
 
-.icon {
-  display: block;
-  object-fit: contain;
-  margin: 0 auto;
-  aspect-ratio: 1 / 1;
-  width: clamp(180px, 28vw, 260px);
-  height: auto;
-}
-
-/* 🔧 Buy Me a Coffee button layout fix */
-footer img[alt="Buy Me A Coffee"] {
-  height: 32px;
-  width: 120px;
-  margin: 2px auto;
-  object-fit: contain;
-  display: block;
-}
-
-main img[alt="Buy Me A Coffee"],
-section img[alt="Buy Me A Coffee"] {
-  display: block;
-  margin: 0 auto;
-  object-fit: contain;
-  width: 220px;
-  max-width: 100%;
-  height: auto;
-}
 
 /* --- End of CSS --- */
-
-
