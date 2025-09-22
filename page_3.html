@@ -34,14 +34,20 @@
   <link rel="manifest" href="/manifest.json" />
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" sizes="180x180" />
 
-  <!-- 🎨 Page-specific styles (no .pagination overrides here) -->
+  <!-- 🎨 Page-specific styles -->
   <style>
-    .site-title img {
-      margin-left: 10px;
-      max-width: 120px;
+    .site-title {
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .site-title img.icon {
+      display: block;
+      margin: 0 auto;
+      width: clamp(180px, 28vw, 260px);
       height: auto;
       object-fit: contain;
-      vertical-align: middle;
+      aspect-ratio: 1 / 1;
     }
 
     .header-buttons {
@@ -85,7 +91,11 @@
     }
   </style>
 </head>
-
+<body>
+  <div class="site-title">
+    <h1>Political Satire: GIFs That Roast the Powerful</h1>
+    <img src="https://chips-gifs.com/featured_page3.gif" class="icon" alt="Header GIF">
+  </div>
 
 <body>
   <!-- 📊 GTM NoScript Fallback -->
@@ -792,49 +802,50 @@
     <span class="download-count">Downloads: 0</span>
 </div>
 <div class="gif-item">
-    <img src="gifs/Bible Verse_mathew_9 29-30.gif" alt="Bible Verse_mathew_9 29-30" class="gif-thumbnail" loading="lazy">
-    <button class="download-btn" data-gif="Bible Verse_mathew_9 29-30.gif">Download</button>
-    <span class="download-count">Downloads: 0</span>
+  <img src="gifs/Bible Verse_mathew_9 29-30.gif" alt="Bible Verse_mathew_9 29-30" class="gif-thumbnail" loading="lazy">
+  <button class="download-btn" data-gif="Bible Verse_mathew_9 29-30.gif">Download</button>
+  <span class="download-count">Downloads: 0</span>
 </div>
 
 </div> <!-- End .gif-container -->
 
 <!-- Contact Me Button -->
 <div class="contact-button-container">
-    <a href="mailto:Chippom2@gmail.com" id="contactMeButton" aria-label="Email Chip">Contact Me</a>
+  <a href="mailto:Chippom2@gmail.com" id="contactMeButton" aria-label="Email Chip">Contact Me</a>
 </div>
 
 <!-- Pagination Bar -->
 <nav class="pagination" aria-label="Page navigation">
-    <a href="index.html">1</a>
-    <a href="page_2.html">2</a>
-    <span aria-current="page">3</span>
-    <a href="page_4.html">4</a>
+  <a href="index.html">1</a>
+  <a href="page_2.html">2</a>
+  <span aria-current="page">3</span>
+  <a href="page_4.html">4</a>
 </nav>
 </main>
 
 <!-- Footer -->
 <footer>
-    <p>Created by Chip Pommert</p>
-    <a href="https://buymeacoffee.com/chippom" target="_blank" rel="noopener noreferrer">
-        <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy me a coffee" />
-    </a>
+  <p>Created by Chip Pommert</p>
+  <a href="https://buymeacoffee.com/chippom" target="_blank" rel="noopener noreferrer">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" />
+  </a>
 </footer>
 
 <!-- Overlay Viewer -->
 <div id="overlay" class="fullsize-overlay" style="display:none;">
-    <img id="overlay-img" class="fullsize-image" src="" alt="Full-size GIF" />
+  <img id="overlay-img" class="fullsize-image" src="" alt="Full-size GIF" />
 </div>
 
 <!-- Consent Banner -->
 <div id="consent-banner" style="display:none;">
-    We use cookies to improve your experience. By using the site, you accept our cookie policy.
-    <button onclick="acceptCookies()">Accept</button>
+  We use cookies to improve your experience. By using the site, you accept our cookie policy.
+  <button onclick="acceptCookies()">Accept</button>
 </div>
 
 <script src="scripts.js"></script>
 </body>
 </html>
+
 
 
 
