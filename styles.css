@@ -1,4 +1,4 @@
-/* Deployment Version: 2 | Timestamp: 2025-10-06 11:40 EDT — Updated for improved bottom nav/button spacing */
+/* Deployment Version: 7 | Timestamp: 2025-10-06 13:50 EDT — Updated footer & title gif */
 
 /* 🎨 THEME VARIABLES */
 :root {
@@ -52,10 +52,10 @@ main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding-bottom: 90px; /* Matches footer height to prevent content underlap */
+  padding-bottom: 120px; /* Reserve space for footer + sticky nav */
   box-sizing: border-box;
   margin-right: 0;
-  min-height: calc(100vh - 90px);
+  min-height: calc(100vh - 120px);
 }
 
 /* 🧱 HEADER & FOOTER */
@@ -66,70 +66,115 @@ header, footer {
   padding: 1rem;
 }
 
-/* Updated .site-title for vertical stacking */
+/* Fixed footer */
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  padding: 1rem 0;
+  box-sizing: border-box;
+  z-index: 1000;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--header-footer-bg);
+  color: var(--header-footer-text);
+  font-size: 0.85rem;
+  overflow: hidden;
+}
+
+footer p {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.2;
+}
+
+footer img {
+  margin-top: 2px;
+  margin-bottom: 2px;
+  height: 32px;
+  width: 120px;
+}
+
+/* Updated .site-title for vertical stacking with larger GIF on desktop */
 .site-title {
   display: flex;
-  flex-direction: column;   /* stacks title and GIF vertically */
-  align-items: center;      /* centers horizontally */
-  gap: 0.5rem;              /* spacing between title and GIF */
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
   max-width: 100%;
 }
 
-/* Title style */
 .site-title .title {
-  /* Your existing styles for the title, if any */
-  font-size: 2rem; /* example */
+  font-size: 2.5rem; /* Larger title for desktop */
   text-align: center;
 }
 
-/* Updated GIF styles */
 .site-title .icon {
-  width: 100px;            /* adjust as needed for your design */
-  margin-left: 0;          /* reset margin left */
-  margin-bottom: 0;        /* reset margin bottom */
+  width: 200px; /* Larger GIF on desktop */
   max-width: 100%;
   height: auto;
   object-fit: contain;
   vertical-align: middle;
   transition: width 0.3s ease;
   flex-shrink: 0;
+  margin-left: 0;
+  margin-bottom: 0;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
+/* Responsive adjustments for GIF sizes */
+@media (max-width: 1024px) {
+  .site-title .title {
+    font-size: 2rem;
+  }
   .site-title .icon {
-    width: 90px;
+    width: 150px;
+  }
+}
+
+@media (max-width: 768px) {
+  .site-title .title {
+    font-size: 1.6rem;
+  }
+  .site-title .icon {
+    width: 120px;
   }
 }
 
 @media (max-width: 480px) {
+  .site-title .title {
+    font-size: 1.2rem;
+    flex-basis: 100%;
+  }
   .site-title .icon {
     width: 60px;
     margin-left: 0;
     margin-bottom: 0.5rem;
     max-width: 50px;
   }
-  .site-title .title {
-    font-size: 1.2rem;
-    text-align: center;
-    flex-basis: 100%;
-  }
 }
 
 /* 🖼️ GIF DISPLAY */
 .gif-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 0 0 0;
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
-  padding: 2rem 0 0 0;
   justify-content: center;
   border-bottom: none;
 }
 
 .gif-item {
-  width: calc(33.33% - 1rem);
+  flex: 1 1 calc(33.33% - 1rem);
   min-width: 200px;
-  max-width: 300px;
+  max-width: 400px;
   margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
@@ -142,21 +187,11 @@ header, footer {
 
 .gif-item img, .placeholder {
   width: 100%;
-  height: 200px;
+  height: auto; /* Maintain aspect ratio */
   object-fit: contain;
   border-radius: 0.5rem;
   margin-bottom: 1rem;
   display: block;
-}
-
-.placeholder {
-  background-color: transparent;
-  border: none;
-  appearance: none;
-  padding: 0;
-  overflow: hidden;
-  box-shadow: none;
-  display: none !important;
 }
 
 /* 📥 DOWNLOAD BUTTONS */
@@ -211,85 +246,36 @@ header, footer {
   margin: 0.25rem 0.125rem;
 }
 
+/* Fix Buy Me a Coffee button sizing and container */
+.contact-button-container {
+  position: relative;
+  margin: 10px auto 6px;
+  z-index: 1100;
+  text-align: center;
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
+  padding: 0 15px;
+}
+
 #contactMeButton {
   display: inline-block;
   padding: 0.625rem 1.25rem;
-  margin-bottom: 0.25rem;         /* UPDATED: Tighten space below button */
+  margin-bottom: 0.25rem;
   position: relative;
   z-index: 10;
   background-color: var(--primary-color);
   color: #fff;
   border-radius: 0.3125rem;
   text-decoration: none;
+  font-size: 1rem;
+  max-width: 160px; /* Clamp max width */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   transition: background-color 0.3s ease;
 }
 
 #contactMeButton:hover {
   background-color: #388e3c;
-}
-
-/* Contact Button container to keep it above nav and footer without overlap */
-.contact-button-container {
-  text-align: center;
-  margin: 0 auto 0.5rem auto;   /* UPDATED: Remove top margin, reduce bottom margin */
-  width: 100%;
-  max-width: 100vw;
-  box-sizing: border-box;
-  padding: 0 15px;
-  position: relative;
-  z-index: 1100;
-}
-
-/* 🌟 STAR EFFECT */
-.star {
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-  color: gold;
-  font-size: 1.875rem;
-  transition: opacity 0.5s ease-out;
-  opacity: 0;
-  font-family: "Segoe UI Symbol", "Arial Unicode MS", serif;
-}
-
-.star:before,
-.star:after {
-  position: absolute;
-  content: "\2726";
-  font-size: 0.75rem;
-}
-
-.star:before {
-  color: #fff0;
-  text-shadow: 0 0 0.1875rem #fafaae;
-}
-
-.star:after {
-  color: #ff0;
-}
-
-/* 🖼️ OVERLAY VIEWER */
-.fullsize-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 3000 !important;
-}
-
-.fullsize-overlay.active {
-  display: flex !important;
-}
-
-.fullsize-image {
-  max-width: 90%;
-  max-height: 90%;
-  object-fit: contain;
 }
 
 /* 🧭 NAVIGATION BUTTONS */
@@ -311,11 +297,13 @@ header, footer {
   background-color: #0056b3;
 }
 
-/* Pagination Bar - Bottom Navigation */
+/* Pagination Bar - Bottom Navigation as sticky and scrolls with content */
 .pagination {
+  position: sticky;
+  bottom: 60px; /* Stops above footer which is 60px tall */
   width: 100vw;
   max-width: 100vw;
-  margin: 0.25rem 0 0 0;      /* UPDATED: Reduce margin-top for tight stacking below button */
+  margin: 0.25rem 0 0 0;
   padding: 12px 0;
   background: var(--pagination-bg, #222);
   display: flex;
@@ -325,7 +313,6 @@ header, footer {
   box-sizing: border-box;
   overflow-x: visible;
   color: var(--pagination-text, #0066cc);
-  position: relative;
   left: 0;
   z-index: 1010;
   border: none;
@@ -428,94 +415,5 @@ body.dark-mode .unique-intro {
     margin-bottom: 90px !important;
   } -- No longer necessary with proper main padding */
 }
-/* === Revert to working backup for footer, bottom nav, and coffee button === */
-
-/* Fixed footer exactly like backup */
-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 60px;
-  padding: 1rem 0;
-  margin: 0;
-  box-sizing: border-box;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  background-color: var(--header-footer-bg);
-  color: var(--header-footer-text);
-}
-footer p { margin: 0; font-size: 0.875rem; line-height: 1.3; }
-footer img { margin-top: 5px; }
-
-/* Reserve space for footer + bottom nav (pagination) */
-main {
-  padding-bottom: 120px !important; /* 60px footer + ~60px pagination */
-}
-
-/* Pagination (bottom nav) fixed above footer like backup */
-.pagination {
-  position: fixed !important;
-  bottom: 60px !important;           /* sit just above the fixed footer */
-  left: 0; right: 0;
-  width: 100% !important;
-  max-width: 100% !important;
-  margin: 0 !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-  background: #222;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 16px;
-  box-sizing: border-box;
-  z-index: 1500;                     /* above content, below overlays */
-  border-radius: 0 !important;
-  box-shadow: none;
-}
-
-/* Contact button sits just above the pagination bar */
-.contact-button-container {
-  position: relative;
-  z-index: 1100;
-  text-align: center;
-  margin: 40px auto 20px auto;       /* restore backup spacing */
-  width: 100%;
-  max-width: 100vw;
-  box-sizing: border-box;
-  padding: 0 15px;
-}
-
-#contactMeButton {
-  display: inline-block;
-  padding: 0.625rem 1.25rem;
-  margin-bottom: 1.25rem;            /* restore backup margin */
-  position: relative;
-  z-index: 10;
-  background-color: var(--primary-color);
-  color: #fff;
-  border-radius: 0.3125rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
-
-/* Optional: page-specific tweak you used before (page 4) */
-/* Add inline class on page 4 container if needed:
-   .contact-button-container.page-4 #contactMeButton { margin-bottom: 30px; } */
-
-/* Dark mode parity for pagination like backup */
-body.dark-mode .pagination { background-color: #fff !important; }
-body.dark-mode .pagination a {
-  background: #fff;
-  color: #009966;
-  border-color: #009966;
-}
-body.dark-mode .pagination a:hover { background-color: #009966; color: #fff; }
-body.dark-mode .pagination span { background: #007a43; color: #b4f3c8; }
-
 
 /* --- End of CSS --- */
