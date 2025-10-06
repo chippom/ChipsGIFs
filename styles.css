@@ -428,5 +428,94 @@ body.dark-mode .unique-intro {
     margin-bottom: 90px !important;
   } -- No longer necessary with proper main padding */
 }
+/* === Revert to working backup for footer, bottom nav, and coffee button === */
+
+/* Fixed footer exactly like backup */
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  padding: 1rem 0;
+  margin: 0;
+  box-sizing: border-box;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--header-footer-bg);
+  color: var(--header-footer-text);
+}
+footer p { margin: 0; font-size: 0.875rem; line-height: 1.3; }
+footer img { margin-top: 5px; }
+
+/* Reserve space for footer + bottom nav (pagination) */
+main {
+  padding-bottom: 120px !important; /* 60px footer + ~60px pagination */
+}
+
+/* Pagination (bottom nav) fixed above footer like backup */
+.pagination {
+  position: fixed !important;
+  bottom: 60px !important;           /* sit just above the fixed footer */
+  left: 0; right: 0;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  background: #222;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  box-sizing: border-box;
+  z-index: 1500;                     /* above content, below overlays */
+  border-radius: 0 !important;
+  box-shadow: none;
+}
+
+/* Contact button sits just above the pagination bar */
+.contact-button-container {
+  position: relative;
+  z-index: 1100;
+  text-align: center;
+  margin: 40px auto 20px auto;       /* restore backup spacing */
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
+  padding: 0 15px;
+}
+
+#contactMeButton {
+  display: inline-block;
+  padding: 0.625rem 1.25rem;
+  margin-bottom: 1.25rem;            /* restore backup margin */
+  position: relative;
+  z-index: 10;
+  background-color: var(--primary-color);
+  color: #fff;
+  border-radius: 0.3125rem;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+/* Optional: page-specific tweak you used before (page 4) */
+/* Add inline class on page 4 container if needed:
+   .contact-button-container.page-4 #contactMeButton { margin-bottom: 30px; } */
+
+/* Dark mode parity for pagination like backup */
+body.dark-mode .pagination { background-color: #fff !important; }
+body.dark-mode .pagination a {
+  background: #fff;
+  color: #009966;
+  border-color: #009966;
+}
+body.dark-mode .pagination a:hover { background-color: #009966; color: #fff; }
+body.dark-mode .pagination span { background: #007a43; color: #b4f3c8; }
+
 
 /* --- End of CSS --- */
