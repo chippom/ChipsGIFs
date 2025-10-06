@@ -1,14 +1,15 @@
-// scripts.js
+// scripts.js V=202510061540
 
-
+// Prevent FOUC: Make body visible once DOM is fully loaded
 document.addEventListener("DOMContentLoaded", () => {
+  document.body.style.visibility = "visible";
+
   // Generate or get unique visitor ID from localStorage
   let visitorId = localStorage.getItem('chips_visitor_id');
   if (!visitorId) {
     visitorId = crypto.randomUUID();
     localStorage.setItem('chips_visitor_id', visitorId);
   }
-
 
   initLazyLoad();
   initOverlay();
@@ -19,9 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initConsentBanner();                        // Banner visible but no blocking, fixed to remember acceptance
   initStarTrails();
 
-
   fetchAndDisplayAllDownloadCounts();
-
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
@@ -35,7 +34,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-
 
 // 1) Lazy-load GIFs below the fold
 function initLazyLoad() {
@@ -51,7 +49,6 @@ function initLazyLoad() {
     });
   }, { rootMargin: "800px" });
 
-
   document.querySelectorAll(".gif-item img").forEach((img, i) => {
     const original = img.src;
     img.dataset.gif = original;
@@ -63,7 +60,6 @@ function initLazyLoad() {
     }
   });
 }
-
 
 // 2) Full-screen overlay on GIF click (not download button)
 function initOverlay() {
@@ -86,7 +82,6 @@ function initOverlay() {
   });
 }
 
-
 // New: Right-click context menu logging on overlay image for "Save As" detection
 function initOverlayContextMenuLogging(visitorId) {
   const overlayImg = document.getElementById("overlay-img");
@@ -107,7 +102,6 @@ function initOverlayContextMenuLogging(visitorId) {
   });
 }
 
-
 // 3) Dark mode toggle
 function initDarkMode() {
   const toggle = document.getElementById("toggleDarkMode");
@@ -120,7 +114,6 @@ function initDarkMode() {
   }
 }
 
-
 // 4) Button-click handler: update counts, log visitor, download GIF
 function initDownloadHandlers(visitorId) {
   document.querySelectorAll(".download-btn").forEach(btn => {
@@ -129,17 +122,14 @@ function initDownloadHandlers(visitorId) {
       btn.textContent = "Downloading…";
       btn.disabled = true;
 
-
       try {
         const gifItem = btn.closest(".gif-item");
         const img = gifItem.querySelector("img");
         const countEl = gifItem.querySelector(".download-count");
 
-
         // Safely extract gif name and trim whitespace
         const rawGifName = decodeURIComponent(img.dataset.gif.split("/").pop()).trim();
         const gifNameEncoded = encodeURIComponent(rawGifName);
-
 
         // A) Increment download count using POST JSON
         const countData = JSON.stringify({ gif_name: rawGifName });
@@ -152,7 +142,6 @@ function initDownloadHandlers(visitorId) {
             body: countData
           });
         }
-
 
         // B) Log visitor & download event
         const visitorData = JSON.stringify({
@@ -172,13 +161,11 @@ function initDownloadHandlers(visitorId) {
           });
         }
 
-
         // C) Fetch GIF from deliver_gif endpoint and trigger download
         const res = await fetch(`/.netlify/functions/deliver_gif?gif_name=${gifNameEncoded}`);
         if (!res.ok) throw new Error(res.statusText);
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
-
 
         const a = document.createElement("a");
         a.href = url;
@@ -187,10 +174,8 @@ function initDownloadHandlers(visitorId) {
         a.click();
         a.remove();
 
-
         // Cleanup blob URL after a delay
         setTimeout(() => URL.revokeObjectURL(url), 10000);
-
 
         // D) Refresh download count on page without beacon (GET request)
         try {
@@ -208,7 +193,6 @@ function initDownloadHandlers(visitorId) {
           console.error("Error refreshing download count:", refreshErr);
         }
 
-
       } catch (err) {
         console.error("Download error:", err);
       } finally {
@@ -219,7 +203,6 @@ function initDownloadHandlers(visitorId) {
   });
 }
 
-
 // 5) Right-click & middle-click logging on GIFs
 function initContextMenuLogging(visitorId) {
   document.querySelectorAll(".gif-item img").forEach(img => {
@@ -227,9 +210,7 @@ function initContextMenuLogging(visitorId) {
       const gifNameRaw = (img.dataset.gif || "").split("/").pop();
       const gifName = decodeURIComponent(gifNameRaw).trim();
 
-
       const countData = JSON.stringify({ gif_name: gifName });
-
 
       if (navigator.sendBeacon) {
         navigator.sendBeacon("/.netlify/functions/update-download-count", countData);
@@ -241,7 +222,6 @@ function initContextMenuLogging(visitorId) {
         }).catch(console.error);
       }
 
-
       const visitorData = JSON.stringify({
         visitor_id: visitorId,
         userAgent: navigator.userAgent,
@@ -249,7 +229,6 @@ function initContextMenuLogging(visitorId) {
         referrer: document.referrer,
         gif_name: gifName
       });
-
 
       if (navigator.sendBeacon) {
         navigator.sendBeacon("/.netlify/functions/logVisitor", visitorData);
@@ -268,7 +247,6 @@ function initContextMenuLogging(visitorId) {
   });
 }
 
-
 // 6) Consent banner - visible but does not disable buttons
 // *** FIXED: Checks localStorage to avoid showing again ***
 function initConsentBanner() {
@@ -277,9 +255,7 @@ function initConsentBanner() {
     return; // Do not show banner if accepted
   }
 
-
   if (document.getElementById("consent-banner")) return;
-
 
   const banner = document.createElement("div");
   banner.id = "consent-banner";
@@ -289,45 +265,79 @@ function initConsentBanner() {
   `;
   document.body.appendChild(banner);
 
-
   banner.querySelector("button").addEventListener("click", () => {
     localStorage.setItem("cookiesAccepted", "true");
     banner.style.display = "none";
   });
 }
 
-
-// 7) Star-trail mouse effect
+// 7) Star-trail mouse effect (improved particle system)
 function initStarTrails() {
   const container = document.createElement("div");
   container.style.position = "fixed";
+  container.style.top = "0";
+  container.style.left = "0";
+  container.style.width = "100%";
+  container.style.height = "100%";
   container.style.pointerEvents = "none";
   container.style.zIndex = "9999";
+  container.style.overflow = "visible";
   document.body.appendChild(container);
 
-
   const stars = [];
-  const total = 5;
-  let index = 0;
-  for (let i = 0; i < total; i++) {
-    const star = document.createElement("div");
-    star.textContent = "★";  // Unicode black star character
-    star.className = "star";
-    container.appendChild(star);
-    stars.push(star);
-  }
-  document.addEventListener("mousemove", e => {
-    const star = stars[index];
-    star.style.left = `${e.clientX}px`;
-    star.style.top = `${e.clientY}px`;
-    star.style.opacity = "1";
-    setTimeout(() => {
-      star.style.opacity = "0";
-    }, 500);
-    index = (index + 1) % total;
-  });
-}
+  const maxStars = 20;
 
+  function createStar(x, y) {
+    const star = document.createElement("div");
+    star.textContent = "★"; // Unicode black star character
+    star.className = "star";
+    star.style.position = "absolute";
+    star.style.left = `${x}px`;
+    star.style.top = `${y}px`;
+    star.style.opacity = "1";
+    star.style.fontSize = `${Math.random() * 12 + 8}px`;
+    star.style.transition = "opacity 0.7s ease-out";
+    container.appendChild(star);
+
+    return {
+      element: star,
+      x,
+      y,
+      life: 700, // milliseconds
+      velocityX: (Math.random() - 0.5) * 1,
+      velocityY: (Math.random() - 0.5) * 1,
+      created: Date.now()
+    };
+  }
+
+  document.addEventListener("mousemove", e => {
+    if (stars.length >= maxStars) {
+      const oldest = stars.shift();
+      container.removeChild(oldest.element);
+    }
+    stars.push(createStar(e.clientX, e.clientY));
+  });
+
+  function animateStars() {
+    const now = Date.now();
+    for (let i = stars.length - 1; i >= 0; i--) {
+      const star = stars[i];
+      const elapsed = now - star.created;
+      if (elapsed > star.life) {
+        container.removeChild(star.element);
+        stars.splice(i, 1);
+        continue;
+      }
+      star.x += star.velocityX;
+      star.y += star.velocityY;
+      star.element.style.left = `${star.x}px`;
+      star.element.style.top = `${star.y}px`;
+      star.element.style.opacity = `${1 - elapsed / star.life}`;
+    }
+    requestAnimationFrame(animateStars);
+  }
+  animateStars();
+}
 
 // Fetch and update download counts on page load
 async function fetchAndDisplayAllDownloadCounts() {
@@ -355,3 +365,4 @@ async function fetchAndDisplayAllDownloadCounts() {
     }
   }
 }
+// End of scripts.js
