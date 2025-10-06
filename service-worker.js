@@ -1,6 +1,6 @@
 // service-worker.js
 
-const CACHE_NAME = 'chips-gifs-cache-v3'; // Increment version for cache updates
+const CACHE_NAME = 'chips-gifs-cache-v4'; // Increment version for cache updates
 
 // Files to always cache and network-first serve (app shell)
 const ESSENTIAL_FILES = [
