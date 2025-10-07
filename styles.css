@@ -101,35 +101,36 @@ footer img {
   width: 120px;
 }
 
-/* Updated .site-title for vertical stacking of GIF beneath title */
 .site-title {
   display: flex;
-  flex-direction: column;   /* stacks title and GIF vertically */
-  align-items: center;      /* centers horizontally */
-  gap: 0.5rem;              /* spacing between title and GIF */
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
   max-width: 100%;
 }
 
-/* Title style */
 .site-title .title {
   font-size: 2rem;
   text-align: center;
 }
 
-/* Updated GIF styles to reserve space with 4:3 aspect ratio and 50% width */
 .site-title .icon {
-  width: 50%;            /* half the width of the site-title container */
-  aspect-ratio: 4 / 3;   /* 4:3 aspect ratio for rectangular GIF */
-  object-fit: contain;   /* preserve aspect ratio */
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
   display: block;
-  margin-left: 0;
-  margin-bottom: 0;
-  max-width: 100%;
+  margin: 0 auto;
   height: auto;
-  vertical-align: middle;
   transition: width 0.3s ease;
   flex-shrink: 0;
-  margin: 0 auto;         /* center horizontally */
+}
+
+@media (max-width: 600px) {
+  .site-title .icon {
+    width: 80%;
+    max-width: none;
+  }
 }
 
 /* Responsive adjustments */
