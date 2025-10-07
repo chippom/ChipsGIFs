@@ -112,21 +112,24 @@ footer img {
 
 /* Title style */
 .site-title .title {
-  font-size: 2rem; /* example font size */
+  font-size: 2rem;
   text-align: center;
 }
 
-/* Updated GIF styles */
+/* Updated GIF styles to reserve space with 4:3 aspect ratio and 50% width */
 .site-title .icon {
-  width: 100px;            /* adjust as needed */
-  margin-left: 0;          /* reset any left margin */
-  margin-bottom: 0;        /* reset margin bottom */
+  width: 50%;            /* half the width of the site-title container */
+  aspect-ratio: 4 / 3;   /* 4:3 aspect ratio for rectangular GIF */
+  object-fit: contain;   /* preserve aspect ratio */
+  display: block;
+  margin-left: 0;
+  margin-bottom: 0;
   max-width: 100%;
   height: auto;
-  object-fit: contain;
   vertical-align: middle;
   transition: width 0.3s ease;
   flex-shrink: 0;
+  margin: 0 auto;         /* center horizontally */
 }
 
 /* Responsive adjustments */
