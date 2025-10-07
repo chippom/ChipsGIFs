@@ -1,365 +1,412 @@
-/* Deployment Version: 7 | Timestamp: 2025-10-06 13:50 EDT — Updated footer & title gif */
+/* Deployment Version: Merged | Timestamp: 2025-10-06 20:50 EDT */
 
 /* 🎨 THEME VARIABLES */
 :root {
-  --primary-color: #4CAF50;
-  --secondary-color: #007BFF;
-  --text-color: #333;
-  --background-color: #f4f4f4;
-  --header-footer-bg: #333;
-  --header-footer-text: #fff;
-  --shadow-color: rgba(0,0,0,0.1);
-  --dark-bg: #121212;
-  --dark-text: #ffffff;
-  --dark-header-footer: #1e1e1e;
+  --primary-color: #4CAF50;
+  --secondary-color: #007BFF;
+  --text-color: #333;
+  --background-color: #f4f4f4;
+  --header-footer-bg: #333;
+  --header-footer-text: #fff;
+  --shadow-color: rgba(0,0,0,0.1);
+  --dark-bg: #121212;
+  --dark-text: #ffffff;
+  --dark-header-footer: #1e1e1e;
 }
 
 /* 🌐 GLOBAL RESET */
 html, body {
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-  display: flex;
-  flex-direction: column;
-  background-color: var(--background-color);
-  color: var(--text-color);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 body.dark-mode {
-  background-color: var(--dark-bg);
-  color: var(--dark-text);
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
 }
 
 body.dark-mode header,
 body.dark-mode footer {
-  background-color: var(--dark-header-footer);
+  background-color: var(--dark-header-footer);
 }
 
 body.dark-mode #consent-banner {
-  background-color: #333;
-  color: #fff;
+  background-color: #333;
+  color: #fff;
 }
 
 body.dark-mode .pagination {
-  background-color: #fff;
+  background-color: #fff;
 }
 
 /* MAIN CONTENT WRAPPER */
 main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 120px; /* Reserve space for footer + sticky nav */
-  box-sizing: border-box;
-  margin-right: 0;
-  min-height: calc(100vh - 120px);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 90px; /* Matches footer height to prevent content underlap */
+  box-sizing: border-box;
+  margin-right: 0;
+  min-height: calc(100vh - 90px);
 }
 
 /* 🧱 HEADER & FOOTER */
 header, footer {
-  background-color: var(--header-footer-bg);
-  color: var(--header-footer-text);
-  text-align: center;
-  padding: 1rem;
+  background-color: var(--header-footer-bg);
+  color: var(--header-footer-text);
+  text-align: center;
+  padding: 1rem;
 }
 
-/* Fixed footer */
+/* Fixed footer restored from backup */
 footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
-  padding: 1rem 0;
-  box-sizing: border-box;
-  z-index: 1000;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  background-color: var(--header-footer-bg);
-  color: var(--header-footer-text);
-  font-size: 0.85rem;
-  overflow: hidden;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 90px;
+  padding: 1rem 0 1rem 0;
+  box-sizing: border-box;
+  z-index: 1000;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--header-footer-bg);
+  color: var(--header-footer-text);
+  font-size: 0.85rem;
+  overflow: hidden;
 }
 
 footer p {
-  margin: 0;
-  font-size: 0.85rem;
-  line-height: 1.2;
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.2;
 }
 
 footer img {
-  margin-top: 2px;
-  margin-bottom: 2px;
-  height: 32px;
-  width: 120px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  height: 32px;
+  width: 120px;
 }
 
-/* Updated .site-title for vertical stacking with larger GIF on desktop */
+/* Updated .site-title for vertical stacking */
 .site-title {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 100%;
 }
 
+/* Title style */
 .site-title .title {
-  font-size: 2.5rem; /* Larger title for desktop */
-  text-align: center;
+  font-size: 2rem;
+  text-align: center;
 }
 
+/* Updated GIF styles */
 .site-title .icon {
-  width: 200px; /* Larger GIF on desktop */
-  max-width: 100%;
-  height: auto;
-  object-fit: contain;
-  vertical-align: middle;
-  transition: width 0.3s ease;
-  flex-shrink: 0;
-  margin-left: 0;
-  margin-bottom: 0;
+  width: 100px;
+  margin-left: 0;
+  margin-bottom: 0;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  vertical-align: middle;
+  transition: width 0.3s ease;
+  flex-shrink: 0;
 }
 
-/* Responsive adjustments for GIF sizes */
-@media (max-width: 1024px) {
-  .site-title .title {
-    font-size: 2rem;
-  }
-  .site-title .icon {
-    width: 150px;
-  }
-}
-
+/* Responsive adjustments */
 @media (max-width: 768px) {
-  .site-title .title {
-    font-size: 1.6rem;
-  }
-  .site-title .icon {
-    width: 120px;
-  }
+  .site-title .icon {
+    width: 90px;
+  }
 }
 
 @media (max-width: 480px) {
-  .site-title .title {
-    font-size: 1.2rem;
-    flex-basis: 100%;
-  }
-  .site-title .icon {
-    width: 60px;
-    margin-left: 0;
-    margin-bottom: 0.5rem;
-    max-width: 50px;
-  }
+  .site-title .icon {
+    width: 60px;
+    margin-left: 0;
+    margin-bottom: 0.5rem;
+    max-width: 50px;
+  }
+  .site-title .title {
+    font-size: 1.2rem;
+    text-align: center;
+    flex-basis: 100%;
+  }
 }
 
 /* 🖼️ GIF DISPLAY */
 .gif-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem 0 0 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
-  border-bottom: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 2rem 0 0 0;
+  justify-content: center;
+  border-bottom: none;
 }
 
 .gif-item {
-  flex: 1 1 calc(33.33% - 1rem);
-  min-width: 200px;
-  max-width: 400px;
-  margin-bottom: 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  background-color: transparent;
-  border: none;
-  outline: none;
+  width: calc(33.33% - 1rem);
+  min-width: 200px;
+  max-width: 300px;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  background-color: transparent;
+  border: none;
+  outline: none;
 }
 
 .gif-item img, .placeholder {
-  width: 100%;
-  height: auto; /* Maintain aspect ratio */
-  object-fit: contain;
-  border-radius: 0.5rem;
-  margin-bottom: 1rem;
-  display: block;
+  width: 100%;
+  height: 200px;
+  object-fit: contain;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.placeholder {
+  background-color: transparent;
+  border: none;
+  appearance: none;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: none;
+  display: none !important;
 }
 
 /* 📥 DOWNLOAD BUTTONS */
 .download-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  position: absolute;
-  bottom: 0.5rem;
-  left: 0;
-  right: 0;
-  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0;
+  right: 0;
+  box-sizing: border-box;
 }
 
 .download-btn,
 #contactMeButton,
 #toggleDarkMode,
 #followMeButton {
-  background-color: var(--primary-color);
-  border: none;
-  color: #fff;
-  padding: 0.3125rem 0.625rem;
-  font-size: 0.75rem;
-  cursor: pointer;
-  border-radius: 0.3125rem;
-  transition: background-color 0.3s ease;
+  background-color: var(--primary-color);
+  border: none;
+  color: #fff;
+  padding: 0.3125rem 0.625rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  border-radius: 0.3125rem;
+  transition: background-color 0.3s ease;
 }
 
 .download-btn {
-  margin-right: 0.625rem;
-  width: 6.25rem;
-  height: 1.875rem;
-  text-align: center;
+  margin-right: 0.625rem;
+  width: 6.25rem;
+  height: 1.875rem;
+  text-align: center;
 }
 
 .download-btn:hover,
 #contactMeButton:hover,
 #toggleDarkMode:hover,
 #followMeButton:hover {
-  background-color: #45a049;
+  background-color: #45a049;
 }
 
 .download-count {
-  font-size: 0.75rem;
+  font-size: 0.75rem;
 }
 
 #toggleDarkMode,
 #followMeButton {
-  padding: 0.9375rem 2rem;
-  font-size: 1rem;
-  margin: 0.25rem 0.125rem;
-}
-
-/* Fix Buy Me a Coffee button sizing and container */
-.contact-button-container {
-  position: relative;
-  margin: 10px auto 6px;
-  z-index: 1100;
-  text-align: center;
-  width: 100%;
-  max-width: 100vw;
-  box-sizing: border-box;
-  padding: 0 15px;
+  padding: 0.9375rem 2rem;
+  font-size: 1rem;
+  margin: 0.25rem 0.125rem;
 }
 
 #contactMeButton {
-  display: inline-block;
-  padding: 0.625rem 1.25rem;
-  margin-bottom: 0.25rem;
-  position: relative;
-  z-index: 10;
-  background-color: var(--primary-color);
-  color: #fff;
-  border-radius: 0.3125rem;
-  text-decoration: none;
-  font-size: 1rem;
-  max-width: 160px; /* Clamp max width */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  transition: background-color 0.3s ease;
+  display: inline-block;
+  padding: 0.625rem 1.25rem;
+  margin-bottom: 0.25rem;
+  position: relative;
+  z-index: 10;
+  background-color: var(--primary-color);
+  color: #fff;
+  border-radius: 0.3125rem;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
 }
 
 #contactMeButton:hover {
-  background-color: #388e3c;
+  background-color: #388e3c;
+}
+
+/* Contact Button container to keep it above nav and footer without overlap */
+.contact-button-container {
+  text-align: center;
+  margin: 0 auto 0.5rem auto;
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
+  padding: 0 15px;
+  position: relative;
+  z-index: 1100;
+}
+
+/* 🌟 STAR EFFECT */
+.star {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  color: gold;
+  font-size: 1.875rem;
+  transition: opacity 0.5s ease-out;
+  opacity: 0;
+  font-family: "Segoe UI Symbol", "Arial Unicode MS", serif;
+}
+
+.star:before,
+.star:after {
+  position: absolute;
+  content: "\2726";
+  font-size: 0.75rem;
+}
+
+.star:before {
+  color: #fff0;
+  text-shadow: 0 0 0.1875rem #fafaae;
+}
+
+.star:after {
+  color: #ff0;
+}
+
+/* 🖼️ OVERLAY VIEWER */
+.fullsize-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000 !important;
+}
+
+.fullsize-overlay.active {
+  display: flex !important;
+}
+
+.fullsize-image {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
 }
 
 /* 🧭 NAVIGATION BUTTONS */
 .nav-button {
-  display: inline-block;
-  padding: 10px 20px;
-  margin: 5px;
-  background-color: var(--secondary-color);
-  color: #fff;
-  text-align: center;
-  text-decoration: none;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 5px;
+  background-color: var(--secondary-color);
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .nav-button:hover {
-  background-color: #0056b3;
+  background-color: #0056b3;
 }
 
-/* Pagination Bar - Bottom Navigation as sticky and scrolls with content */
+/* Pagination Bar - Bottom Navigation */
 .pagination {
-  position: sticky;
-  bottom: 60px; /* Stops above footer which is 60px tall */
-  width: 100vw;
-  max-width: 100vw;
-  margin: 0.25rem 0 0 0;
-  padding: 12px 0;
-  background: var(--pagination-bg, #222);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 16px;
-  box-sizing: border-box;
-  overflow-x: visible;
-  color: var(--pagination-text, #0066cc);
-  left: 0;
-  z-index: 1010;
-  border: none;
-  box-shadow: none;
+  width: 100vw;
+  max-width: 100vw;
+  margin: 0.25rem 0 0 0;
+  padding: 12px 0;
+  background: var(--pagination-bg, #222);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  box-sizing: border-box;
+  overflow-x: visible;
+  color: var(--pagination-text, #0066cc);
+  position: relative;
+  left: 0;
+  z-index: 1010;
+  border: none;
+  box-shadow: none;
 }
 
 .pagination a,
 .pagination span {
-  padding: 8px 16px;
-  border-radius: 4px;
-  font-weight: bold;
-  text-decoration: none;
-  color: var(--pagination-link-color, #0066cc);
-  background: var(--pagination-link-bg, #fff);
-  border: 1px solid var(--pagination-link-color, #0066cc);
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: bold;
+  text-decoration: none;
+  color: var(--pagination-link-color, #0066cc);
+  background: var(--pagination-link-bg, #fff);
+  border: 1px solid var(--pagination-link-color, #0066cc);
 }
 
 .pagination span {
-  background: var(--pagination-current-bg, #004a99);
-  color: var(--pagination-current-color, #eee);
-  cursor: default;
+  background: var(--pagination-current-bg, #004a99);
+  color: var(--pagination-current-color, #eee);
+  cursor: default;
 }
 
 .pagination a:hover {
-  background-color: var(--pagination-hover-bg, #0066cc);
-  color: var(--pagination-hover-color, #fff);
+  background-color: var(--pagination-hover-bg, #0066cc);
+  color: var(--pagination-hover-color, #fff);
 }
 
 /* Dark Mode for Pagination */
 body.dark-mode .pagination {
-  background-color: var(--pagination-dark-bg, #fff) !important;
+  background-color: var(--pagination-dark-bg, #fff) !important;
 }
 
 body.dark-mode .pagination a {
-  background: var(--pagination-dark-link-bg, #fff);
-  color: var(--pagination-dark-link-color, #009966);
-  border-color: var(--pagination-dark-link-color, #009966);
+  background: var(--pagination-dark-link-bg, #fff);
+  color: var(--pagination-dark-link-color, #009966);
+  border-color: var(--pagination-dark-link-color, #009966);
 }
 
 body.dark-mode .pagination a:hover {
-  background-color: var(--pagination-dark-hover-bg, #009966);
-  color: var(--pagination-dark-hover-color, #fff);
+  background-color: var(--pagination-dark-hover-bg, #009966);
+  color: var(--pagination-dark-hover-color, #fff);
 }
 
 body.dark-mode .pagination span {
-  background: var(--pagination-dark-current-bg, #007a43);
-  color: var(--pagination-dark-current-color, #b4f3c8);
+  background: var(--pagination-dark-current-bg, #007a43);
+  color: var(--pagination-dark-current-color, #b4f3c8);
 }
 
 /* Accessibility Focus Outlines */
@@ -368,52 +415,49 @@ body.dark-mode .pagination span {
 #toggleDarkMode:focus,
 #followMeButton:focus,
 .nav-button:focus {
-  outline: 2px solid #000;
-  outline-offset: 2px;
+  outline: 2px solid #000;
+  outline-offset: 2px;
 }
 
 /* Future: Fluorescent green text in dark mode for download counts and more */
 body.dark-mode .download-count,
 body.dark-mode .some-other-class {
-  color: #39FF14;
+  color: #39FF14;
 }
 
-/* Unique intro box for satire comment - ensure included */
+/* Unique intro box for satire comment */
 .unique-intro {
-  margin: 40px auto 20px auto;
-  max-width: 800px;
-  font-size: 20px;
-  background: #eaeecb;
-  color: #222;
-  border-radius: 14px;
-  padding: 26px 32px;
-  border: 3px solid #89A542;
-  font-style: italic;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
-  transition: background 0.3s, color 0.3s, border-color 0.3s;
+  margin: 40px auto 20px auto;
+  max-width: 800px;
+  font-size: 20px;
+  background: #eaeecb;
+  color: #222;
+  border-radius: 14px;
+  padding: 26px 32px;
+  border: 3px solid #89A542;
+  font-style: italic;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  transition: background 0.3s, color 0.3s, border-color 0.3s;
 }
 
 body.dark-mode .unique-intro {
-  background: #282e18;
-  color: #f4f4f4;
-  border-color: #97cf53;
+  background: #282e18;
+  color: #f4f4f4;
+  border-color: #97cf53;
 }
 
 /* Responsive Adjustments */
 @media (max-width: 600px) {
-  .site-title img {
-    max-width: 100px;
-  }
-  .header-buttons {
-    flex-direction: column;
-    gap: 12px;
-  }
-  .gif-item {
-    width: calc(50% - 1rem);
-  }
-  /* main .pagination:last-of-type {
-    margin-bottom: 90px !important;
-  } -- No longer necessary with proper main padding */
+  .site-title img {
+    max-width: 100px;
+  }
+  .header-buttons {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .gif-item {
+    width: calc(50% - 1rem);
+  }
 }
 
-/* --- End of CSS --- */
+/* === End of CSS Sheet === */
