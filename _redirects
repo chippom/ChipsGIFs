@@ -1,4 +1,5 @@
-/page_2.html   /page_2.html   200
-/404.html      /404.html      404
-/*             /index.html    200
-https://www.chips-gifs.com/*  https://chips-gifs.com/:splat  301!
+# Redirect www domain to non-www with 301 permanent redirect
+https://www.chips-gifs.com/* https://chips-gifs.com/:splat 301!
+
+# Redirect all paths to index.html for SPA routing
+/* /index.html 200
