@@ -1,6 +1,13 @@
-/* Deployment Version: 3 | Timestamp: 2026-01-18 12:00 EDT — Updated */consent-banner 
+/* Deployment Version: 4 | Timestamp: 2026-01-18 16:00 EDT — Updated */ made buttons visble
+.download-btn, .contactMeButton, .toggleDarkMode, .followMeButton { color: #fff !important; }
 
-/* 🎨 THEME VARIABLES */
+/* FORCE DARK MODE BACKGROUND */
+body.dark-mode { 
+    background-color: #121212 !important; 
+    color: #39ff14 !important; 
+}
+
+ /* 🎨 THEME VARIABLES */
 :root {
   --primary-color: #4CAF50;
   --secondary-color: #007BFF;
