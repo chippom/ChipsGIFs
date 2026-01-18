@@ -1,4 +1,4 @@
-/* Deployment Version: 4 | Timestamp: 2026-01-18 16:00 EDT — Updated */ made buttons visble
+/* Deployment Version: 5 | Timestamp: 2026-01-18 16:30 EDT — Updated */ killed consent banner on index page
 .download-btn, .contactMeButton, .toggleDarkMode, .followMeButton { color: #fff !important; }
 
 /* FORCE DARK MODE BACKGROUND */
@@ -7,7 +7,14 @@ body.dark-mode {
     color: #39ff14 !important; 
 }
 
- /* 🎨 THEME VARIABLES */
+/* KILL CONSENT BANNER ON INDEX */
+[id*="consent"], [class*="consent"], [id*="cookie"], [class*="cookie"] {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+}
+
+/* 🎨 THEME VARIABLES */
 :root {
   --primary-color: #4CAF50;
   --secondary-color: #007BFF;
