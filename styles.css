@@ -1,4 +1,4 @@
-/* Deployment Version: 2 | Timestamp: 2025-10-07 22:00 EDT — Updated */
+/* Deployment Version: 3 | Timestamp: 2026-01-18 12:00 EDT — Updated */consent-banner 
 
 /* 🎨 THEME VARIABLES */
 :root {
@@ -467,6 +467,32 @@ body.dark-mode .unique-intro {
     margin-bottom: 90px !important;
   } -- No longer necessary with proper main padding */
 }
+/* ========================================
+   CONSENT BANNER FIX ONLY
+   Added: January 18, 2026 - 2:48 PM EST
+   Purpose: Position consent banner correctly
+   ======================================== */
+
+consent-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #000;
+  color: #fff;
+  padding: 15px;
+  text-align: center;
+  z-index: 2000 !important;
+}
+
+body.dark-mode consent-banner {
+  background-color: #333;
+  color: #fff;
+}
+
+/* ========================================
+   END CONSENT BANNER FIX - Use ?v20260118
+   ======================================== */
 
 
 /* --- End of CSS --- */
