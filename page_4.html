@@ -3,12 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+  
+  <!-- 👇 ONE LINE HERE 👇 -->
+  <style>html{visibility:hidden}body{visibility:visible}</style>
+  
   <!-- 🔎 SEO & Social Tags -->
-  <meta name="description" content="420 stoner GIFs, viral anti-Trump & anti-Elon Musk memes, and all-out political satire—plus a blast of pro-Ukraine spirit. This is the wildest GIF page on the web!" />
-  <meta name="keywords" content="420 GIFs, weed memes, anti-Trump, anti-Elon Musk, pro-Ukraine, political satire GIFs, stoner animations, Chips GIF gallery" />
+  <meta name="description" content="420 stoner GIFs, viral anti-Trump & anti-Elon Musk memes..." />
+  <meta name="keywords" content="420 GIFs, weed memes..." />
   <meta name="author" content="Chip Pommert" />
   <title>Page 4: 420, Satire, Trump/Musk Roasts, & Ukraine | Chips GIFs</title>
+
+  <!-- 👇 PUT PWA CODE HERE 👇 -->
+  <!-- PWA manifest and theme colors -->
+  <meta name="theme-color" content="#333333" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#39ff14" media="(prefers-color-scheme: dark)">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" sizes="180x180">
+  <!-- ^^^^^^^ END PWA CODE ^^^^^^^ -->
 
   <!-- ✅ Preload CSS to reduce render-blocking -->
   <link rel="preload" href="styles.css?v=20251007-2" as="style" onload="this.onload=null;this.rel='stylesheet'">
