@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- 👇 ONE LINE FIRST 👇 -->
+  <style>html{visibility:hidden}body{visibility:visible}</style>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Page 3: Satirical GIFs that roast the powerful, mock the absurd, and deliver next-level meme chaos." />
@@ -8,8 +11,7 @@
   <meta name="author" content="Chip Pommert" />
   <title>Page 3: Satirical Madness Continues | Chips GIF Showcase</title>
 
-  <!-- 👇 PUT PWA CODE HERE 👇 -->
-  <!-- PWA manifest and theme colors -->
+  <!-- 👇 PWA CODE (single correct block) 👇 -->
   <meta name="theme-color" content="#333333" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#39ff14" media="(prefers-color-scheme: dark)">
   <link rel="manifest" href="manifest.json">
@@ -26,13 +28,7 @@
   <meta property="og:url" content="https://chips-gifs.com/page_3.html" />
   <meta property="og:image" content="https://chips-gifs.com/featured_page3.gif" />
 
-  <!-- PWA manifest + theme colors -->
-  <meta name="theme-color" content="#333333" media="(prefers-color-scheme: light)" />
-  <meta name="theme-color" content="#39ff14" media="(prefers-color-scheme: dark)" />
-  <link rel="manifest" href="/manifest.json" />
-  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" sizes="180x180" />
-
-  <!-- 🎨 Page-specific styles (no .pagination overrides here) -->
+  <!-- 🎨 Page-specific styles -->
   <style>
     .site-title img {
       margin-left: 10px;
@@ -85,7 +81,7 @@
 </head>
 
 <body>
-   <!-- 🔝 Page Header -->
+  <!-- 🔝 Page Header -->
   <header class="header">
     <div class="site-title">
       <h1 class="title">Political Satire: GIFs That Roast the Powerful</h1>
@@ -97,7 +93,7 @@
     <p class="instructions">Click on any GIF below for the full-size, unfiltered version.</p>
   </header>
 
-  <!-- 🔗 Top Pagination Nav (clean and consistent) -->
+  <!-- 🔗 Top Pagination Nav -->
   <nav class="pagination" aria-label="Page navigation">
     <a href="index.html">1</a>
     <a href="page_2.html">2</a>
@@ -126,10 +122,7 @@
   <!-- 📦 GIF Content -->
   <main>
     <div class="gif-container">
-      <!-- 🔸 Your ~200 GIF entries start here -->
-
-
-<div class="gif-container">
+      <!-- 🔸 Your GIF entries start here -->
 
   <div class="gif-item">
     <img src="gifs/executive_overreach_1.gif" alt="executive_overreach" class="gif-thumbnail" loading="lazy">
@@ -872,21 +865,22 @@
     <span class="download-count">Downloads: 0</span>
 </div>
 
-</div> <!-- End .gif-container -->
+    </div> <!-- End .gif-container -->
 
-<!-- Contact Me Button -->
-<div class="contact-button-container">
-    <a href="mailto:Chippom2@gmail.com" id="contactMeButton" aria-label="Email Chip">Contact Me</a>
-</div>
+    <!-- Contact Me Button -->
+    <div class="contact-button-container">
+        <a href="mailto:Chippom2@gmail.com" id="contactMeButton" aria-label="Email Chip">Contact Me</a>
+    </div>
 
-<!-- Pagination Bar -->
-<nav class="pagination" aria-label="Page navigation">
-    <a href="index.html">1</a>
-    <a href="page_2.html">2</a>
-    <span aria-current="page">3</span>
-    <a href="page_4.html">4</a>
-</nav>
-</main>
+    <!-- Pagination Bar -->
+    <nav class="pagination" aria-label="Page navigation">
+        <a href="index.html">1</a>
+        <a href="page_2.html">2</a>
+        <span aria-current="page">3</span>
+        <a href="page_4.html">4</a>
+    </nav>
+
+</main> <!-- ✅ main closes HERE, after pagination -->
 
 <!-- Footer -->
 <footer>
@@ -910,6 +904,7 @@
 <script src="scripts.js"></script>
 </body>
 </html>
+
 
 
 
