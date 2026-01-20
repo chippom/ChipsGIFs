@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// 1) Lazy-load GIFs below the fold
+// 1) Lazy-load ALL GIFs using IntersectionObserver
 function initLazyLoad() {
   const io = new IntersectionObserver(entries => {
     entries.forEach(entry => {
@@ -49,17 +49,20 @@ function initLazyLoad() {
     });
   }, { rootMargin: "800px" });
 
-  document.querySelectorAll(".gif-item img").forEach((img, i) => {
+  document.querySelectorAll(".gif-item img").forEach(img => {
     const original = img.src;
+
+    // Store the real GIF source
     img.dataset.gif = original;
-    if (i < 6) { // Prime first few
-      img.src = original;
-    } else {
-      img.src = "gifs/placeholder.jpg";
-      io.observe(img);
-    }
+
+    // Start with a lightweight placeholder for ALL GIFs
+    img.src = "gifs/placeholder.jpg";
+
+    // Observe every GIF for lazy loading
+    io.observe(img);
   });
 }
+
 
 // 2) Full-screen overlay on GIF click (not download button)
 function initOverlay() {
