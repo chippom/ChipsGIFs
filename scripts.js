@@ -1,4 +1,4 @@
-/* scripts.js V=202601231958 */
+/* scripts.js CLEAN VERSION — NO SERVICE WORKER */
 
 /* Prevent FOUC: Make body visible once DOM is fully loaded */
 document.addEventListener("DOMContentLoaded", () => {
@@ -20,8 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initStarTrails();
 
   fetchAndDisplayAllDownloadCounts();
-
-  /* SERVICE WORKER BLOCK REMOVED */
 });
 
 /* 1) Lazy-load GIFs below the fold */
@@ -72,7 +70,7 @@ function initOverlay() {
   });
 }
 
-/* New: Right-click context menu logging on overlay image */
+/* Overlay right-click logging */
 function initOverlayContextMenuLogging(visitorId) {
   const overlayImg = document.getElementById("overlay-img");
   if (!overlayImg) return;
@@ -112,7 +110,7 @@ function initDarkMode() {
   }
 }
 
-/* 4) Button-click handler: update counts, log visitor, download GIF */
+/* 4) Download handler */
 function initDownloadHandlers(visitorId) {
   document.querySelectorAll(".download-btn").forEach(btn => {
     btn.addEventListener("click", async () => {
@@ -339,11 +337,4 @@ async function fetchAndDisplayAllDownloadCounts() {
   }
 }
 
-/* ---------------------------------------------------------
-   SERVICE WORKER REGISTRATION (added at the very bottom)
---------------------------------------------------------- */
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/service-worker.js');
-}
-
-/* End of scripts.js */
+/* END — NO SERVICE WORKER */
