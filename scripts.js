@@ -14,10 +14,9 @@ document.addEventListener("DOMContentLoaded", () => {
   initLazyLoad();
   initOverlay();
   initDarkMode();
-  initDownloadHandlers(visitorId);           
-  initContextMenuLogging(visitorId);         
-  initOverlayContextMenuLogging(visitorId); 
-  initConsentBanner();                        
+  initDownloadHandlers(visitorId);
+  initContextMenuLogging(visitorId);
+  initOverlayContextMenuLogging(visitorId);
   initStarTrails();
 
   fetchAndDisplayAllDownloadCounts();
@@ -42,7 +41,7 @@ function initLazyLoad() {
   document.querySelectorAll(".gif-item img").forEach((img, i) => {
     const original = img.src;
     img.dataset.gif = original;
-    if (i < 6) { 
+    if (i < 6) {
       img.src = original;
     } else {
       img.src = "gifs/placeholder.jpg";
@@ -54,7 +53,7 @@ function initLazyLoad() {
 /* 2) Full-screen overlay on GIF click */
 function initOverlay() {
   document.querySelectorAll(".gif-item").forEach(item => {
-    item.addaddEventListener("click", e => {
+    item.addEventListener("click", e => {
       if (e.target.classList.contains("download-btn")) return;
       const img = item.querySelector("img");
       const overlay = document.getElementById("overlay");
@@ -65,6 +64,7 @@ function initOverlay() {
       }
     });
   });
+
   const overlay = document.getElementById("overlay");
   overlay?.addEventListener("click", () => {
     overlay.classList.remove("active");
@@ -76,10 +76,16 @@ function initOverlay() {
 function initOverlayContextMenuLogging(visitorId) {
   const overlayImg = document.getElementById("overlay-img");
   if (!overlayImg) return;
+
   overlayImg.addEventListener("contextmenu", () => {
     const gifUrl = overlayImg.src;
     const gifName = gifUrl.split("/").pop();
-    const data = JSON.stringify({ gif_name: gifName, visitor_id: visitorId, action: 'right-click-save-overlay' });
+    const data = JSON.stringify({
+      gif_name: gifName,
+      visitor_id: visitorId,
+      action: 'right-click-save-overlay'
+    });
+
     if (navigator.sendBeacon) {
       navigator.sendBeacon('/.netlify/functions/logVisitor', data);
     } else {
@@ -95,10 +101,12 @@ function initOverlayContextMenuLogging(visitorId) {
 /* 3) Dark mode toggle */
 function initDarkMode() {
   const toggle = document.getElementById("toggleDarkMode");
+
   toggle?.addEventListener("click", () => {
     document.body.classList.toggle("dark-mode");
     localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
   });
+
   if (localStorage.getItem("darkMode") === "true") {
     document.body.classList.add("dark-mode");
   }
@@ -121,6 +129,7 @@ function initDownloadHandlers(visitorId) {
         const gifNameEncoded = encodeURIComponent(rawGifName);
 
         const countData = JSON.stringify({ gif_name: rawGifName });
+
         if (navigator.sendBeacon) {
           navigator.sendBeacon("/.netlify/functions/update-download-count", countData);
         } else {
@@ -138,10 +147,11 @@ function initDownloadHandlers(visitorId) {
           referrer: document.referrer,
           gif_name: rawGifName
         });
+
         if (navigator.sendBeacon) {
           navigator.sendBeacon("/.netlify/functions/logVisitor", visitorData);
         } else {
-          await fetch("/.netnetlify/functions/logVisitor", {
+          await fetch("/.netlify/functions/logVisitor", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: visitorData
@@ -150,6 +160,7 @@ function initDownloadHandlers(visitorId) {
 
         const res = await fetch(`/.netlify/functions/deliver_gif?gif_name=${gifNameEncoded}`);
         if (!res.ok) throw new Error(res.statusText);
+
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
 
@@ -170,8 +181,6 @@ function initDownloadHandlers(visitorId) {
             if (countEl) {
               countEl.textContent = `Downloads: ${safeCount}`;
             }
-          } else {
-            console.error(`Failed to refresh download count:`, countRes.statusText);
           }
         } catch (refreshErr) {
           console.error("Error refreshing download count:", refreshErr);
@@ -224,32 +233,11 @@ function initContextMenuLogging(visitorId) {
         }).catch(console.error);
       }
     };
+
     img.addEventListener("contextmenu", logBoth);
     img.addEventListener("auxclick", e => {
       if (e.button === 1) logBoth();
     });
-  });
-}
-
-/* 6) Consent banner */
-function initConsentBanner() {
-  if (localStorage.getItem("cookiesAccepted") === "true") {
-    return;
-  }
-
-  if (document.getElementById("consent-banner")) return;
-
-  const banner = document.createElement("div");
-  banner.id = "consent-banner";
-  banner.innerinnerHTML = `
-    <p>We use cookies to ensure you get the best experience.</p>
-    <button>Accept Cookies</button>
-  `;
-  document.body.appendChild(banner);
-
-  banner.querySelector("button").addEventListener("click", () => {
-    localStorage.setItem("cookiesAccepted", "true");
-    banner.style.display = "none";
   });
 }
 
@@ -324,22 +312,25 @@ function initStarTrails() {
 /* Fetch and update download counts on page load */
 async function fetchAndDisplayAllDownloadCounts() {
   const gifItems = document.querySelectorAll(".gif-item");
+
   for (const item of gifItems) {
     const img = item.querySelector("img");
+
     if (img?.dataset.gif) {
       const rawGifName = decodeURIComponent(img.dataset.gif.split("/").pop()).trim();
       const gifNameEncoded = encodeURIComponent(rawGifName);
+
       try {
         const res = await fetch(`/.netlify/functions/get-download-count?gif_name=${gifNameEncoded}`);
+
         if (res.ok) {
           const data = await res.json();
           const countEl = item.querySelector(".download-count");
+
           if (countEl) {
             const safeCount = data.count ?? 0;
             countEl.textContent = `Downloads: ${safeCount}`;
           }
-        } else {
-          console.error(`Failed to fetch count for ${rawGifName}:`, res.statusText);
         }
       } catch (err) {
         console.error(`Error fetching download count for ${rawGifName}:`, err);
@@ -352,7 +343,7 @@ async function fetchAndDisplayAllDownloadCounts() {
    SERVICE WORKER REGISTRATION (added at the very bottom)
 --------------------------------------------------------- */
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js');
+  navigator.serviceWorker.register('/service-worker.js');
 }
 
 /* End of scripts.js */
