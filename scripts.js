@@ -338,3 +338,12 @@ async function fetchAndDisplayAllDownloadCounts() {
 }
 
 /* END — NO SERVICE WORKER */
+
+
+/* ---------------------------------------------------------
+   SERVICE WORKER REGISTRATION (GIF-only)
+--------------------------------------------------------- */
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js');
+}
+

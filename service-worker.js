@@ -1,54 +1,45 @@
-// service-worker.js
+/* ---------------------------------------------------------
+   GIF-ONLY SERVICE WORKER
+   - Caches ONLY GIF files
+   - NEVER caches HTML, JS, CSS
+   - Prevents layout/nav bar from getting stuck
+   - Boosts performance by caching heavy GIF assets
+--------------------------------------------------------- */
 
-const CACHE_NAME = 'chips-gifs-cache-v8'; // Increment version for cache updates
+const CACHE_NAME = "chips-gifs-cache-v1";
 
-// Files to always cache and network-first serve (app shell)
-const ESSENTIAL_FILES = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/styles.css',
-  '/scripts.js',
-  // Add any other critical assets like icons, fonts here:
-  '/icons/apple-touch-icon.png',
-];
-
-// On install, cache essential files
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ESSENTIAL_FILES))
-  );
+self.addEventListener("install", event => {
+  // Activate immediately
   self.skipWaiting();
 });
 
-// On activate, clean up old caches if any
-self.addEventListener('activate', event => {
+self.addEventListener("activate", event => {
+  // Clean old caches if names change
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(
-        keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
+        keys
+          .filter(key => key !== CACHE_NAME)
+          .map(key => caches.delete(key))
       )
     )
   );
   self.clients.claim();
 });
 
-// Fetch handler: cache-first for GIFs, network-first for essential files, cache-first fallback otherwise
-self.addEventListener('fetch', event => {
-  const requestUrl = new URL(event.request.url);
+self.addEventListener("fetch", event => {
+  const request = event.request;
 
-  // Cache-first for GIF files (serve from cache, else fetch and cache)
-  if (requestUrl.pathname.endsWith('.gif')) {
+  // Only cache GIFs
+  if (request.destination === "image" && request.url.endsWith(".gif")) {
     event.respondWith(
       caches.open(CACHE_NAME).then(cache =>
-        cache.match(event.request).then(cachedResponse => {
-          if (cachedResponse) {
-            return cachedResponse;
-          } 
-          return fetch(event.request).then(networkResponse => {
-            const responseClone = networkResponse.clone();
-            cache.put(event.request, responseClone);
-            return networkResponse;
+        cache.match(request).then(cached => {
+          if (cached) return cached;
+
+          return fetch(request).then(response => {
+            cache.put(request, response.clone());
+            return response;
           });
         })
       )
@@ -56,39 +47,6 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Network-first for essential app shell files (HTML, CSS, JS, manifest)
-  if (
-    ESSENTIAL_FILES.includes(requestUrl.pathname) ||
-    requestUrl.pathname === '/' ||
-    requestUrl.pathname.endsWith('.html') ||
-    requestUrl.pathname.endsWith('.css') ||
-    requestUrl.pathname.endsWith('.js') ||
-    requestUrl.pathname.endsWith('.json')
-  ) {
-    event.respondWith(
-      fetch(event.request)
-        .then(networkResponse => {
-          const responseClone = networkResponse.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, responseClone);
-          });
-          return networkResponse;
-        })
-        .catch(() =>
-          caches.match(event.request).then(cachedResponse => {
-            if (cachedResponse) return cachedResponse;
-            // You can serve a custom offline fallback page here if desired
-            return caches.match('/index.html');
-          })
-        )
-    );
-    return;
-  }
-
-  // Default: try cache first, then network fallback
-  event.respondWith(
-    caches.match(event.request).then(cachedResponse => {
-      return cachedResponse || fetch(event.request);
-    })
-  );
+  // Everything else: network only
+  return;
 });
