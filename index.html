@@ -1,88 +1,41 @@
 <!DOCTYPE html>
-<html lang="en" style="background-color: #333; background: #333;">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <!-- 👇 ONE LINE HERE 👇 -->
+
   <style>html{visibility:hidden}body{visibility:visible}</style>
-  
-  <!-- 🔎 SEO & Social Tags -->
+
   <meta name="description" content="Sample the wildest mix of political satire GIFs, memes, animations, and viral chaos—from pro-Ukraine declarations to billionaire burns and 420 humor." />
   <meta name="keywords" content="political GIFs, satire memes, 420 humor, Trump parody, Elon Musk GIF, pro-Ukraine memes, political humor, Chip's GIFs" />
   <meta name="author" content="Chip Pommert" />
-  <title>Index Page: The Satirical Starter Pack | Chips GIF Showcase</title>
 
-  <!-- ✅ Preload CSS to reduce render-blocking -->
-  <link rel="preload" href="styles.css?v=20252300" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="styles.css?v=20252300"></noscript>
+  <title>Chips GIFs: Political Satire, Memes & Viral Animation Hub</title>
+
+  <link rel="preload" href="styles.css?v=20260118" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="styles.css?v=20260118"></noscript>
 
   <link rel="canonical" href="https://chips-gifs.com/index.html" />
-  <meta property="og:title" content="Index of Chaos: Satirical GIF Mashup | Chips-GIFs" />
-  <meta property="og:description" content="Kick off your GIF binge with the fiercest, weirdest political satire and stoner animation mix. Page 1 introduces it all." />
+  <meta property="og:title" content="Chips GIFs: Political Satire, Memes & Viral Animation Hub" />
+  <meta property="og:description" content="Kick off your GIF binge with the fiercest, weirdest political satire and stoner animation mix." />
   <meta property="og:url" content="https://chips-gifs.com/index.html" />
   <meta property="og:image" content="https://chips-gifs.com/featured_home.gif" />
 
-  <!-- PWA manifest and theme colors -->
-  <meta name="theme-color" content="#333333" media="(prefers-color-scheme: light)" />
-  <meta name="theme-color" content="#39ff14" media="(prefers-color-scheme: dark)" />
-  <link rel="manifest" href="/manifest.json" />
-  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" sizes="180x180" />
-
-  <style>
-    /* Ensure the pagination top nav bar is full width and flush */
-    .pagination, .pagination-top {
-      width: 100% !important;
-      max-width: 100% !important;
-      margin-left: 0 !important;
-      margin-right: 0 !important;
-      border-radius: 0 !important;
-      background-color: #222;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 16px;
-      box-sizing: border-box;
-      padding: 12px 0;
-    }
-
-    /* Center and style the header-buttons container */
-    .header-buttons {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
-      margin: 1.2rem auto 2rem auto;
-      max-width: 900px;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    @media (max-width: 600px) {
-      .header-buttons {
-        flex-direction: column;
-        gap: 12px;
-      }
-    }
-  </style>
+  <meta name="theme-color" content="#333333" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#39ff14" media="(prefers-color-scheme: dark)">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" sizes="180x180">
 </head>
+
 <body>
+<header class="header" role="banner">
+  <div class="site-title">
+    <h1 class="title">Political Satire &amp; Meme Mayhem: Your First Dose</h1>
+    <img src="gifs/weed_parental_advisery_1a.gif" alt="Parental Advisory For kids with Stoner parents" class="icon" width="160" height="160">
+  </div>
+  <p class="instructions">Click on any GIF below for the full-size, unfiltered version.</p>
+</header>
 
-  <header class="header" role="banner">
-    <div class="site-title">
-      <h1 class="title">Political Satire &amp; Meme Mayhem: Your First Dose</h1>
-      <img
-        src="gifs/weed_parental_advisery_1a.gif"
-        alt="Parental Advisory For kids with Stoner parents"
-        class="icon"
-      />
-    </div>
-    <p class="instructions">
-      Click on any GIF below for the full-size, unfiltered version.
-    </p>
-  </header>
-
-<!-- Top Pagination Bar (full width and flush) -->
 <nav class="pagination pagination-top" aria-label="Page navigation">
   <span aria-current="page">Home</span>
   <a href="page_2.html">2</a>
@@ -91,32 +44,22 @@
   <a href="bible_verses.html">Bible Verses</a>
 </nav>
 
+<div class="header-buttons">
+  <button id="toggleDarkMode">🌓 Toggle Theme</button>
+  <a href="https://bsky.app/profile/chips-gifs.com" target="_blank" rel="noopener noreferrer">
+    <button id="followMeButton">Follow Me</button>
+  </a>
+</div>
 
+<div class="unique-intro">
+  <strong>This is the front door to the madness.</strong><br />
+  From smoke-filled satire to billionaire takedowns, Page 1 serves as your all-access pass to every flavor of absurdity this GIF gallery offers.<br /><br />
+  <span>Think of it as a sampler platter of political chaos, pop culture mockery, and meme-grade mayhem—handpicked by Chip with zero chill.</span><br /><br />
+  <span class="satire-highlight">“Why pick sides when you can pick GIFs? Scroll down and enjoy the spectacle.”</span>
+</div>
 
-  <!-- Centered Dark Mode and Follow Me Buttons under top nav -->
-  <div class="header-buttons" role="region" aria-label="Header action buttons">
-    <button id="toggleDarkMode" aria-pressed="false" aria-label="Toggle Dark Mode">🌓 Toggle Theme</button>
-    <a href="https://bsky.app/profile/chips-gifs.com" target="_blank" rel="noopener noreferrer">
-      <button id="followMeButton">Follow Me</button>
-    </a>
-  </div>
-
-  <div class="unique-intro">
-    <strong>This is the front door to the madness.</strong><br />
-    From smoke-filled satire to billionaire takedowns, Page 1 serves as your
-    all-access pass to every flavor of absurdity this GIF gallery offers.<br /><br />
-    <span>
-      Think of it as a sampler platter of political chaos, pop culture mockery,
-      and meme-grade mayhem—handpicked by Chip with zero chill and full commitment
-      to the roast.
-    </span><br /><br />
-    <span class="satire-highlight">
-      “Why pick sides when you can pick GIFs? Scroll down, buckle up, and enjoy the spectacle.”
-    </span>
-  </div>
-
-  <main>
-    <div class="gif-container">
+<main>
+  <div class="gif-container">
     <!-- Your GIF entries go here -->
 
 
