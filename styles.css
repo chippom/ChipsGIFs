@@ -326,5 +326,13 @@ body.dark-mode .unique-intro {
   max-height: 92%;
   object-fit: contain;
 }
+/* Center the theme toggle + follow buttons on all pages */
+.header-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+}
+
 
 /* --- End of CSS B --- */
