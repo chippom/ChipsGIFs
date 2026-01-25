@@ -267,7 +267,7 @@ footer img {
 #contactMeButton {
   display: inline-block;
   padding: 0.625rem 1.25rem;
-  margin-bottom: 0.25rem;         /* UPDATED: Tighten space below button */
+  margin-bottom: 0.25rem;
   position: relative;
   z-index: 10;
   background-color: var(--primary-color);
@@ -281,16 +281,28 @@ footer img {
   background-color: #388e3c;
 }
 
-/* Contact Button container to keep it above nav and footer without overlap */
+/* Contact Button container */
 .contact-button-container {
   text-align: center;
-  margin: 0 auto 0.5rem auto;    /* UPDATED: Remove top margin, reduce bottom margin */
+  margin: 0 auto 0.5rem auto;
   width: 100%;
   max-width: 100vw;
   box-sizing: border-box;
   padding: 0 15px;
   position: relative;
   z-index: 1100;
+}
+
+/* ⭐ HEADER BUTTONS — FIXED & CENTERED */
+.header-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;   /* ⭐ ADDED BACK IN */
+  gap: 20px;
+  margin: 1.2rem auto 2rem auto;
+  max-width: 900px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* 🌟 STAR EFFECT */
@@ -368,7 +380,7 @@ footer img {
 .pagination {
   width: 100vw;
   max-width: 100vw;
-  margin: 0.25rem 0 0 0;       /* UPDATED: Reduce margin-top for tight stacking below button */
+  margin: 0.25rem 0 0 0;
   padding: 12px 0;
   background: var(--pagination-bg, #222);
   display: flex;
@@ -477,10 +489,8 @@ body.dark-mode .unique-intro {
   .gif-item {
     width: calc(50% - 1rem);
   }
-  /* main .pagination:last-of-type {
-    margin-bottom: 90px !important;
-  } -- No longer necessary with proper main padding */
 }
+
 /* ========================================
    CONSENT BANNER FIX ONLY
    Added: January 18, 2026 - 2:48 PM EST
