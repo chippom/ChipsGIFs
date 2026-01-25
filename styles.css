@@ -333,6 +333,14 @@ body.dark-mode .unique-intro {
     align-items: center;
     gap: 0.75rem;
 }
+.header-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1rem; /* Add this line */
+}
+
 
 
 /* --- End of CSS B --- */
