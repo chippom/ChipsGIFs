@@ -119,8 +119,8 @@ export async function handler(event) {
       console.error('gif_download_summary insert error:', err.message);
     }
 
-    // --- ⭐ DIRECT FILE READ ⭐ ---
-    const filePath = path.join(process.cwd(), '..', 'gifs', gifName);
+    // --- ⭐ CORRECTED FILE PATH ⭐ ---
+    const filePath = path.join(process.cwd(), '..', '..', 'chips-gifs', 'gifs', gifName);
 
     console.log(`Looking for GIF at: ${filePath}`);
 
