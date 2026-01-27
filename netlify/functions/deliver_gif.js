@@ -1,14 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
-import { Buffer } from 'buffer'; // Ensure Buffer is available in Netlify environment
+import { readFileSync, existsSync } from 'fs';
+import path from 'path';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-// Helper to validate gifName parameter to allow only safe characters
+// Allow only safe characters
 function isValidGifName(name) {
-  // Allow alphanumeric characters, dashes, underscores, dots, and spaces
   return typeof name === 'string' && /^[a-zA-Z0-9_\-\. ]+$/.test(name);
 }
 
@@ -45,6 +45,7 @@ export async function handler(event) {
     const timestamp = new Date().toISOString();
     const page = event.headers.referer || 'direct-link';
 
+    // --- GEO LOOKUP (unchanged) ---
     let location = 'lookup disabled';
     let country = 'unknown';
     try {
@@ -52,6 +53,7 @@ export async function handler(event) {
         event.headers['x-nf-client-connection-ip'] ||
         event.headers['x-forwarded-for'] ||
         'unknown';
+
       if (ip !== 'unknown' && process.env.IPINFOTOKEN) {
         const geoRes = await fetch(`https://ipinfo.io/${ip}/json?token=${process.env.IPINFOTOKEN}`);
         if (geoRes.ok) {
@@ -70,45 +72,36 @@ export async function handler(event) {
       console.warn('Geo lookup failed:', geoErr.message);
     }
 
+    // --- LOGGING (unchanged) ---
     try {
-      const { data, error } = await supabase
-        .from('gif_downloads')
-        .insert([
-          {
-            gif_name: gifName,
-            timestamp,
-            page,
-            method: 'fallback',
-          },
-        ]);
-      if (error) {
-        console.error('❌ gif_downloads insert error:', error.message);
-      } else {
-        console.log('✅ gif_downloads insert success:', data);
-      }
-    } catch (logError) {
-      console.warn('🟠 Uncaught logging error:', logError.message);
+      await supabase.from('gif_downloads').insert([
+        {
+          gif_name: gifName,
+          timestamp,
+          page,
+          method: 'direct-file-read',
+        },
+      ]);
+    } catch (err) {
+      console.error('gif_downloads insert error:', err.message);
     }
 
     try {
-      const visitorId = 'anonymous';
-      await supabase
-        .from('visitor_logs')
-        .upsert(
-          {
-            visitorid: visitorId,
-            useragent: event.headers['user-agent'] || 'unknown',
-            page,
-            referrer: event.headers.referer || 'none',
-            timestamp,
-            gif_name: gifName,
-            location,
-            country,
-          },
-          { onConflict: 'visitorid' }
-        );
-    } catch (visitorErr) {
-      console.error('❌ visitor_logs upsert error:', visitorErr.message);
+      await supabase.from('visitor_logs').upsert(
+        {
+          visitorid: 'anonymous',
+          useragent: event.headers['user-agent'] || 'unknown',
+          page,
+          referrer: event.headers.referer || 'none',
+          timestamp,
+          gif_name: gifName,
+          location,
+          country,
+        },
+        { onConflict: 'visitorid' }
+      );
+    } catch (err) {
+      console.error('visitor_logs upsert error:', err.message);
     }
 
     try {
@@ -122,16 +115,17 @@ export async function handler(event) {
           country,
         },
       ]);
-    } catch (summaryErr) {
-      console.error('❌ gif_download_summary insert error:', summaryErr.message);
+    } catch (err) {
+      console.error('gif_download_summary insert error:', err.message);
     }
 
-    const fileUrl = `https://chips-gifs.com/gifs/${gifName}`;
-    console.log(`Fetching GIF from URL: ${fileUrl}`);
-    const res = await fetch(fileUrl);
+    // --- ⭐ DIRECT FILE READ ⭐ ---
+    const filePath = path.join('/var/task/gifs', gifName);
 
-    if (res.status === 404) {
-      console.warn(`GIF not found: ${gifName}`);
+    console.log(`Looking for GIF at: ${filePath}`);
+
+    if (!existsSync(filePath)) {
+      console.warn(`GIF not found on disk: ${gifName}`);
       return {
         statusCode: 404,
         headers: { ...headers, 'Content-Type': 'application/json' },
@@ -139,37 +133,28 @@ export async function handler(event) {
       };
     }
 
-    if (!res.ok) {
-      throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
-    }
+    const buffer = readFileSync(filePath);
 
-    const arrayBuffer = await res.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    const base64Body = buffer.toString('base64');
-
-    const contentType = res.headers.get('Content-Type') || 'application/octet-stream';
-
-    console.log(`Serving GIF: ${gifName} with Content-Type: ${contentType}`);
+    console.log(`Serving GIF from disk: ${gifName}`);
 
     return {
       statusCode: 200,
       isBase64Encoded: true,
       headers: {
         ...headers,
-        'Content-Type': contentType,
+        'Content-Type': 'image/gif',
         'Content-Disposition': `attachment; filename="${gifName}"`,
       },
-      body: base64Body,
+      body: buffer.toString('base64'),
     };
+
   } catch (err) {
-    console.error('🧨 Uncaught error in deliver_gif.js:', err.message);
+    console.error('Uncaught error in deliver_gif.js:', err.message);
     return {
       statusCode: 500,
       headers: {
+        ...headers,
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'no-store',
-        'X-Content-Type-Options': 'nosniff',
       },
       body: JSON.stringify({ error: 'Server error' }),
     };
