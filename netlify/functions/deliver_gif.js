@@ -120,7 +120,7 @@ export async function handler(event) {
     }
 
     // --- ⭐ DIRECT FILE READ ⭐ ---
-    const filePath = path.join('/var/task/gifs', gifName);
+    const filePath = path.join(process.cwd(), 'gifs', gifName);
 
     console.log(`Looking for GIF at: ${filePath}`);
 
