@@ -121,7 +121,7 @@ export async function handler(event) {
     }
 
     // --- ⭐ FIXED FILE PATH ⭐ ---
-    const filePath = path.join(__dirname, 'gifs', gifName);
+    const filePath = path.join(process.cwd(), 'gifs', gifName);
 
     console.log(`Looking for GIF at: ${filePath}`);
 
