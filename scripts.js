@@ -123,7 +123,7 @@ function initDownloadHandlers(visitorId) {
         const img = gifItem.querySelector("img");
         const countEl = gifItem.querySelector(".download-count");
 
-        const rawGifName = decodeURIComponent(img.dataset.gif.split("/").pop()).trim();
+        const rawGifName = decodeURIComponent(img.dataset.gif.split("gif_name=").pop()).trim();
         const gifNameEncoded = encodeURIComponent(rawGifName);
 
         const countData = JSON.stringify({ gif_name: rawGifName });
@@ -156,7 +156,7 @@ function initDownloadHandlers(visitorId) {
           });
         }
 
-        const res = await fetch(`/.netlify/functions/deliver_gif?gif_name=${gifNameEncoded}`);
+        const res = await fetch(`/.netlify/functions/deliver_gif2?gif_name=${gifNameEncoded}`);
         if (!res.ok) throw new Error(res.statusText);
 
         const blob = await res.blob();
@@ -198,10 +198,9 @@ function initDownloadHandlers(visitorId) {
 function initContextMenuLogging(visitorId) {
   document.querySelectorAll(".gif-item img").forEach(img => {
     const logBoth = () => {
-      const gifNameRaw = (img.dataset.gif || "").split("/").pop();
-      const gifName = decodeURIComponent(gifNameRaw).trim();
+      const gifNameRaw = decodeURIComponent(img.dataset.gif.split("gif_name=").pop()).trim();
 
-      const countData = JSON.stringify({ gif_name: gifName });
+      const countData = JSON.stringify({ gif_name: gifNameRaw });
 
       if (navigator.sendBeacon) {
         navigator.sendBeacon("/.netlify/functions/update-download-count", countData);
@@ -218,7 +217,7 @@ function initContextMenuLogging(visitorId) {
         userAgent: navigator.userAgent,
         page: window.location.pathname,
         referrer: document.referrer,
-        gif_name: gifName
+        gif_name: gifNameRaw
       });
 
       if (navigator.sendBeacon) {
@@ -315,7 +314,7 @@ async function fetchAndDisplayAllDownloadCounts() {
     const img = item.querySelector("img");
 
     if (img?.dataset.gif) {
-      const rawGifName = decodeURIComponent(img.dataset.gif.split("/").pop()).trim();
+      const rawGifName = decodeURIComponent(img.dataset.gif.split("gif_name=").pop()).trim();
       const gifNameEncoded = encodeURIComponent(rawGifName);
 
       try {
@@ -346,4 +345,3 @@ async function fetchAndDisplayAllDownloadCounts() {
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/service-worker.js');
 }
-
