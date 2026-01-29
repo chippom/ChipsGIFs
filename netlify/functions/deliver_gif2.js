@@ -1,4 +1,3 @@
- // trigger deploy
 import { createClient } from '@supabase/supabase-js';
 import { readFileSync, existsSync } from 'fs';
 import path from 'path';
@@ -121,7 +120,7 @@ export async function handler(event) {
     }
 
     // --- ⭐ FIXED FILE PATH ⭐ ---
-    const filePath = path.join(process.cwd(), 'static', 'gifs', gifName);
+    const filePath = path.join('/var/task/static/gifs', gifName);
 
     console.log(`Looking for GIF at: ${filePath}`);
 
