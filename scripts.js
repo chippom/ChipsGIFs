@@ -1,4 +1,4 @@
-/* scripts.js CLEAN VERSION — NO SERVICE WORKER */
+/* scripts.js v20260129 — ACTIVE SERVICE WORKER (RECONFIGURED) */
 
 /* Prevent FOUC: Make body visible once DOM is fully loaded */
 document.addEventListener("DOMContentLoaded", () => {
