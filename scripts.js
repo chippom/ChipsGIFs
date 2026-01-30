@@ -30,7 +30,7 @@ function initLazyLoad() {
         const img = entry.target;
         const filename = img.dataset.gif;
         if (filename) {
-          img.src = "/.netlify/functions/deliver_gif2?gif_name=" + filename;
+          img.src = "/static/gifs/" + filename;
           io.unobserve(img);
         }
       }
@@ -41,7 +41,7 @@ function initLazyLoad() {
     const filename = img.dataset.gif;
 
     if (i < 6) {
-      img.src = "/.netlify/functions/deliver_gif2?gif_name=" + filename;
+      img.src = "/static/gifs/" + filename;
     } else {
       img.src = "gifs/placeholder.jpg";
       io.observe(img);
@@ -58,7 +58,7 @@ function initOverlay() {
       const overlay = document.getElementById("overlay");
       const overlayImg = document.getElementById("overlay-img");
       if (img?.dataset.gif && overlay && overlayImg) {
-        overlayImg.src = img.dataset.gif;
+        overlayImg.src = "/static/gifs/" + img.dataset.gif;
         overlay.classList.add("active");
       }
     });
