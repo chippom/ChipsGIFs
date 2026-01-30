@@ -28,8 +28,9 @@ function initLazyLoad() {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         const img = entry.target;
-        if (img.dataset.gif && img.src !== img.dataset.gif) {
-          img.src = img.dataset.gif;
+        const filename = img.dataset.gif;
+        if (filename) {
+          img.src = "/.netlify/functions/deliver_gif2?gif_name=" + filename;
           io.unobserve(img);
         }
       }
@@ -37,10 +38,10 @@ function initLazyLoad() {
   }, { rootMargin: "800px" });
 
   document.querySelectorAll(".gif-item img").forEach((img, i) => {
-    const original = img.src;
-    img.dataset.gif = original;
+    const filename = img.dataset.gif;
+
     if (i < 6) {
-      img.src = original;
+      img.src = "/.netlify/functions/deliver_gif2?gif_name=" + filename;
     } else {
       img.src = "gifs/placeholder.jpg";
       io.observe(img);
