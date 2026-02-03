@@ -1,57 +1,57 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
-
-export async function handler(event) {
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Content-Type': 'application/json',
-    'Cache-Control': 'no-store',
-    'X-Content-Type-Options': 'nosniff',
-  };
-
-  if (event.httpMethod !== 'GET') {
-    return {
-      statusCode: 405,
-      headers,
-      body: JSON.stringify({ error: 'Method Not Allowed' }),
+export default {
+  async fetch(request, env) {
+    const headers = {
+      'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-store',
+      'X-Content-Type-Options': 'nosniff'
     };
-  }
 
-  const gif_name = event.queryStringParameters?.gif_name;
-  if (!gif_name) {
-    return {
-      statusCode: 400,
-      headers,
-      body: JSON.stringify({ error: 'Missing gif_name parameter' }),
-    };
-  }
+    try {
+      const url = new URL(request.url);
 
-  try {
-    const { data, error } = await supabase
-      .from('downloads')
-      .select('count')
-      .eq('gif_name', gif_name)
-      .single();
+      if (request.method !== 'GET') {
+        return new Response(
+          JSON.stringify({ error: 'Method Not Allowed' }),
+          { status: 405, headers }
+        );
+      }
 
-    if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
-      throw error;
+      const gif_name = url.searchParams.get('gif_name');
+      if (!gif_name) {
+        return new Response(
+          JSON.stringify({ error: 'Missing gif_name parameter' }),
+          { status: 400, headers }
+        );
+      }
+
+      const supabase = createClient(
+        env.SUPABASE_URL,
+        env.SUPABASE_SERVICE_ROLE_KEY
+      );
+
+      const { data, error } = await supabase
+        .from('downloads')
+        .select('count')
+        .eq('gif_name', gif_name)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
+
+      return new Response(
+        JSON.stringify({ count: data?.count ?? 0 }),
+        { status: 200, headers }
+      );
+
+    } catch (err) {
+      return new Response(
+        JSON.stringify({ error: 'Internal server error' }),
+        { status: 500, headers }
+      );
     }
-
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({ count: data?.count ?? 0 }),
-    };
-  } catch (err) {
-    console.error('❌ get-download-count error:', err.message);
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ error: 'Internal server error' }),
-    };
   }
-}
+};
