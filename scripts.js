@@ -86,9 +86,9 @@ function initOverlayContextMenuLogging(visitorId) {
     });
 
     if (navigator.sendBeacon) {
-      navigator.sendBeacon('/.netlify/functions/logVisitor', data);
+      navigator.sendBeacon('/functions/logVisitor', data);
     } else {
-      fetch('/.netlify/functions/logVisitor', {
+      fetch('/functions/logVisitor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: data,
@@ -130,9 +130,9 @@ function initDownloadHandlers(visitorId) {
         const countData = JSON.stringify({ gif_name: rawGifName });
 
         if (navigator.sendBeacon) {
-          navigator.sendBeacon("/.netlify/functions/update-download-count", countData);
+          navigator.sendBeacon("/functions/update-download-count", countData);
         } else {
-          await fetch("/.netlify/functions/update-download-count", {
+          await fetch("/functions/update-download-count", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: countData
@@ -148,16 +148,16 @@ function initDownloadHandlers(visitorId) {
         });
 
         if (navigator.sendBeacon) {
-          navigator.sendBeacon("/.netlify/functions/logVisitor", visitorData);
+          navigator.sendBeacon("/functions/logVisitor", visitorData);
         } else {
-          await fetch("/.netlify/functions/logVisitor", {
+          await fetch("/functions/logVisitor", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: visitorData
           });
         }
 
-        const res = await fetch(`/.netlify/functions/deliver_gif2?gif_name=${gifNameEncoded}`);
+        const res = await fetch(`/functions/deliver_gif?gif_name=${gifNameEncoded}`);
         if (!res.ok) throw new Error(res.statusText);
 
         const blob = await res.blob();
@@ -173,7 +173,7 @@ function initDownloadHandlers(visitorId) {
         setTimeout(() => URL.revokeObjectURL(url), 10000);
 
         try {
-          const countRes = await fetch(`/.netlify/functions/get-download-count?gif_name=${gifNameEncoded}`);
+          const countRes = await fetch(`/functions/get-download-count?gif_name=${gifNameEncoded}`);
           if (countRes.ok) {
             const countDataRes = await countRes.json();
             const safeCount = countDataRes.count ?? 0;
@@ -204,9 +204,9 @@ function initContextMenuLogging(visitorId) {
       const countData = JSON.stringify({ gif_name: gifNameRaw });
 
       if (navigator.sendBeacon) {
-        navigator.sendBeacon("/.netlify/functions/update-download-count", countData);
+        navigator.sendBeacon("/functions/update-download-count", countData);
       } else {
-        fetch("/.netlify/functions/update-download-count", {
+        fetch("/functions/update-download-count", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: countData
@@ -222,9 +222,9 @@ function initContextMenuLogging(visitorId) {
       });
 
       if (navigator.sendBeacon) {
-        navigator.sendBeacon("/.netlify/functions/logVisitor", visitorData);
+        navigator.sendBeacon("/functions/logVisitor", visitorData);
       } else {
-        fetch("/.netlify/functions/logVisitor", {
+        fetch("/functions/logVisitor", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: visitorData
@@ -319,7 +319,7 @@ async function fetchAndDisplayAllDownloadCounts() {
       const gifNameEncoded = encodeURIComponent(rawGifName);
 
       try {
-        const res = await fetch(`/.netlify/functions/get-download-count?gif_name=${gifNameEncoded}`);
+        const res = await fetch(`/functions/get-download-count?gif_name=${gifNameEncoded}`);
 
         if (res.ok) {
           const data = await res.json();
