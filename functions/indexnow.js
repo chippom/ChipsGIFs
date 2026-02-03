@@ -1,4 +1,4 @@
-export default async (req, context) => {
+export async function onRequest(context) {
   const urlsToSubmit = [
     "https://chips-gifs.com/",
     "https://chips-gifs.com/page_2",
@@ -32,4 +32,4 @@ export default async (req, context) => {
     headers: { "content-type": "application/json" },
     status: 200
   });
-};
+}
