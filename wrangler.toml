@@ -1,0 +1,13 @@
+name = "chips-gifs-api"
+main = "worker/index.js"
+compatibility_date = "2024-12-01"
+
+[vars]
+SUPABASE_URL = ""
+SUPABASE_SERVICE_ROLE_KEY = ""
+IPINFO_TOKEN = ""
+
+[[r2_buckets]]
+binding = "CHIPS_GIFS"
+bucket_name = "chips-gifs"
+preview_bucket_name = "chips-gifs"
