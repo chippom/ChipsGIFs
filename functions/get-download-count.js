@@ -1,5 +1,4 @@
-// @ts-ignore
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2?no-dts';
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 export async function onRequest(context) {
   const { request, env } = context;
