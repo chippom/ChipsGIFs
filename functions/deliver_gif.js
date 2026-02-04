@@ -125,5 +125,3 @@ export async function onRequest(context) {
     );
   }
 }
-          
-  for cloudflare
