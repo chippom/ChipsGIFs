@@ -86,9 +86,9 @@ function initOverlayContextMenuLogging(visitorId) {
     });
 
     if (navigator.sendBeacon) {
-      navigator.sendBeacon('/api/logVisitor', data);
+      navigator.sendBeacon('/logVisitor', data);
     } else {
-      fetch('/api/logVisitor', {
+      fetch('/logVisitor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: data,
@@ -130,9 +130,9 @@ function initDownloadHandlers(visitorId) {
         const countData = JSON.stringify({ gif_name: rawGifName });
 
         if (navigator.sendBeacon) {
-          navigator.sendBeacon("/api/update-download-count", countData);
+          navigator.sendBeacon("/update-download-count", countData);
         } else {
-          await fetch("/api/update-download-count", {
+          await fetch("/update-download-count", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: countData
@@ -148,16 +148,16 @@ function initDownloadHandlers(visitorId) {
         });
 
         if (navigator.sendBeacon) {
-          navigator.sendBeacon("/api/logVisitor", visitorData);
+          navigator.sendBeacon("/logVisitor", visitorData);
         } else {
-          await fetch("/api/logVisitor", {
+          await fetch("/logVisitor", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: visitorData
           });
         }
 
-        const res = await fetch(`/api/deliver_gif?gif_name=${gifNameEncoded}`);
+        const res = await fetch(`/deliver_gif?gif_name=${gifNameEncoded}`);
         if (!res.ok) throw new Error(res.statusText);
 
         const blob = await res.blob();
@@ -173,7 +173,7 @@ function initDownloadHandlers(visitorId) {
         setTimeout(() => URL.revokeObjectURL(url), 10000);
 
         try {
-          const countRes = await fetch(`/api/get-download-count?gif_name=${gifNameEncoded}`);
+          const countRes = await fetch(`/get-download-count?gif_name=${gifNameEncoded}`);
           if (countRes.ok) {
             const countDataRes = await countRes.json();
             const safeCount = countDataRes.count ?? 0;
@@ -204,9 +204,9 @@ function initContextMenuLogging(visitorId) {
       const countData = JSON.stringify({ gif_name: gifNameRaw });
 
       if (navigator.sendBeacon) {
-        navigator.sendBeacon("/api/update-download-count", countData);
+        navigator.sendBeacon("/update-download-count", countData);
       } else {
-        fetch("/api/update-download-count", {
+        fetch("/update-download-count", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: countData
@@ -222,9 +222,9 @@ function initContextMenuLogging(visitorId) {
       });
 
       if (navigator.sendBeacon) {
-        navigator.sendBeacon("/api/logVisitor", visitorData);
+        navigator.sendBeacon("/logVisitor", visitorData);
       } else {
-        fetch("/api/logVisitor", {
+        fetch("/logVisitor", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: visitorData
@@ -319,7 +319,7 @@ async function fetchAndDisplayAllDownloadCounts() {
       const gifNameEncoded = encodeURIComponent(rawGifName);
 
       try {
-        const res = await fetch(`/api/get-download-count?gif_name=${gifNameEncoded}`);
+        const res = await fetch(`/get-download-count?gif_name=${gifNameEncoded}`);
 
         if (res.ok) {
           const data = await res.json();
