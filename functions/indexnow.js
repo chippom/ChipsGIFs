@@ -1,5 +1,3 @@
-/* noop change to force redeploy */
-
 export async function onRequest(context) {
   const urlsToSubmit = [
     "https://chips-gifs.com/",
