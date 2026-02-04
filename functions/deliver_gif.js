@@ -98,7 +98,7 @@ export async function onRequest(context) {
       ]);
     } catch (e) {}
 
-    const object = await env.CHIPS_GIFS.get(gifName);
+    const object = await env["CHIPS-GIFS"].get(gifName);
 
     if (!object) {
       return new Response(
