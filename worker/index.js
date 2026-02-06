@@ -1,3 +1,4 @@
+===== WORKER FILE START =====
 import { createClient } from "@supabase/supabase-js";
 
 export default {
@@ -98,7 +99,7 @@ export default {
           ]);
         } catch (_) {}
 
-        const object = await env.CHIPS_GIFS.get(gifName);
+        const object = await env.CHIPS_GIFS.get(`static/gifs/${gifName}`);
 
         if (!object) {
           return new Response(JSON.stringify({ error: "GIF not found" }), {
@@ -411,3 +412,4 @@ export default {
     return new Response("Not found", { status: 404 });
   }
 };
+===== WORKER FILE END =====
