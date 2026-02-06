@@ -204,7 +204,7 @@ export default {
           });
         }
 
-        const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE);
+        const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
 
         const now = new Date();
         const timestamp = now.toISOString();
