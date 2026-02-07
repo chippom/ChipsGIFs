@@ -7,6 +7,52 @@ export default {
     const path = url.pathname;
 
     // -------------------------------
+    // HELPER: ensure downloads row exists, then increment
+    // -------------------------------
+    async function ensureAndIncrement(supabase, gifName, visitorId) {
+      const now = new Date();
+      const timestamp = now.toISOString();
+      const easternTime = now.toLocaleString("en-US", {
+        timeZone: "America/New_York",
+        hour12: true
+      });
+
+      const { data: existing, error: selectErr } = await supabase
+        .from("downloads")
+        .select("*")
+        .eq("gif_name", gifName)
+        .single();
+
+      if (selectErr && selectErr.code !== "PGRST116") throw selectErr;
+
+      if (!existing) {
+        const { error: insertErr } = await supabase.from("downloads").insert([
+          {
+            gif_name: gifName,
+            count: 1,
+            timestamp,
+            eastern_time: easternTime,
+            visitor_id: visitorId || "unknown"
+          }
+        ]);
+        if (insertErr) throw insertErr;
+        return;
+      }
+
+      const { error: updateErr } = await supabase
+        .from("downloads")
+        .update({
+          count: existing.count + 1,
+          timestamp,
+          eastern_time: easternTime,
+          visitor_id: visitorId || existing.visitor_id
+        })
+        .eq("gif_name", gifName);
+
+      if (updateErr) throw updateErr;
+    }
+
+    // -------------------------------
     // ROUTE: /api/deliver
     // -------------------------------
     if (path === "/api/deliver") {
@@ -70,12 +116,15 @@ export default {
               page: referer,
               referrer: referer,
               timestamp,
+              eastern_time: easternTime,
               gif_name: gifName,
               location,
               country
             }
           ]);
         } catch (_) {}
+
+        await ensureAndIncrement(supabase, gifName, "anonymous");
 
         const object = await env.CHIPS_GIFS.get(`static/gifs/${gifName}`);
 
@@ -95,7 +144,7 @@ export default {
             "Content-Disposition": `attachment; filename="${gifName}"`
           }
         });
-      } catch (err) {
+      } catch (_) {
         return new Response(JSON.stringify({ error: "Server error" }), {
           status: 500,
           headers: { "Content-Type": "application/json" }
@@ -108,13 +157,6 @@ export default {
     // -------------------------------
     if (path === "/api/count") {
       try {
-        if (request.method !== "GET") {
-          return new Response(
-            JSON.stringify({ error: "Method Not Allowed" }),
-            { status: 405, headers: { "Content-Type": "application/json" } }
-          );
-        }
-
         const gif_name = url.searchParams.get("gif_name");
         if (!gif_name) {
           return new Response(
@@ -150,13 +192,6 @@ export default {
     // -------------------------------
     if (path === "/api/log") {
       try {
-        if (request.method !== "POST") {
-          return new Response(
-            JSON.stringify({ error: "Method Not Allowed" }),
-            { status: 405, headers: { "Content-Type": "application/json" } }
-          );
-        }
-
         let data;
         try {
           data = await request.json();
@@ -167,14 +202,8 @@ export default {
           });
         }
 
-        const {
-          visitor_id,
-          page,
-          referrer,
-          userAgent,
-          gif_name,
-          excludeTester
-        } = data;
+        const { visitor_id, page, referrer, userAgent, gif_name, excludeTester } =
+          data;
 
         if (excludeTester) {
           return new Response(JSON.stringify({ message: "Excluded visitor" }), {
@@ -197,73 +226,6 @@ export default {
           request.headers.get("x-forwarded-for") ||
           "unknown";
 
-        async function getLocationInfo(ipAddress) {
-          try {
-            const { data: cached, error } = await supabase
-              .from("ip_location_cache")
-              .select()
-              .eq("ip", ipAddress)
-              .single();
-
-            if (!error && cached) {
-              const age = new Date() - new Date(cached.timestamp);
-              if (age < 7 * 24 * 60 * 60 * 1000) {
-                return {
-                  city: cached.city,
-                  region: cached.region,
-                  country: cached.country,
-                  locationStr:
-                    [cached.city, cached.region, cached.country]
-                      .filter(Boolean)
-                      .join(", ") || "unknown"
-                };
-              }
-            }
-          } catch (_) {}
-
-          try {
-            const geoRes = await fetch(
-              `https://ipinfo.io/${ipAddress}/json?token=${env.IPINFO_TOKEN}`
-            );
-
-            if (!geoRes.ok) throw new Error("Geo API error");
-
-            const geo = await geoRes.json();
-
-            const city = geo.city || null;
-            const region = geo.region || null;
-            const country = geo.country || null;
-            const locationStr =
-              [city, region, country].filter(Boolean).join(", ") || "unknown";
-
-            await supabase.from("ip_location_cache").upsert(
-              [
-                {
-                  ip: ipAddress,
-                  city,
-                  region,
-                  country,
-                  location: locationStr,
-                  timestamp: new Date().toISOString()
-                }
-              ],
-              { onConflict: ["ip"] }
-            );
-
-            return { city, region, country, locationStr };
-          } catch (_) {
-            return {
-              city: null,
-              region: null,
-              country: null,
-              locationStr: "lookup disabled"
-            };
-          }
-        }
-
-        const geoInfo = await getLocationInfo(ip);
-        const { locationStr: location, country } = geoInfo;
-
         const ops = [];
 
         ops.push(
@@ -275,12 +237,14 @@ export default {
               referrer: referrer || "none",
               timestamp,
               eastern_time: easternTime,
-              location,
-              country,
               ip
             }
           ])
         );
+
+        if (gif_name) {
+          ops.push(ensureAndIncrement(supabase, gif_name, visitor_id));
+        }
 
         await Promise.allSettled(ops);
 
@@ -301,13 +265,6 @@ export default {
     // -------------------------------
     if (path === "/api/update") {
       try {
-        if (request.method !== "POST") {
-          return new Response(
-            JSON.stringify({ error: "Method Not Allowed" }),
-            { status: 405, headers: { "Content-Type": "application/json" } }
-          );
-        }
-
         let data;
         try {
           data = await request.json();
@@ -318,7 +275,8 @@ export default {
           });
         }
 
-        const { gif_name } = data;
+        const { gif_name, visitor_id } = data;
+
         if (!gif_name) {
           return new Response(
             JSON.stringify({ error: "Missing gif_name" }),
@@ -328,11 +286,7 @@ export default {
 
         const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
 
-        const { error } = await supabase.rpc("increment_download_count", {
-          gif_name_param: gif_name
-        });
-
-        if (error) throw error;
+        await ensureAndIncrement(supabase, gif_name, visitor_id);
 
         return new Response(
           JSON.stringify({ message: "Download count updated" }),
@@ -346,9 +300,6 @@ export default {
       }
     }
 
-    // -------------------------------
-    // FALLBACK
-    // -------------------------------
     return new Response("Not found", { status: 404 });
   }
 };
