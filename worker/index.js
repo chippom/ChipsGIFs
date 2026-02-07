@@ -27,7 +27,12 @@ export default {
 
         const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
 
-        const timestamp = new Date().toISOString();
+        const now = new Date();
+        const timestamp = now.toISOString();
+        const easternTime = now.toLocaleString("en-US", {
+          timeZone: "America/New_York",
+          hour12: true
+        });
         const referer = request.headers.get("referer") || "direct-link";
 
         let location = "lookup disabled";
@@ -58,18 +63,7 @@ export default {
         } catch (_) {}
 
         try {
-          await supabase.from("gif_downloads").insert([
-            {
-              gif_name: gifName,
-              timestamp,
-              page: referer,
-              method: "r2-read"
-            }
-          ]);
-        } catch (_) {}
-
-        try {
-          await supabase.from("visitor_logs").upsert(
+          await supabase.from("visitor_logs").insert([
             {
               visitorid: "anonymous",
               useragent: request.headers.get("user-agent") || "unknown",
@@ -77,22 +71,6 @@ export default {
               referrer: referer,
               timestamp,
               gif_name: gifName,
-              location,
-              country
-            },
-            { onConflict: "visitorid" }
-          );
-        } catch (_) {}
-
-        try {
-          await supabase.from("gif_download_summary").insert([
-            {
-              gif_name: gifName,
-              timestamp,
-              easternTime: new Date().toLocaleString("en-US", {
-                timeZone: "America/New_York"
-              }),
-              referrer: referer,
               location,
               country
             }
@@ -289,58 +267,20 @@ export default {
         const ops = [];
 
         ops.push(
-          supabase.from("visitor_logs").upsert(
-            [
-              {
-                gif_name,
-                useragent: userAgent,
-                page: page || referrer || "unknown",
-                referrer: referrer || "none",
-                timestamp,
-                eastern_time: easternTime,
-                location,
-                country,
-                ip
-              }
-            ],
-            { onConflict: ["gif_name"] }
-          )
+          supabase.from("visitor_logs").insert([
+            {
+              gif_name,
+              useragent: userAgent,
+              page: page || referrer || "unknown",
+              referrer: referrer || "none",
+              timestamp,
+              eastern_time: easternTime,
+              location,
+              country,
+              ip
+            }
+          ])
         );
-
-        if (gif_name && visitor_id) {
-          ops.push(
-            supabase.from("gif_downloads").upsert(
-              [
-                {
-                  gif_name,
-                  visitor_id,
-                  timestamp,
-                  eastern_time: easternTime,
-                  location,
-                  country,
-                  ip,
-                  page: page || referrer || "unknown"
-                }
-              ],
-              { onConflict: ["gif_name", "visitor_id"] }
-            )
-          );
-        }
-
-        if (gif_name) {
-          ops.push(
-            supabase.from("gif_download_summary").insert([
-              {
-                gif_name,
-                timestamp,
-                eastern_time: easternTime,
-                referrer: referrer || "none",
-                country,
-                ip
-              }
-            ])
-          );
-        }
 
         await Promise.allSettled(ops);
 
