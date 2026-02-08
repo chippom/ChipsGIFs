@@ -1,14 +1,11 @@
 ===== WORKER FILE START =====
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const path = url.pathname;
 
-    // -------------------------------
-    // HELPER: ensure downloads row exists, then increment
-    // -------------------------------
     async function ensureAndIncrement(supabase, gifName, visitorId) {
       const now = new Date();
       const timestamp = now.toISOString();
@@ -52,9 +49,6 @@ export default {
       if (updateErr) throw updateErr;
     }
 
-    // -------------------------------
-    // ROUTE: /api/deliver
-    // -------------------------------
     if (path === "/api/deliver") {
       try {
         const gifNameRaw =
@@ -152,9 +146,6 @@ export default {
       }
     }
 
-    // -------------------------------
-    // ROUTE: /api/count
-    // -------------------------------
     if (path === "/api/count") {
       try {
         const gif_name = url.searchParams.get("gif_name");
@@ -187,9 +178,6 @@ export default {
       }
     }
 
-    // -------------------------------
-    // ROUTE: /api/log
-    // -------------------------------
     if (path === "/api/log") {
       try {
         let data;
@@ -260,9 +248,6 @@ export default {
       }
     }
 
-    // -------------------------------
-    // ROUTE: /api/update
-    // -------------------------------
     if (path === "/api/update") {
       try {
         let data;
