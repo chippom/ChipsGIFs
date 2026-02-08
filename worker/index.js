@@ -126,7 +126,7 @@ export default {
 
         await ensureAndIncrement(supabase, gifName, "anonymous");
 
-        const object = await env.CHIPS_GIFS.get(`static/gifs/${gifName}`);
+        const object = await env.CHIPS_GIFS.get(gifName);
 
         if (!object) {
           return new Response(JSON.stringify({ error: "GIF not found" }), {
