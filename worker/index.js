@@ -100,7 +100,9 @@ export default {
               }
             }
           }
-        } catch (_) {}
+        } catch (err) {
+          console.error(err);
+        }
 
         try {
           await supabase.from("visitor_logs").insert([
@@ -116,7 +118,9 @@ export default {
               country
             }
           ]);
-        } catch (_) {}
+        } catch (err) {
+          console.error(err);
+        }
 
         await ensureAndIncrement(supabase, gifName, "anonymous");
 
@@ -138,7 +142,8 @@ export default {
             "Content-Disposition": `attachment; filename="${gifName}"`
           }
         });
-      } catch (_) {
+      } catch (err) {
+        console.error(err);
         return new Response(JSON.stringify({ error: "Server error" }), {
           status: 500,
           headers: { "Content-Type": "application/json" }
@@ -170,7 +175,8 @@ export default {
           JSON.stringify({ count: data?.count ?? 0 }),
           { status: 200, headers: { "Content-Type": "application/json" } }
         );
-      } catch (_) {
+      } catch (err) {
+        console.error(err);
         return new Response(JSON.stringify({ error: "Internal server error" }), {
           status: 500,
           headers: { "Content-Type": "application/json" }
@@ -183,7 +189,8 @@ export default {
         let data;
         try {
           data = await request.json();
-        } catch (_) {
+        } catch (err) {
+          console.error(err);
           return new Response(JSON.stringify({ error: "Invalid JSON" }), {
             status: 400,
             headers: { "Content-Type": "application/json" }
@@ -240,7 +247,8 @@ export default {
           status: 200,
           headers: { "Content-Type": "application/json" }
         });
-      } catch (_) {
+      } catch (err) {
+        console.error(err);
         return new Response(JSON.stringify({ error: "Internal server error" }), {
           status: 500,
           headers: { "Content-Type": "application/json" }
@@ -253,7 +261,8 @@ export default {
         let data;
         try {
           data = await request.json();
-        } catch (_) {
+        } catch (err) {
+          console.error(err);
           return new Response(JSON.stringify({ error: "Invalid JSON" }), {
             status: 400,
             headers: { "Content-Type": "application/json" }
@@ -277,7 +286,8 @@ export default {
           JSON.stringify({ message: "Download count updated" }),
           { status: 200, headers: { "Content-Type": "application/json" } }
         );
-      } catch (_) {
+      } catch (err) {
+        console.error(err);
         return new Response(JSON.stringify({ error: "Internal server error" }), {
           status: 500,
           headers: { "Content-Type": "application/json" }
