@@ -1,4 +1,3 @@
-===== WORKER FILE START =====
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 export default {
@@ -124,7 +123,7 @@ export default {
 
         await ensureAndIncrement(supabase, gifName, "anonymous");
 
-        const object = await env.CHIPS_GIFS.get(gifName);
+        const object = await env["CHIPS-GIFS"].get(gifName);
 
         if (!object) {
           return new Response(JSON.stringify({ error: "GIF not found" }), {
@@ -133,7 +132,7 @@ export default {
           });
         }
 
-        const body = await object.arrayBuffer();
+        const body = await object.body.arrayBuffer();
 
         return new Response(body, {
           status: 200,
@@ -298,4 +297,3 @@ export default {
     return new Response("Not found", { status: 404 });
   }
 };
-===== WORKER FILE END =====
