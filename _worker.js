@@ -1,4 +1,4 @@
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/esm/index.js";
+import { createClient } from "@supabase/supabase-js";
 
 export default {
   async fetch(request, env) {

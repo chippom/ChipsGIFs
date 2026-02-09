@@ -6,10 +6,10 @@
     "dev": "netlify dev"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.50.3"
+    "@supabase/supabase-js": "^2.95.3"
   },
   "devDependencies": {
-    "netlify-cli": "^17.0.0",
-    "buffer": "^6.0.3"
+    "buffer": "^6.0.3",
+    "netlify-cli": "^17.0.0"
   }
 }
