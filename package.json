@@ -1,6 +1,7 @@
 {
   "name": "chips-gifs-project",
   "version": "1.0.0",
+  "description": "Cloudflare Pages project for ChipsGIFs",
   "type": "module",
   "scripts": {
     "dev": "netlify dev"
