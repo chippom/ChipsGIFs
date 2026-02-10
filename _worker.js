@@ -48,6 +48,17 @@ export default {
       if (updateErr) throw updateErr;
     }
 
+    // Serve GIFs directly from R2 if path is not an API route
+    if (!path.startsWith("/api/") && path !== "/") {
+      const key = path.slice(1); // strip leading "/"
+      const object = await env["CHIPS-GIFS"].get(key);
+      if (object) {
+        return new Response(object.body, {
+          headers: { "Content-Type": "image/gif" }
+        });
+      }
+    }
+
     if (path === "/api/deliver") {
       try {
         const gifNameRaw =
@@ -277,23 +288,4 @@ export default {
           );
         }
 
-        const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
-
-        await ensureAndIncrement(supabase, gif_name, visitor_id);
-
-        return new Response(
-          JSON.stringify({ message: "Download count updated" }),
-          { status: 200, headers: { "Content-Type": "application/json" } }
-        );
-      } catch (err) {
-        console.error(err);
-        return new Response(JSON.stringify({ error: "Internal server error" }), {
-          status: 500,
-          headers: { "Content-Type": "application/json" }
-        });
-      }
-    }
-
-    return new Response("Not found", { status: 404 });
-  }
-};
+        const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY
