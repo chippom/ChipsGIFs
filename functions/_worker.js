@@ -18,20 +18,18 @@ export default {
         .from("downloads")
         .select("*")
         .eq("gif_name", gifName)
-        .single();
+        .maybeSingle();   // safer than .single()
 
-      if (selectErr && selectErr.code !== "PGRST116") throw selectErr;
+      if (selectErr) throw selectErr;
 
       if (!existing) {
-        const { error: insertErr } = await supabase.from("downloads").insert([
-          {
-            gif_name: gifName,
-            count: 1,
-            timestamp,
-            eastern_time: easternTime,
-            visitor_id: visitorId || "unknown"
-          }
-        ]);
+        const { error: insertErr } = await supabase.from("downloads").insert({
+          gif_name: gifName,
+          count: 1,
+          timestamp,
+          eastern_time: easternTime,
+          visitor_id: visitorId || "unknown"
+        });
         if (insertErr) throw insertErr;
         return;
       }
@@ -51,7 +49,7 @@ export default {
 
     // Serve GIFs directly from R2 if path is not an API route
     if (!path.startsWith("/api/") && path !== "/") {
-      const key = path.slice(1); // strip leading "/"
+      const key = path.slice(1);
       const object = await env["CHIPS-GIFS"].get(key);
       if (object) {
         return new Response(object.body, {
@@ -77,7 +75,6 @@ export default {
         }
 
         const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
-
         await ensureAndIncrement(supabase, gifName, "anonymous");
 
         const object = await env["CHIPS-GIFS"].get(gifName);
@@ -121,9 +118,9 @@ export default {
           .from("downloads")
           .select("count")
           .eq("gif_name", gif_name)
-          .single();
+          .maybeSingle();
 
-        if (error && error.code !== "PGRST116") throw error;
+        if (error) throw error;
 
         return new Response(JSON.stringify({ count: data?.count ?? 0 }), {
           status: 200,
@@ -131,8 +128,9 @@ export default {
         });
       } catch (err) {
         console.error(err);
-        return new Response(JSON.stringify({ error: "Internal server error" }), {
-          status: 500,
+        // Safe fallback so frontend scripts (dark mode) don’t hang
+        return new Response(JSON.stringify({ count: 0 }), {
+          status: 200,
           headers: { "Content-Type": "application/json" }
         });
       }
@@ -174,17 +172,15 @@ export default {
 
         const ops = [];
         ops.push(
-          supabase.from("visitor_logs").insert([
-            {
-              gif_name,
-              useragent: userAgent,
-              page: page || referrer || "unknown",
-              referrer: referrer || "none",
-              timestamp,
-              eastern_time: easternTime,
-              ip
-            }
-          ])
+          supabase.from("visitor_logs").insert({
+            gif_name,
+            useragent: userAgent,
+            page: page || referrer || "unknown",
+            referrer: referrer || "none",
+            timestamp,
+            eastern_time: easternTime,
+            ip
+          })
         );
         if (gif_name) {
           ops.push(ensureAndIncrement(supabase, gif_name, visitor_id));
