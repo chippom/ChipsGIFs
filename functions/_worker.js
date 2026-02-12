@@ -18,7 +18,7 @@ export default {
         .from("downloads")
         .select("*")
         .eq("gif_name", gifName)
-        .maybeSingle();   // safer than .single()
+        .single();   // changed from maybeSingle()
 
       if (selectErr) throw selectErr;
 
@@ -118,7 +118,7 @@ export default {
           .from("downloads")
           .select("count")
           .eq("gif_name", gif_name)
-          .maybeSingle();
+          .single();   // changed from maybeSingle()
 
         if (error) throw error;
 
@@ -128,7 +128,6 @@ export default {
         });
       } catch (err) {
         console.error(err);
-        // Safe fallback so frontend scripts (dark mode) don’t hang
         return new Response(JSON.stringify({ count: 0 }), {
           status: 200,
           headers: { "Content-Type": "application/json" }
