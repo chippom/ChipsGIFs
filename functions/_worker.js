@@ -18,7 +18,7 @@ export default {
         .from("downloads")
         .select("*")
         .eq("gif_name", gifName)
-        .single();   // changed from maybeSingle()
+        .maybeSingle();   // FIXED
 
       if (selectErr) throw selectErr;
 
@@ -47,7 +47,6 @@ export default {
       if (updateErr) throw updateErr;
     }
 
-    // Serve GIFs directly from R2 if path is not an API route
     if (!path.startsWith("/api/") && path !== "/") {
       const key = path.slice(1);
       const object = await env["CHIPS-GIFS"].get(key);
@@ -58,7 +57,6 @@ export default {
       }
     }
 
-    // ===== /api/deliver =====
     if (path === "/api/deliver") {
       try {
         const gifNameRaw =
@@ -102,7 +100,6 @@ export default {
       }
     }
 
-    // ===== /api/count =====
     if (path === "/api/count") {
       try {
         const gif_name = url.searchParams.get("gif_name");
@@ -118,7 +115,7 @@ export default {
           .from("downloads")
           .select("count")
           .eq("gif_name", gif_name)
-          .single();   // changed from maybeSingle()
+          .maybeSingle();   // FIXED
 
         if (error) throw error;
 
@@ -135,7 +132,6 @@ export default {
       }
     }
 
-    // ===== /api/log =====
     if (path === "/api/log") {
       try {
         let data;
@@ -199,7 +195,6 @@ export default {
       }
     }
 
-    // ===== /api/update =====
     if (path === "/api/update") {
       try {
         let data;
@@ -236,7 +231,6 @@ export default {
       }
     }
 
-    // ===== FALLBACK =====
     return new Response("Not found", { status: 404 });
   }
 };
