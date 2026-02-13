@@ -18,7 +18,7 @@ export default {
         .from("downloads")
         .select("*")
         .eq("gif_name", gifName)
-        .maybeSingle();   // FIXED
+        .maybeSingle();
 
       if (selectErr) throw selectErr;
 
@@ -72,7 +72,12 @@ export default {
           );
         }
 
-        const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
+        const supabase = createClient(
+          env.SUPABASE_URL,
+          env.SUPABASE_SERVICE_ROLE_KEY,
+          { global: { fetch } }
+        );
+
         await ensureAndIncrement(supabase, gifName, "anonymous");
 
         const object = await env["CHIPS-GIFS"].get(gifName);
@@ -110,12 +115,17 @@ export default {
           );
         }
 
-        const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
+        const supabase = createClient(
+          env.SUPABASE_URL,
+          env.SUPABASE_SERVICE_ROLE_KEY,
+          { global: { fetch } }
+        );
+
         const { data, error } = await supabase
           .from("downloads")
           .select("count")
           .eq("gif_name", gif_name)
-          .maybeSingle();   // FIXED
+          .maybeSingle();
 
         if (error) throw error;
 
@@ -152,7 +162,12 @@ export default {
           });
         }
 
-        const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
+        const supabase = createClient(
+          env.SUPABASE_URL,
+          env.SUPABASE_SERVICE_ROLE_KEY,
+          { global: { fetch } }
+        );
+
         const now = new Date();
         const timestamp = now.toISOString();
         const easternTime = now.toLocaleString("en-US", {
@@ -215,7 +230,12 @@ export default {
           });
         }
 
-        const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
+        const supabase = createClient(
+          env.SUPABASE_URL,
+          env.SUPABASE_SERVICE_ROLE_KEY,
+          { global: { fetch } }
+        );
+
         await ensureAndIncrement(supabase, gif_name, visitor_id);
 
         return new Response(JSON.stringify({ message: "Download count updated" }), {
