@@ -76,7 +76,7 @@ function initOverlayContextMenuLogging(visitorId) {
   const overlayImg = document.getElementById("overlay-img");
   if (!overlayImg) return;
 
-  overlayImg.addEventListener("contextmenu", () => {
+  overlayImg.addEventListener("contextmenu", async () => {
     const gifUrl = overlayImg.src;
     const gifName = gifUrl.split("/").pop();
     const data = JSON.stringify({
@@ -85,14 +85,14 @@ function initOverlayContextMenuLogging(visitorId) {
       action: 'right-click-save-overlay'
     });
 
-    if (navigator.sendBeacon) {
-      navigator.sendBeacon('/api/log', data);
-    } else {
-      fetch('/api/log', {
+    try {
+      await fetch('/api/log', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: data,
-      }).catch(console.error);
+      });
+    } catch (err) {
+      console.error(err);
     }
   });
 }
@@ -129,15 +129,11 @@ function initDownloadHandlers(visitorId) {
 
         const countData = JSON.stringify({ gif_name: rawGifName });
 
-        if (navigator.sendBeacon) {
-          navigator.sendBeacon("/api/update", countData);
-        } else {
-          await fetch("/api/update", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: countData
-          });
-        }
+        await fetch("/api/update", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: countData
+        });
 
         const visitorData = JSON.stringify({
           visitor_id: visitorId,
@@ -147,15 +143,11 @@ function initDownloadHandlers(visitorId) {
           gif_name: rawGifName
         });
 
-        if (navigator.sendBeacon) {
-          navigator.sendBeacon("/api/log", visitorData);
-        } else {
-          await fetch("/api/log", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: visitorData
-          });
-        }
+        await fetch("/api/log", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: visitorData
+        });
 
         const res = await fetch(`/api/deliver?gif_name=${gifNameEncoded}`);
         if (!res.ok) throw new Error(res.statusText);
@@ -198,19 +190,19 @@ function initDownloadHandlers(visitorId) {
 /* 5) Right-click & middle-click logging on GIFs */
 function initContextMenuLogging(visitorId) {
   document.querySelectorAll(".gif-item img").forEach(img => {
-    const logBoth = () => {
+    const logBoth = async () => {
       const gifNameRaw = decodeURIComponent(img.dataset.gif.split("gif_name=").pop()).trim();
 
       const countData = JSON.stringify({ gif_name: gifNameRaw });
 
-      if (navigator.sendBeacon) {
-        navigator.sendBeacon("/api/update", countData);
-      } else {
-        fetch("/api/update", {
+      try {
+        await fetch("/api/update", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: countData
-        }).catch(console.error);
+        });
+      } catch (err) {
+        console.error(err);
       }
 
       const visitorData = JSON.stringify({
@@ -221,14 +213,14 @@ function initContextMenuLogging(visitorId) {
         gif_name: gifNameRaw
       });
 
-      if (navigator.sendBeacon) {
-        navigator.sendBeacon("/api/log", visitorData);
-      } else {
-        fetch("/api/log", {
+      try {
+        await fetch("/api/log", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: visitorData
-        }).catch(console.error);
+        });
+      } catch (err) {
+        console.error(err);
       }
     };
 
