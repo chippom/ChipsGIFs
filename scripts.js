@@ -123,7 +123,7 @@ function initDownloadHandlers(visitorId) {
         const img = gifItem.querySelector("img");
         const countEl = gifItem.querySelector(".download-count");
 
-        const rawGifName = decodeURIComponent(img.dataset.gif.split("gif=").pop()).trim();
+        const rawGifName = img.dataset.gif;
         const gifNameEncoded = encodeURIComponent(rawGifName);
 
         const countData = JSON.stringify({ gif: rawGifName });
@@ -190,7 +190,7 @@ function initDownloadHandlers(visitorId) {
 function initContextMenuLogging(visitorId) {
   document.querySelectorAll(".gif-item img").forEach(img => {
     const logBoth = async () => {
-      const gifNameRaw = decodeURIComponent(img.dataset.gif.split("gif=").pop()).trim();
+      const gifNameRaw = img.dataset.gif;
 
       const countData = JSON.stringify({ gif: gifNameRaw });
 
@@ -306,7 +306,7 @@ async function fetchAndDisplayAllDownloadCounts() {
     const img = item.querySelector("img");
 
     if (img?.dataset.gif) {
-      const rawGifName = decodeURIComponent(img.dataset.gif.split("gif=").pop()).trim();
+      const rawGifName = img.dataset.gif;
       const gifNameEncoded = encodeURIComponent(rawGifName);
 
       try {
