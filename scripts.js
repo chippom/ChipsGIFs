@@ -78,17 +78,19 @@ function initOverlayContextMenuLogging(visitorId) {
   overlayImg.addEventListener("contextmenu", async () => {
     const gifUrl = overlayImg.src;
     const gifName = gifUrl.split("/").pop();
-    const data = JSON.stringify({
-      gif: gifName,
+
+    const visitorData = JSON.stringify({
       visitor_id: visitorId,
-      action: 'right-click-save-overlay'
+      userAgent: navigator.userAgent,
+      page: window.location.pathname,
+      referrer: document.referrer
     });
 
     try {
-      await fetch('/api/log', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: data,
+      await fetch(`/api/log?gif=${encodeURIComponent(gifName)}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: visitorData
       });
     } catch (err) {
       console.error(err);
@@ -138,11 +140,10 @@ function initDownloadHandlers(visitorId) {
           visitor_id: visitorId,
           userAgent: navigator.userAgent,
           page: window.location.pathname,
-          referrer: document.referrer,
-          gif: rawGifName
+          referrer: document.referrer
         });
 
-        await fetch("/api/log", {
+        await fetch(`/api/log?gif=${gifNameEncoded}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: visitorData
@@ -208,12 +209,11 @@ function initContextMenuLogging(visitorId) {
         visitor_id: visitorId,
         userAgent: navigator.userAgent,
         page: window.location.pathname,
-        referrer: document.referrer,
-        gif: gifNameRaw
+        referrer: document.referrer
       });
 
       try {
-        await fetch("/api/log", {
+        await fetch(`/api/log?gif=${encodeURIComponent(gifNameRaw)}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: visitorData
