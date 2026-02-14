@@ -4,7 +4,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   document.body.style.visibility = "visible";
 
-  // Generate or get unique visitor ID from localStorage
   let visitorId = localStorage.getItem('chips_visitor_id');
   if (!visitorId) {
     visitorId = crypto.randomUUID();
@@ -129,7 +128,7 @@ function initDownloadHandlers(visitorId) {
 
         const countData = JSON.stringify({ gif: rawGifName });
 
-        await fetch("/api/update", {
+        await fetch(`/api/update?gif=${gifNameEncoded}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: countData
@@ -196,7 +195,7 @@ function initContextMenuLogging(visitorId) {
       const countData = JSON.stringify({ gif: gifNameRaw });
 
       try {
-        await fetch("/api/update", {
+        await fetch(`/api/update?gif=${encodeURIComponent(gifNameRaw)}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: countData
@@ -331,10 +330,6 @@ async function fetchAndDisplayAllDownloadCounts() {
 
 /* END — NO SERVICE WORKER */
 
-
-/* ---------------------------------------------------------
-   SERVICE WORKER REGISTRATION (GIF-only)
---------------------------------------------------------- */
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/service-worker.js');
 }
