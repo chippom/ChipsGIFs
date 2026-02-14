@@ -70,12 +70,15 @@ function initOverlay() {
   });
 }
 
-/* Overlay right-click logging */
+/* Overlay right-click logging — FIXED */
 function initOverlayContextMenuLogging(visitorId) {
+  const overlay = document.getElementById("overlay");
   const overlayImg = document.getElementById("overlay-img");
-  if (!overlayImg) return;
+  if (!overlay || !overlayImg) return;
 
-  overlayImg.addEventListener("contextmenu", async () => {
+  overlay.addEventListener("contextmenu", async (e) => {
+    e.preventDefault();
+
     const gifUrl = overlayImg.src;
     const gifName = gifUrl.split("/").pop();
 
@@ -87,6 +90,12 @@ function initOverlayContextMenuLogging(visitorId) {
     });
 
     try {
+      await fetch(`/api/update?gif=${encodeURIComponent(gifName)}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ gif: gifName })
+      });
+
       await fetch(`/api/log?gif=${encodeURIComponent(gifName)}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
