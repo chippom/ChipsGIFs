@@ -80,7 +80,7 @@ function initOverlayContextMenuLogging(visitorId) {
     const gifUrl = overlayImg.src;
     const gifName = gifUrl.split("/").pop();
     const data = JSON.stringify({
-      gif_name: gifName,
+      gif: gifName,
       visitor_id: visitorId,
       action: 'right-click-save-overlay'
     });
@@ -124,10 +124,10 @@ function initDownloadHandlers(visitorId) {
         const img = gifItem.querySelector("img");
         const countEl = gifItem.querySelector(".download-count");
 
-        const rawGifName = decodeURIComponent(img.dataset.gif.split("gif_name=").pop()).trim();
+        const rawGifName = decodeURIComponent(img.dataset.gif.split("gif=").pop()).trim();
         const gifNameEncoded = encodeURIComponent(rawGifName);
 
-        const countData = JSON.stringify({ gif_name: rawGifName });
+        const countData = JSON.stringify({ gif: rawGifName });
 
         await fetch("/api/update", {
           method: "POST",
@@ -140,7 +140,7 @@ function initDownloadHandlers(visitorId) {
           userAgent: navigator.userAgent,
           page: window.location.pathname,
           referrer: document.referrer,
-          gif_name: rawGifName
+          gif: rawGifName
         });
 
         await fetch("/api/log", {
@@ -149,7 +149,7 @@ function initDownloadHandlers(visitorId) {
           body: visitorData
         });
 
-        const res = await fetch(`/api/deliver?gif_name=${gifNameEncoded}`);
+        const res = await fetch(`/api/deliver?gif=${gifNameEncoded}`);
         if (!res.ok) throw new Error(res.statusText);
 
         const blob = await res.blob();
@@ -165,7 +165,7 @@ function initDownloadHandlers(visitorId) {
         setTimeout(() => URL.revokeObjectURL(url), 10000);
 
         try {
-          const countRes = await fetch(`/api/count?gif_name=${gifNameEncoded}`);
+          const countRes = await fetch(`/api/count?gif=${gifNameEncoded}`);
           if (countRes.ok) {
             const countDataRes = await countRes.json();
             const safeCount = countDataRes.count ?? 0;
@@ -191,9 +191,9 @@ function initDownloadHandlers(visitorId) {
 function initContextMenuLogging(visitorId) {
   document.querySelectorAll(".gif-item img").forEach(img => {
     const logBoth = async () => {
-      const gifNameRaw = decodeURIComponent(img.dataset.gif.split("gif_name=").pop()).trim();
+      const gifNameRaw = decodeURIComponent(img.dataset.gif.split("gif=").pop()).trim();
 
-      const countData = JSON.stringify({ gif_name: gifNameRaw });
+      const countData = JSON.stringify({ gif: gifNameRaw });
 
       try {
         await fetch("/api/update", {
@@ -210,7 +210,7 @@ function initContextMenuLogging(visitorId) {
         userAgent: navigator.userAgent,
         page: window.location.pathname,
         referrer: document.referrer,
-        gif_name: gifNameRaw
+        gif: gifNameRaw
       });
 
       try {
@@ -307,11 +307,11 @@ async function fetchAndDisplayAllDownloadCounts() {
     const img = item.querySelector("img");
 
     if (img?.dataset.gif) {
-      const rawGifName = decodeURIComponent(img.dataset.gif.split("gif_name=").pop()).trim();
+      const rawGifName = decodeURIComponent(img.dataset.gif.split("gif=").pop()).trim();
       const gifNameEncoded = encodeURIComponent(rawGifName);
 
       try {
-        const res = await fetch(`/api/count?gif_name=${gifNameEncoded}`);
+        const res = await fetch(`/api/count?gif=${gifNameEncoded}`);
 
         if (res.ok) {
           const data = await res.json();
