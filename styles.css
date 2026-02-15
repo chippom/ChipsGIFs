@@ -30,9 +30,9 @@ body.dark-mode {
    THEME VARIABLES
    ============================================================ */
 :root {
-  --primary-color: #4CAF50;
+  --primary-color: #3e8e41; /* FIXED: was #4CAF50 */
   --secondary-color: #007BFF;
-  --text-color: #222; /* FIXED: was #333 */
+  --text-color: #222; 
   --background-color: #f4f4f4;
   --header-footer-bg: #333;
   --header-footer-text: #fff;
@@ -252,12 +252,12 @@ footer img {
   font-weight: bold;
   text-decoration: none;
   background: #fff;
-  color: #0055aa;        /* FIXED: was #0066cc */
-  border: 1px solid #0055aa; /* FIXED */
+  color: #0055aa;
+  border: 1px solid #0055aa;
 }
 
 .pagination span {
-  background: #003f88;   /* FIXED: was #004a99 */
+  background: #003f88;
   color: #eee;
 }
 
