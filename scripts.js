@@ -29,22 +29,17 @@ function initLazyLoad() {
         const img = entry.target;
         const filename = img.dataset.gif;
         if (filename) {
-          img.src = "/static/gifs/" + filename;
+          img.src = "/api/deliver?file=" + filename;
           io.unobserve(img);
         }
       }
     });
   }, { rootMargin: "800px" });
 
-  document.querySelectorAll(".gif-item img").forEach((img, i) => {
-    const filename = img.dataset.gif;
-
-    if (i < 6) {
-      img.src = "/static/gifs/" + filename;
-    } else {
-      img.src = "gifs/placeholder.jpg";
-      io.observe(img);
-    }
+  document.querySelectorAll(".gif-item img").forEach((img) => {
+    // No eager-loading
+    // No placeholder
+    io.observe(img);
   });
 }
 
