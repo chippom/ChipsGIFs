@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
   fetchAndDisplayAllDownloadCounts();
 });
 
-/* 1) Lazy-load GIFs below the fold */
+/* 1) Correct lazy loader — static thumbnails, no eager, no placeholder */
 function initLazyLoad() {
   const io = new IntersectionObserver(entries => {
     entries.forEach(entry => {
@@ -29,7 +29,7 @@ function initLazyLoad() {
         const img = entry.target;
         const filename = img.dataset.gif;
         if (filename) {
-          img.src = "/api/deliver?file=" + filename;
+          img.src = "/static/gifs/" + filename;
           io.unobserve(img);
         }
       }
@@ -37,9 +37,8 @@ function initLazyLoad() {
   }, { rootMargin: "800px" });
 
   document.querySelectorAll(".gif-item img").forEach((img) => {
-    // No eager-loading
-    // No placeholder
-    io.observe(img);
+    img.src = "";        // prevent early load
+    io.observe(img);     // lazy-load everything
   });
 }
 
