@@ -15,7 +15,63 @@ export async function onRequest(context) {
     const supabaseUrl = env.SUPABASE_URL;
     const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY;
 
-    // First, check if the row exists
+    // Get IP address for dedupe
+    const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+
+    // 1. Check recent_downloads for duplicate within 10 seconds
+    const tenSecondsAgo = new Date(Date.now() - 10000).toISOString();
+
+    const recentCheck = await fetch(
+      `${supabaseUrl}/rest/v1/recent_downloads?gif_name=eq.${gifName}&ip_address=eq.${ip}&timestamp=gt.${tenSecondsAgo}`,
+      {
+        method: "GET",
+        headers: {
+          "apikey": supabaseKey,
+          "Authorization": `Bearer ${supabaseKey}`,
+          "Content-Type": "application/json"
+        }
+      }
+    );
+
+    const recentRows = await recentCheck.json();
+
+    if (recentRows.length > 0) {
+      // Duplicate request within 10 seconds — return current count without incrementing
+      const existing = await fetch(
+        `${supabaseUrl}/rest/v1/downloads?gif_name=eq.${gifName}`,
+        {
+          method: "GET",
+          headers: {
+            "apikey": supabaseKey,
+            "Authorization": `Bearer ${supabaseKey}`,
+            "Content-Type": "application/json"
+          }
+        }
+      );
+
+      const existingData = await existing.json();
+      const count = existingData.length > 0 ? existingData[0].count : 0;
+
+      return new Response(JSON.stringify({ count }), {
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+
+    // 2. Log this download in recent_downloads
+    await fetch(`${supabaseUrl}/rest/v1/recent_downloads`, {
+      method: "POST",
+      headers: {
+        "apikey": supabaseKey,
+        "Authorization": `Bearer ${supabaseKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        gif_name: gifName,
+        ip_address: ip
+      })
+    });
+
+    // 3. Continue with your existing logic (increment count)
     const selectResponse = await fetch(
       `${supabaseUrl}/rest/v1/downloads?gif_name=eq.${gifName}`,
       {
@@ -37,7 +93,6 @@ export async function onRequest(context) {
     }
 
     const rows = await selectResponse.json();
-
     let updateResponse;
 
     if (rows.length === 0) {
