@@ -25,11 +25,11 @@ export async function onRequest(context) {
       }
     });
 
+    // If Supabase returns anything other than 200, treat as count = 0
     if (!response.ok) {
-      return new Response(
-        JSON.stringify({ error: "Supabase query failed" }),
-        { status: 500 }
-      );
+      return new Response(JSON.stringify({ count: 0 }), {
+        headers: { "Content-Type": "application/json" }
+      });
     }
 
     const data = await response.json();
