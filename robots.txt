@@ -1,4 +1,2 @@
-User-agent: *
 Allow: /
 Sitemap: https://chips-gifs.com/sitemap.xml
-
