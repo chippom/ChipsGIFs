@@ -1,16 +1,15 @@
 /* ---------------------------------------------------------
-   GIF-ONLY SERVICE WORKER
+   GIF-ONLY SERVICE WORKER (CLEAN + STABLE)
    - Caches ONLY GIF files
    - NEVER caches HTML, JS, CSS
-   - Prevents layout/nav bar from getting stuck
-   - Boosts performance by caching heavy GIF assets
+   - No forced activation
+   - No forced client takeover
 --------------------------------------------------------- */
 
 const CACHE_NAME = "chips-gifs-cache-v1";
 
 self.addEventListener("install", event => {
-  // Activate immediately
-  self.skipWaiting();
+  // No skipWaiting — allow clean updates
 });
 
 self.addEventListener("activate", event => {
@@ -24,7 +23,7 @@ self.addEventListener("activate", event => {
       )
     )
   );
-  self.clients.claim();
+  // No clients.claim — allow clean unregister
 });
 
 self.addEventListener("fetch", event => {
