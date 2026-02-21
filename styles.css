@@ -1,4 +1,25 @@
 /* ============================================================
+   NEON GREEN BUTTONS + BOLD NAVY TAPE (NEW BLOCK)
+   ============================================================ */
+button,
+.button,
+.btn,
+.download-btn,
+#contactMeButton,
+#toggleDarkMode,
+#followMeButton {
+  background-color: #39FF14; /* neon green */
+  color: black !important;   /* strong contrast */
+  font-weight: 700;
+}
+
+.tape {
+  background-color: #001A4D; /* bold navy blue */
+  color: black;
+  font-weight: 800;
+}
+
+/* ============================================================
    GLOBAL BUTTON COLOR FIXES
    ============================================================ */
 .download-btn,
