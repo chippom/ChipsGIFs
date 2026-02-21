@@ -5,7 +5,7 @@
 .contactMeButton,
 .toggleDarkMode,
 .followMeButton {
-    color: #fff !important;
+    color: #003366 !important; /* DARK BLUE TEXT FOR ACCESSIBILITY */
 }
 
 /* ============================================================
@@ -204,7 +204,7 @@ footer img {
 #followMeButton {
   background-color: var(--primary-color);
   border: none;
-  color: #fff;
+  color: #003366 !important; /* DARK BLUE TEXT */
   padding: 0.4rem 0.8rem;
   font-size: 0.8rem;
   cursor: pointer;
