@@ -387,18 +387,21 @@ body.dark-mode .unique-intro {
 
 
 /* ============================================================
-   ACTIVE PAGE HIGHLIGHT — FINAL CLEAN VERSION
+   ACTIVE PAGE HIGHLIGHT — FINAL CLEAN VERSION (FIXED)
    ============================================================ */
+
+/* LIGHT MODE — CURRENT PAGE = GREEN */
 .pagination span[aria-current="page"],
 .pagination a[aria-current="page"] {
-  background-color: #000000 !important;  /* LIGHT MODE: black */
-  color: #39ff14 !important;             /* LIGHT MODE: neon green */
+  background-color: #39ff14 !important;  /* neon green */
+  color: #000000 !important;             /* black text */
   border: 2px solid #39ff14 !important;
 }
 
+/* DARK MODE — CURRENT PAGE = BLACK */
 body.dark-mode .pagination span[aria-current="page"],
 body.dark-mode .pagination a[aria-current="page"] {
-  background-color: #000000 !important;  /* DARK MODE: black */
-  color: #39ff14 !important;             /* DARK MODE: neon green */
+  background-color: #000000 !important;  /* black */
+  color: #39ff14 !important;             /* neon green */
   border: 2px solid #000000 !important;
 }
