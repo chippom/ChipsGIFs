@@ -397,20 +397,16 @@ body.dark-mode .unique-intro {
 
 
 /* ============================================================
-   FORCE CURRENT PAGE BUTTON INVERSION (FINAL OVERRIDE)
+   ACTIVE PAGE HIGHLIGHT — FINAL CLEAN VERSION
    ============================================================ */
-.pagination .current,
-.pagination span.current {
+.pagination [aria-current="page"] {
   background-color: #000000 !important;  /* LIGHT MODE: black */
   color: #39ff14 !important;             /* LIGHT MODE: neon green */
   border: 2px solid #39ff14 !important;
 }
 
-/* DARK MODE INVERSION */
-body.dark-mode .pagination .current,
-body.dark-mode .pagination span.current {
+body.dark-mode .pagination [aria-current="page"] {
   background-color: #000000 !important;  /* DARK MODE: black */
   color: #39ff14 !important;             /* DARK MODE: neon green */
-  border: 2px solid #39ff14 !important;
+  border: 2px solid #000000 !important;
 }
-
