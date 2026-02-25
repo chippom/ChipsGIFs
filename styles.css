@@ -8,8 +8,9 @@ button,
 #contactMeButton,
 #toggleDarkMode,
 #followMeButton {
-  background-color: #39FF14; /* neon green */
-  color: black !important;   /* strong contrast */
+  background-color: #000000 !important; /* LIGHT MODE: black */
+  color: #39ff14 !important;            /* LIGHT MODE: neon green text */
+  border: 2px solid #39ff14;
   font-weight: 700;
 }
 
@@ -26,7 +27,7 @@ button,
 .contactMeButton,
 .toggleDarkMode,
 .followMeButton {
-    color: #003366 !important; /* DARK BLUE TEXT FOR ACCESSIBILITY */
+    color: #39ff14 !important; /* LIGHT MODE: neon green text */
 }
 
 /* ============================================================
@@ -35,6 +36,32 @@ button,
 body.dark-mode {
     background-color: #121212 !important;
     color: #39ff14 !important;
+}
+
+/* ============================================================
+   DARK MODE BUTTON OVERRIDES
+   ============================================================ */
+body.dark-mode button,
+body.dark-mode .button,
+body.dark-mode .btn,
+body.dark-mode .download-btn,
+body.dark-mode #contactMeButton,
+body.dark-mode #toggleDarkMode,
+body.dark-mode #followMeButton {
+  background-color: #39ff14 !important; /* neon green */
+  color: #000000 !important;            /* black text */
+  border: 2px solid #000000;
+  font-weight: 700;
+}
+
+body.dark-mode button:hover,
+body.dark-mode .download-btn:hover,
+body.dark-mode #contactMeButton:hover,
+body.dark-mode #toggleDarkMode:hover,
+body.dark-mode #followMeButton:hover {
+  background-color: #2ecc10 !important;
+  color: #000000 !important;
+  transform: translateY(-2px);
 }
 
 /* ============================================================
@@ -223,9 +250,9 @@ footer img {
 #contactMeButton,
 #toggleDarkMode,
 #followMeButton {
-  background-color: var(--primary-color);
-  border: none;
-  color: #003366 !important; /* DARK BLUE TEXT */
+  background-color: #000000 !important; /* LIGHT MODE: black */
+  border: 2px solid #39ff14;
+  color: #39ff14 !important; /* LIGHT MODE: neon green text */
   padding: 0.4rem 0.8rem;
   font-size: 0.8rem;
   cursor: pointer;
@@ -237,7 +264,8 @@ footer img {
 #contactMeButton:hover,
 #toggleDarkMode:hover,
 #followMeButton:hover {
-  background-color: #45a049;
+  background-color: #111111 !important;
+  color: #39ff14 !important;
   transform: translateY(-2px);
 }
 
