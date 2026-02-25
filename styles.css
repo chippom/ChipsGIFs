@@ -394,3 +394,21 @@ body.dark-mode .unique-intro {
 }
 
 /* --- End of CSS B --- */
+
+
+/* ============================================================
+   FORCE CURRENT PAGE BUTTON INVERSION (FINAL OVERRIDE)
+   ============================================================ */
+.pagination .current,
+.pagination span.current {
+  background-color: #000000 !important;
+  color: #39ff14 !important;
+  border: 2px solid #39ff14 !important;
+}
+
+body.dark-mode .pagination .current,
+body.dark-mode .pagination span.current {
+  background-color: #39ff14 !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
