@@ -389,13 +389,15 @@ body.dark-mode .unique-intro {
 /* ============================================================
    ACTIVE PAGE HIGHLIGHT — FINAL CLEAN VERSION
    ============================================================ */
-.pagination [aria-current="page"] {
+.pagination span[aria-current="page"],
+.pagination a[aria-current="page"] {
   background-color: #000000 !important;  /* LIGHT MODE: black */
   color: #39ff14 !important;             /* LIGHT MODE: neon green */
   border: 2px solid #39ff14 !important;
 }
 
-body.dark-mode .pagination [aria-current="page"] {
+body.dark-mode .pagination span[aria-current="page"],
+body.dark-mode .pagination a[aria-current="page"] {
   background-color: #000000 !important;  /* DARK MODE: black */
   color: #39ff14 !important;             /* DARK MODE: neon green */
   border: 2px solid #000000 !important;
