@@ -401,14 +401,16 @@ body.dark-mode .unique-intro {
    ============================================================ */
 .pagination .current,
 .pagination span.current {
-  background-color: #000000 !important;
-  color: #39ff14 !important;
+  background-color: #000000 !important;  /* LIGHT MODE: black */
+  color: #39ff14 !important;             /* LIGHT MODE: neon green */
   border: 2px solid #39ff14 !important;
 }
 
+/* DARK MODE INVERSION */
 body.dark-mode .pagination .current,
 body.dark-mode .pagination span.current {
-  background-color: #39ff14 !important;
-  color: #000000 !important;
-  border: 2px solid #000000 !important;
+  background-color: #000000 !important;  /* DARK MODE: black */
+  color: #39ff14 !important;             /* DARK MODE: neon green */
+  border: 2px solid #39ff14 !important;
 }
+
