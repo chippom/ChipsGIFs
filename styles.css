@@ -326,6 +326,16 @@ body.dark-mode .pagination a:hover {
 }
 
 /* ============================================================
+   ACTIVE PAGE HIGHLIGHT (ADDED)
+   ============================================================ */
+.pagination .current,
+.pagination span.current {
+  background: #39ff14 !important; /* invert colors */
+  color: #000000 !important;
+  border-color: #39ff14 !important;
+}
+
+/* ============================================================
    UNIQUE INTRO BOX
    ============================================================ */
 .unique-intro {
