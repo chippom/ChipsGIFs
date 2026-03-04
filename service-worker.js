@@ -1,51 +1,44 @@
-/* ---------------------------------------------------------
-   GIF-ONLY SERVICE WORKER (CLEAN + STABLE)
-   - Caches ONLY GIF files
-   - NEVER caches HTML, JS, CSS
-   - No forced activation
-   - No forced client takeover
---------------------------------------------------------- */
+const CACHE_NAME = "chips-gifs-cache-v3";
+const MAX_ITEMS = 200;
 
-const CACHE_NAME = "chips-gifs-cache-v1";
+async function trimCache(cacheName, maxItems) {
+  const cache = await caches.open(cacheName);
+  const keys = await cache.keys();
 
-self.addEventListener("install", event => {
-  // No skipWaiting — allow clean updates
-});
+  if (keys.length > maxItems) {
+    await cache.delete(keys[0]);
+    return trimCache(cacheName, maxItems);
+  }
+}
 
 self.addEventListener("activate", event => {
-  // Clean old caches if names change
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(
-        keys
-          .filter(key => key !== CACHE_NAME)
-          .map(key => caches.delete(key))
+        keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
       )
     )
   );
-  // No clients.claim — allow clean unregister
 });
 
 self.addEventListener("fetch", event => {
   const request = event.request;
 
-  // Only cache GIFs
-  if (request.destination === "image" && request.url.endsWith(".gif")) {
+  if (
+    request.destination === "image" &&
+    request.url.endsWith(".gif") &&
+    request.url.startsWith(self.location.origin)
+  ) {
     event.respondWith(
-      caches.open(CACHE_NAME).then(cache =>
-        cache.match(request).then(cached => {
-          if (cached) return cached;
+      caches.open(CACHE_NAME).then(async cache => {
+        const cached = await cache.match(request);
+        if (cached) return cached;
 
-          return fetch(request).then(response => {
-            cache.put(request, response.clone());
-            return response;
-          });
-        })
-      )
+        const response = await fetch(request);
+        cache.put(request, response.clone());
+        trimCache(CACHE_NAME, MAX_ITEMS);
+        return response;
+      })
     );
-    return;
   }
-
-  // Everything else: network only
-  return;
 });
