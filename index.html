@@ -4,29 +4,36 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <title>Chips GIFs: Political Satire, Memes & Viral Animation Hub</title>
+
+  <!-- Preload LCP GIF -->
+  <link rel="preload" as="image" href="/static/gifs/featured_home_lcp.gif" fetchpriority="high">
+
+  <!-- Lower priority OG GIF -->
+  <link rel="preload" as="image" href="https://chips-gifs.com/featured_home.gif" fetchpriority="low">
+
+  <!-- Async CSS -->
+  <link rel="preload" href="styles.css?v=20260307-1645" as="style" onload="this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="styles.css?v=20260307-1645"></noscript>
+
   <meta name="description" content="Explore the wildest mix of political satire GIFs, memes, animations, and viral chaos—from pro‑Ukraine declarations to billionaire burns and 420 humor—all created by Chip Pommert for bold, shareable entertainment.">
   <meta name="keywords" content="political GIFs, satire memes, 420 humor, Trump parody, Elon Musk GIF, pro-Ukraine memes, political humor, Chip's GIFs" />
   <meta name="author" content="Chip Pommert" />
 
   <link rel="shortcut icon" type="image/png" href="/favicon.png">
-
-  <title>Chips GIFs: Political Satire, Memes & Viral Animation Hub</title>
-
-<link rel="stylesheet" href="styles.css?v=20260307-1300">
-
-<link rel="canonical" href="https://chips-gifs.com/index" />
-<meta property="og:title" content="Chips GIFs: Political Satire, Memes & Viral Animation Hub" />
-<meta property="og:description" content="Kick off your GIF binge with the fiercest, weirdest political satire and stoner animation mix." />
-<meta property="og:url" content="https://chips-gifs.com/index" />
-<meta property="og:image" content="https://chips-gifs.com/featured_home.gif" />
-
-
-  <meta name="theme-color" content="#333333" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#39ff14" media="(prefers-color-scheme: dark)">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" sizes="180x180">
 
+  <link rel="canonical" href="https://chips-gifs.com/index" />
+  <meta property="og:title" content="Chips GIFs: Political Satire, Memes & Viral Animation Hub" />
+  <meta property="og:description" content="Kick off your GIF binge with the fiercest, weirdest political satire and stoner animation mix." />
+  <meta property="og:url" content="https://chips-gifs.com/index" />
+  <meta property="og:image" content="https://chips-gifs.com/featured_home.gif" />
+
+  <meta name="theme-color" content="#333333" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#39ff14" media="(prefers-color-scheme: dark)">
 </head>
+
 
 <body>
 
@@ -137,7 +144,7 @@
 </div>
 
 <div class="gif-item">
-    <img src=""
+    <img src="/api/deliver?file=coffee_cannabis_cusswords.gif"
          data-gif="coffee_cannabis_cusswords.gif"
          alt="An animated GIF showing a cup of coffee with cannabis and cuss words" class="gif-thumbnail" loading="lazy">
     <button class="download-btn" data-gif="coffee_cannabis_cusswords.gif">Download</button>
