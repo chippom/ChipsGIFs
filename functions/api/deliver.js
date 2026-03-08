@@ -1,7 +1,11 @@
 export async function onRequest(context) {
   const { request, env } = context;
   const url = new URL(request.url);
-  const gif = url.searchParams.get("gif");
+
+  // Accept file= OR gif= OR gif_name=
+  const gif = url.searchParams.get("file") 
+           || url.searchParams.get("gif") 
+           || url.searchParams.get("gif_name");
 
   if (!gif) {
     return new Response("Missing gif parameter", { status: 400 });
