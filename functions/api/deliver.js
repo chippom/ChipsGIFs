@@ -2,6 +2,15 @@ export async function onRequest(context) {
   const { request, env } = context;
   const url = new URL(request.url);
 
+  ///// ROBOTS.TXT HANDLER — START /////
+  if (url.pathname === "/robots.txt") {
+    return new Response(
+      "User-agent: *\nAllow: /\nSitemap: https://chips-gifs.com/sitemap.xml\n",
+      { headers: { "Content-Type": "text/plain" } }
+    );
+  }
+  ///// ROBOTS.TXT HANDLER — END /////
+
   // Accept file= OR gif= OR gif_name=
   const gif = url.searchParams.get("file") 
            || url.searchParams.get("gif") 
