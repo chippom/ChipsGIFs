@@ -21,17 +21,46 @@ document.addEventListener("DOMContentLoaded", () => {
   fetchAndDisplayAllDownloadCounts();
 });
 
-/* 1) Correct lazy loader — static thumbnails, no eager, no placeholder */
+/* -----------------------------------------------------------
+   BROWSER-SIDE 5-SECOND TIMEOUT FOR GIF LOADING
+----------------------------------------------------------- */
+function loadGifWithTimeout(img, src) {
+  let loaded = false;
+
+  img.onload = () => {
+    loaded = true;
+  };
+
+  img.onerror = () => {
+    img.src = "/static/gifs/" + img.dataset.gif;
+  };
+
+  img.src = src;
+
+  setTimeout(() => {
+    if (!loaded) {
+      console.warn("GIF load timeout, switching to fallback:", img.dataset.gif);
+      img.src = "/static/gifs/" + img.dataset.gif;
+    }
+  }, 5000);
+}
+
+/* -----------------------------------------------------------
+   1) Correct lazy loader — NOW USING WORKER FIRST
+----------------------------------------------------------- */
 function initLazyLoad() {
   const io = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         const img = entry.target;
         const filename = img.dataset.gif;
+
         if (filename) {
-          img.src = "/static/gifs/" + filename;
-          io.unobserve(img);
+          const apiUrl = "/api/deliver?file=" + filename;
+          loadGifWithTimeout(img, apiUrl);
         }
+
+        io.unobserve(img);
       }
     });
   }, { rootMargin: "800px" });

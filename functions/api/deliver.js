@@ -20,9 +20,19 @@ export async function onRequest(context) {
     return new Response("Missing gif parameter", { status: 400 });
   }
 
-  // 1) Try R2 bucket first
+  // Build fallback URL (relative path = most bulletproof)
+  const fallbackUrl = new URL(`/static/gifs/${gif}`, request.url).toString();
+
+  // --- 5 SECOND TIMEOUT WRAPPER ---
+  const timeout = (ms) =>
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("R2 timeout")), ms)
+    );
+
+  // --- Try R2 with 5-second race timeout ---
   try {
-    const object = await env.CHIPS_GIFS.get(gif);
+    const r2Promise = env.CHIPS_GIFS.get(gif);
+    const object = await Promise.race([r2Promise, timeout(5000)]);
 
     if (object) {
       return new Response(object.body, {
@@ -35,13 +45,12 @@ export async function onRequest(context) {
       });
     }
   } catch (err) {
-    console.error("R2 fetch error:", err);
+    console.error("R2 fetch or timeout error:", err);
   }
 
-  // 2) Fallback to static/gifs folder
+  // --- Fallback to static/gifs ---
   try {
-    const staticUrl = new URL(`/static/gifs/${gif}`, request.url).toString();
-    const res = await fetch(staticUrl);
+    const res = await fetch(fallbackUrl);
 
     if (res.ok) {
       return new Response(res.body, {
