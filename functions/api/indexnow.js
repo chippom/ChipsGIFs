@@ -3,14 +3,14 @@ export async function onRequest(context) {
   const url = new URL(request.url);
 
   // Serve IndexNow key
-  if (url.pathname === "/indexnow-key.txt") {
+  if (url.pathname === "/api/indexnow-key.txt") {
     return new Response(env.INDEXNOW_KEY, {
       headers: { "Content-Type": "text/plain" }
     });
   }
 
   // Manual ping trigger
-  if (url.pathname === "/ping-indexnow") {
+  if (url.pathname === "/api/ping-indexnow") {
     const body = {
       host: "chips-gifs.com",
       key: env.INDEXNOW_KEY,
