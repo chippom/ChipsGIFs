@@ -5,11 +5,12 @@ export async function onRequest(context) {
     const url = new URL(request.url);
     const gifName = url.searchParams.get("gif");
 
+    // FIXED: Do NOT return 400 for missing gif
     if (!gifName) {
-      return new Response(
-        JSON.stringify({ error: "Missing gif parameter" }),
-        { status: 400 }
-      );
+      return new Response(JSON.stringify({ count: 0 }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" }
+      });
     }
 
     const supabaseUrl = env.SUPABASE_URL;
