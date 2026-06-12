@@ -1,4 +1,4 @@
-/* scripts.js v20260612-0330 — ACTIVE SERVICE WORKER (RECONFIGURED) */
+/* scripts.js v20260612-0530 — ACTIVE SERVICE WORKER (RECONFIGURED) */
 
 
 /* Prevent FOUC: Make body visible once DOM is fully loaded */
@@ -69,7 +69,7 @@ function initLazyLoad() {
         io.unobserve(img);
       }
     });
-  }, { rootMargin: "800px" });
+  }, { rootMargin: "400px" });
 
   document.querySelectorAll(".gif-item img").forEach((img) => {
     img.src = "";        // prevent early load
