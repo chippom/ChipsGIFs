@@ -1,4 +1,5 @@
-/* scripts.js v20260129 — ACTIVE SERVICE WORKER (RECONFIGURED) */
+/* scripts.js v20260612-0330 — ACTIVE SERVICE WORKER (RECONFIGURED) */
+
 
 /* Prevent FOUC: Make body visible once DOM is fully loaded */
 document.addEventListener("DOMContentLoaded", () => {
@@ -21,17 +22,20 @@ document.addEventListener("DOMContentLoaded", () => {
   fetchAndDisplayAllDownloadCounts();
 });
 
+
 /* -----------------------------------------------------------
-   BROWSER-SIDE 5-SECOND TIMEOUT FOR GIF LOADING
+   BROWSER-SIDE 15-SECOND TIMEOUT FOR GIF LOADING
 ----------------------------------------------------------- */
 function loadGifWithTimeout(img, src) {
   let loaded = false;
+  let timedOut = false;
 
   img.onload = () => {
     loaded = true;
   };
 
   img.onerror = () => {
+    if (timedOut) return;
     img.src = "/static/gifs/" + img.dataset.gif;
   };
 
@@ -39,11 +43,13 @@ function loadGifWithTimeout(img, src) {
 
   setTimeout(() => {
     if (!loaded) {
+      timedOut = true;
       console.warn("GIF load timeout, switching to fallback:", img.dataset.gif);
       img.src = "/static/gifs/" + img.dataset.gif;
     }
-  }, 5000);
+  }, 15000);
 }
+
 
 /* -----------------------------------------------------------
    1) Correct lazy loader — NOW USING WORKER FIRST
