@@ -1,4 +1,4 @@
-/* scripts.js v20260612-0530 — ACTIVE SERVICE WORKER (RECONFIGURED) */
+/* scripts.js v20260612-1330 — ACTIVE SERVICE WORKER (RECONFIGURED) */
 
 
 /* Prevent FOUC: Make body visible once DOM is fully loaded */
@@ -24,32 +24,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 /* -----------------------------------------------------------
-   BROWSER-SIDE 15-SECOND TIMEOUT FOR GIF LOADING
+   BROWSER-SIDE GIF LOADING
 ----------------------------------------------------------- */
-function loadGifWithTimeout(img, src) {
-  let loaded = false;
-  let timedOut = false;
-
-  img.onload = () => {
-    loaded = true;
-  };
-
+function loadGif(img, src) {
   img.onerror = () => {
-    if (timedOut) return;
     img.src = "/static/gifs/" + img.dataset.gif;
   };
 
   img.src = src;
-
-  setTimeout(() => {
-    if (!loaded) {
-      timedOut = true;
-      console.warn("GIF load timeout, switching to fallback:", img.dataset.gif);
-      img.src = "/static/gifs/" + img.dataset.gif;
-    }
-  }, 15000);
 }
-
 
 /* -----------------------------------------------------------
    1) Correct lazy loader — NOW USING WORKER FIRST
@@ -63,7 +46,7 @@ function initLazyLoad() {
 
         if (filename) {
           const apiUrl = "/api/deliver?file=" + filename;
-          loadGifWithTimeout(img, apiUrl);
+          loadGif(img, apiUrl);
         }
 
         io.unobserve(img);
@@ -72,12 +55,14 @@ function initLazyLoad() {
   }, { rootMargin: "400px" });
 
   document.querySelectorAll(".gif-item img").forEach((img) => {
-    img.src = "";        // prevent early load
-    io.observe(img);     // lazy-load everything
+    img.src = "";
+    io.observe(img);
   });
 }
 
-/* 2) Full-screen overlay on GIF click */
+/* -----------------------------------------------------------
+   2) Full-screen overlay on GIF click
+----------------------------------------------------------- */
 function initOverlay() {
   document.querySelectorAll(".gif-item").forEach(item => {
     item.addEventListener("click", e => {
@@ -95,11 +80,14 @@ function initOverlay() {
   const overlay = document.getElementById("overlay");
   overlay?.addEventListener("click", () => {
     overlay.classList.remove("active");
-    document.getElementById("overlay-img").src = "";
+    const overlayImg = document.getElementById("overlay-img");
+    if (overlayImg) overlayImg.src = "";
   });
 }
 
-/* Overlay right-click logging — FIXED */
+/* -----------------------------------------------------------
+   3) Overlay right-click logging — FIXED
+----------------------------------------------------------- */
 function initOverlayContextMenuLogging(visitorId) {
   const overlay = document.getElementById("overlay");
   const overlayImg = document.getElementById("overlay-img");
