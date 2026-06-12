@@ -52,9 +52,10 @@ export async function onRequest(context) {
     );
   }
 
-  const gif = url.searchParams.get("file") 
-           || url.searchParams.get("gif") 
-           || url.searchParams.get("gif_name");
+  const gif =
+    url.searchParams.get("file") ||
+    url.searchParams.get("gif") ||
+    url.searchParams.get("gif_name");
 
   if (!gif) {
     return new Response("Missing gif parameter", { status: 400 });
@@ -70,8 +71,7 @@ export async function onRequest(context) {
       headers: {
         "Content-Type": "image/gif",
         "Cache-Control": "public, max-age=31536000"
-      },
-      cf: { cacheEverything: true, cacheTtl: 31536000 }
+      }
     });
   }
 
@@ -84,8 +84,8 @@ export async function onRequest(context) {
 
   // ---- TRY R2 ----
   try {
-    const r2Promise = env.CHIPS_GIFS.get(gif);
-    const object = await Promise.race([r2Promise, timeout(5000)]);
+    const objectPromise = env.CHIPS_GIFS.get(gif);
+    const object = await Promise.race([objectPromise, timeout(5000)]);
 
     if (object) {
       const body = await object.arrayBuffer();
@@ -96,8 +96,7 @@ export async function onRequest(context) {
         headers: {
           "Content-Type": "image/gif",
           "Cache-Control": "public, max-age=31536000"
-        },
-        cf: { cacheEverything: true, cacheTtl: 31536000 }
+        }
       });
     }
   } catch (err) {
@@ -117,8 +116,7 @@ export async function onRequest(context) {
         headers: {
           "Content-Type": "image/gif",
           "Cache-Control": "public, max-age=31536000"
-        },
-        cf: { cacheEverything: true, cacheTtl: 31536000 }
+        }
       });
     }
   } catch (err) {
