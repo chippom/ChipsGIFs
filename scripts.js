@@ -1,14 +1,13 @@
-/* scripts.js v20260612-1330 — ACTIVE SERVICE WORKER (RECONFIGURED) */
-
+/* scripts.js v20260620-0930 — ACTIVE SERVICE WORKER (RECONFIGURED) */
 
 /* Prevent FOUC: Make body visible once DOM is fully loaded */
 document.addEventListener("DOMContentLoaded", () => {
   document.body.style.visibility = "visible";
 
-  let visitorId = localStorage.getItem('chips_visitor_id');
+  let visitorId = localStorage.getItem("chips_visitor_id");
   if (!visitorId) {
     visitorId = crypto.randomUUID();
-    localStorage.setItem('chips_visitor_id', visitorId);
+    localStorage.setItem("chips_visitor_id", visitorId);
   }
 
   initLazyLoad();
@@ -21,7 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   fetchAndDisplayAllDownloadCounts();
 });
-
 
 /* -----------------------------------------------------------
    BROWSER-SIDE GIF LOADING
@@ -356,6 +354,6 @@ async function fetchAndDisplayAllDownloadCounts() {
 
 /* END — NO SERVICE WORKER */
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/service-worker.js');
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/service-worker.js");
 }
