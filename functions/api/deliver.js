@@ -1,46 +1,3 @@
-// ---- SIMPLE IN-MEMORY PER-PAGE CACHE ----
-const PAGE_CACHES = {};
-const MAX_CACHE_PER_PAGE = 200;
-
-function getPageId(gifName) {
-  const match = gifName.match(/(page\d+)_/i);
-  return match ? match[1].toLowerCase() : "default";
-}
-
-function getPageCache(pageId) {
-  if (!PAGE_CACHES[pageId]) {
-    PAGE_CACHES[pageId] = new Map();
-  }
-  return PAGE_CACHES[pageId];
-}
-
-function cacheSet(pageId, key, value) {
-  const bucket = getPageCache(pageId);
-
-  if (bucket.has(key)) bucket.delete(key);
-
-  if (bucket.size >= MAX_CACHE_PER_PAGE) {
-    const oldestKey = bucket.keys().next().value;
-    bucket.delete(oldestKey);
-  }
-
-  bucket.set(key, value);
-}
-
-function cacheGet(pageId, key) {
-  const bucket = getPageCache(pageId);
-  if (!bucket.has(key)) return null;
-
-  const value = bucket.get(key);
-  bucket.delete(key);
-  bucket.set(key, value);
-
-  return value;
-}
-
-// ------------------------------------------------------------
-// MAIN WORKER HANDLER
-// ------------------------------------------------------------
 export async function onRequest(context) {
   const { request, env } = context;
   const url = new URL(request.url);
@@ -58,20 +15,9 @@ export async function onRequest(context) {
     url.searchParams.get("gif_name");
 
   if (!gif) {
-    return new Response("Missing gif parameter", { status: 400 });
-  }
-
-  const pageId = getPageId(gif);
-
-  // ---- CACHE HIT ----
-  const cached = cacheGet(pageId, gif);
-  if (cached) {
-    return new Response(cached, {
-      status: 200,
-      headers: {
-        "Content-Type": "image/gif",
-        "Cache-Control": "public, max-age=31536000"
-      }
+    return new Response("Missing gif parameter", {
+      status: 400,
+      headers: { "Content-Type": "text/plain; charset=utf-8" }
     });
   }
 
@@ -82,20 +28,17 @@ export async function onRequest(context) {
       setTimeout(() => reject(new Error("R2 timeout")), ms)
     );
 
-  // ---- TRY R2 ----
   try {
-    const objectPromise = env.CHIPS_GIFS.get(gif);
-    const object = await Promise.race([objectPromise, timeout(5000)]);
+    const r2Promise = env.CHIPS_GIFS.get(gif);
+    const object = await Promise.race([r2Promise, timeout(15000)]);
 
-    if (object) {
-      const body = await object.arrayBuffer();
-      cacheSet(pageId, gif, body);
-
-      return new Response(body, {
+    if (object && object.body) {
+      return new Response(object.body, {
         status: 200,
         headers: {
-          "Content-Type": "image/gif",
-          "Cache-Control": "public, max-age=31536000"
+          "Content-Type": object.httpMetadata?.contentType || "image/gif",
+          "Content-Disposition": `inline; filename="${gif}"`,
+          "Cache-Control": "public, max-age=31536000, immutable"
         }
       });
     }
@@ -103,19 +46,15 @@ export async function onRequest(context) {
     console.error("R2 fetch or timeout error:", err);
   }
 
-  // ---- STATIC FALLBACK ----
   try {
     const res = await fetch(fallbackUrl);
-
     if (res.ok) {
-      const body = await res.arrayBuffer();
-      cacheSet(pageId, gif, body);
-
-      return new Response(body, {
+      return new Response(res.body, {
         status: 200,
         headers: {
-          "Content-Type": "image/gif",
-          "Cache-Control": "public, max-age=31536000"
+          "Content-Type": res.headers.get("Content-Type") || "image/gif",
+          "Content-Disposition": `inline; filename="${gif}"`,
+          "Cache-Control": "public, max-age=31536000, immutable"
         }
       });
     }
@@ -123,5 +62,8 @@ export async function onRequest(context) {
     console.error("Static fallback error:", err);
   }
 
-  return new Response("GIF not found", { status: 404 });
+  return new Response("GIF not found", {
+    status: 404,
+    headers: { "Content-Type": "text/plain; charset=utf-8" }
+  });
 }
