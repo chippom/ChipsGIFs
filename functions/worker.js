@@ -1,6 +1,18 @@
+// functions/worker.js
+// Cloudflare Pages Function for ChipsGIFs
+// - Serves GIFs from R2 (tolerant binding lookup)
+// - Normalizes wrapper routes (count?gif=..., deliver?File=..., File/file params)
+// - Writes responses into the edge cache (caches.default) under a normalized key
+// - Prevents recursion with x-skip-worker
+// - Fires a background origin counter: tries GET to original wrapper/origin, falls back to POST with credentials
+// - Handles GET and HEAD only for asset serving; forwards everything else to origin
+
 export async function onRequest(context) {
   const { request, env } = context;
   const url = new URL(request.url);
+
+  // tolerant R2 binding: try several common binding names so we don't need to redeploy for a rename
+  const R2 = env.R2_BUCKET || env.GIFS_BUCKET || env.MY_BUCKET || env.CHIPS_GIFS_BUCKET || env.GIFS;
 
   // === Bypass worker for internal background calls ===
   if (request.headers.get('x-skip-worker') === '1') {
@@ -12,40 +24,40 @@ export async function onRequest(context) {
     return fetch(request);
   }
 
-  // Forward true API endpoints without gif param
-  if (url.pathname.startsWith('/api/') && !url.searchParams.has('gif')) {
+  // Forward true API endpoints without gif/File param
+  if (url.pathname.startsWith('/api/') && !url.searchParams.has('gif') && !url.searchParams.has('File') && !url.searchParams.has('file')) {
     return fetch(request);
   }
 
-  // Determine asset path (from ?gif=... or direct path)
-  let assetPath;
-  const hasGifParam = url.searchParams.has('gif');
+  // --- Determine asset path (handles ?gif=..., ?File=..., ?file=..., /deliver and /count wrappers) ---
+  let assetPath = '';
+  const hasGifParam =
+    url.searchParams.has('gif') ||
+    url.searchParams.has('File') ||
+    url.searchParams.has('file');
+
   if (hasGifParam) {
+    const param = url.searchParams.get('gif') || url.searchParams.get('File') || url.searchParams.get('file') || '';
     try {
-      const gifUrl = new URL(url.searchParams.get('gif'), request.url);
+      // Resolve relative or absolute param to a pathname
+      const gifUrl = new URL(param, request.url);
       assetPath = gifUrl.pathname;
     } catch {
-      assetPath = url.searchParams.get('gif') || '';
+      // Fallback: strip fragment if present
+      assetPath = (param || '').split('#')[0];
     }
   } else {
-    assetPath = url.pathname;
+    // Try to extract /static/gifs/... from the path if wrapped (e.g., /deliver?File=..., or /count/static/gifs/name.gif)
+    const possible = url.pathname.match(/(\/static\/gifs\/.*?\.gif)(?:$|[?#])/i);
+    assetPath = possible ? possible[1] : url.pathname;
   }
 
   // Only handle GIF assets under /static/gifs
-  if (!assetPath || !assetPath.startsWith('/static/gifs/')) {
+  if (!assetPath || !/^\/static\/gifs\/.*?\.gif$/i.test(assetPath)) {
     return fetch(request);
   }
 
-  // Fire the original wrapper to origin in background but avoid re-entering this Worker
-  if (hasGifParam) {
-    const bgHeaders = new Headers(request.headers);
-    bgHeaders.set('x-skip-worker', '1');
-    // Preserve Host for origin routing
-    bgHeaders.set('Host', url.host);
-    const bgReq = new Request(request.url, { method: 'GET', headers: bgHeaders });
-    context.waitUntil(fetch(bgReq).catch(() => {}));
-  }
-
+  // Normalize key for R2 (no leading slash)
   const key = assetPath.replace(/^\/+/, '');
 
   // Normalize cache key to asset path with no query string
@@ -55,13 +67,28 @@ export async function onRequest(context) {
   const cacheKey = new Request(cacheUrl.toString(), { method: 'GET' });
 
   // Serve from edge cache if present
-  const cached = await caches.default.match(cacheKey);
-  if (cached) return cached;
+  try {
+    const cached = await caches.default.match(cacheKey);
+    if (cached) return cached;
+  } catch (e) {
+    // If cache lookup fails for any reason, continue to R2/origin fallback
+  }
 
-  // Read from R2 and return with cache headers
-  const object = await env.R2_BUCKET.get(key);
-  if (!object) return new Response('GIF not found', { status: 404 });
+  // Read from R2 and return with cache headers (tolerant binding)
+  let object;
+  try {
+    object = await (R2 && R2.get ? R2.get(key) : null);
+  } catch (err) {
+    // If R2 binding isn't configured or fails, fall back to origin
+    return fetch(request);
+  }
 
+  if (!object) {
+    // Not found in R2; fall back to origin so wrappers still work
+    return fetch(request);
+  }
+
+  // Prepare response headers
   const headers = new Headers();
   headers.set('Content-Type', 'image/gif');
   headers.set('Cache-Control', 'public, max-age=86400, immutable');
@@ -71,10 +98,62 @@ export async function onRequest(context) {
     return new Response(null, { headers });
   }
 
-  const response = new Response(object.body, { headers });
+  // Build response from R2 object (streaming body)
+  const response = new Response(object.body, { status: 200, headers });
 
   // Store at edge under normalized key (fire-and-forget)
-  context.waitUntil(caches.default.put(cacheKey, response.clone()));
+  try {
+    context.waitUntil(caches.default.put(cacheKey, response.clone()).catch(() => {}));
+  } catch (e) {
+    // ignore cache put errors
+  }
+
+  // Fire background origin counter/tracker.
+  // Strategy:
+  //  - If the original request was a wrapper (had gif/File param or wrapper path), attempt to call the original wrapper URL with x-skip-worker=1
+  //  - If that GET fails (non-2xx/3xx), attempt a POST to /count with JSON body and credentials included
+  context.waitUntil((async () => {
+    try {
+      // Prefer calling the original request URL so origin sees the same wrapper call
+      const originalWrapperUrl = request.url;
+
+      // Build GET attempt to original wrapper/origin
+      const getHeaders = new Headers();
+      getHeaders.set('x-skip-worker', '1');
+      getHeaders.set('Accept', 'text/plain, */*');
+      // Preserve Host for origin routing; remove these lines if your origin rejects custom Host headers
+      getHeaders.set('Host', url.host);
+
+      const getReq = new Request(originalWrapperUrl, { method: 'GET', headers: getHeaders, redirect: 'follow' });
+      const getRes = await fetch(getReq).catch(() => null);
+
+      if (getRes && getRes.status >= 200 && getRes.status < 400) {
+        return;
+      }
+
+      // If GET didn't succeed, try POST to a counting endpoint that most origins use (/count)
+      const postUrl = `https://${url.host}/count`;
+      const body = JSON.stringify({ gif: assetPath });
+      const postHeaders = new Headers({
+        'Content-Type': 'application/json',
+        'x-skip-worker': '1',
+      });
+      // Preserve Host for origin routing; remove this line if your origin rejects custom Host headers
+      postHeaders.set('Host', url.host);
+
+      const postReq = new Request(postUrl, {
+        method: 'POST',
+        headers: postHeaders,
+        body,
+        credentials: 'include',
+        redirect: 'follow',
+      });
+
+      await fetch(postReq).catch(() => null);
+    } catch (e) {
+      // Swallow any errors from background counting; do not affect the main response
+    }
+  })());
 
   return response;
 }
