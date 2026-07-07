@@ -11,10 +11,11 @@ export async function onRequest(context) {
     return new Response("GIF not found", { status: 404 });
   }
 
-  return new Response(object.body, {
-    headers: {
-      "Content-Type": "image/gif",
-      "Cache-Control": "public, max-age=31536000, immutable"
-    }
-  });
+  const headers = new Headers();
+  headers.set('Content-Type', 'image/gif');
+  headers.set('Cache-Control', 'public, max-age=86400, immutable');
+
+  const response = new Response(object.body, { headers });
+  context.waitUntil(caches.default.put(request, response.clone()));
+  return response;
 }
