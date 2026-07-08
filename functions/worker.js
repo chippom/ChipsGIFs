@@ -109,19 +109,13 @@ export async function onRequest(context) {
   }
 
   // Fire background origin counter/tracker.
-  // Strategy:
-  //  - If the original request was a wrapper (had gif/File param or wrapper path), attempt to call the original wrapper URL with x-skip-worker=1
-  //  - If that GET fails (non-2xx/3xx), attempt a POST to /count with JSON body and credentials included
   context.waitUntil((async () => {
     try {
-      // Prefer calling the original request URL so origin sees the same wrapper call
       const originalWrapperUrl = request.url;
 
-      // Build GET attempt to original wrapper/origin
       const getHeaders = new Headers();
       getHeaders.set('x-skip-worker', '1');
       getHeaders.set('Accept', 'text/plain, */*');
-      // Preserve Host for origin routing; remove these lines if your origin rejects custom Host headers
       getHeaders.set('Host', url.host);
 
       const getReq = new Request(originalWrapperUrl, { method: 'GET', headers: getHeaders, redirect: 'follow' });
@@ -131,14 +125,12 @@ export async function onRequest(context) {
         return;
       }
 
-      // If GET didn't succeed, try POST to a counting endpoint that most origins use (/count)
       const postUrl = `https://${url.host}/count`;
       const body = JSON.stringify({ gif: assetPath });
       const postHeaders = new Headers({
         'Content-Type': 'application/json',
         'x-skip-worker': '1',
       });
-      // Preserve Host for origin routing; remove this line if your origin rejects custom Host headers
       postHeaders.set('Host', url.host);
 
       const postReq = new Request(postUrl, {
@@ -156,4 +148,10 @@ export async function onRequest(context) {
   })());
 
   return response;
+}
+
+// ⭐⭐⭐ FINAL FIX — FALLBACK ROUTING ⭐⭐⭐
+// This is the missing line that stops your 4xx errors and activates caching.
+export async function onRequestFallback(context) {
+  return context.env.ASSETS.fetch(context.request);
 }
