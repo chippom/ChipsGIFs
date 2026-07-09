@@ -1,4 +1,4 @@
-/* scripts.js v20260620-0930 — ACTIVE SERVICE WORKER (RECONFIGURED) */
+/* scripts.js v20260708-2000 — ACTIVE SERVICE WORKER (RECONFIGURED) */
 
 /* Prevent FOUC: Make body visible once DOM is fully loaded */
 document.addEventListener("DOMContentLoaded", () => {
@@ -202,7 +202,7 @@ function initDownloadHandlers(visitorId) {
         }
 
       } catch (err) {
-        console.error("Download error:", err);
+        console.error("Download failed:", err);
       } finally {
         btn.textContent = originalText;
         btn.disabled = false;
