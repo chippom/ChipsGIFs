@@ -12,7 +12,7 @@ export async function onRequest(context) {
           status: 400,
           headers: {
             "Content-Type": "application/json",
-            "Cache-Control": "no-store"
+            "Cache-Control": "public, max-age=60"
           }
         }
       );
@@ -38,7 +38,7 @@ export async function onRequest(context) {
       return new Response(JSON.stringify({ count: 0 }), {
         headers: {
           "Content-Type": "application/json",
-          "Cache-Control": "no-store"
+          "Cache-Control": "public, max-age=60"
         }
       });
     }
@@ -49,7 +49,7 @@ export async function onRequest(context) {
     return new Response(JSON.stringify({ count }), {
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "no-store"
+        "Cache-Control": "public, max-age=60"
       }
     });
 
@@ -60,7 +60,7 @@ export async function onRequest(context) {
         status: 500,
         headers: {
           "Content-Type": "application/json",
-          "Cache-Control": "no-store"
+          "Cache-Control": "public, max-age=60"
         }
       }
     );
