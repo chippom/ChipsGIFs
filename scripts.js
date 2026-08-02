@@ -328,26 +328,22 @@ async function fetchAndDisplayAllDownloadCounts() {
 
   for (const item of gifItems) {
     const img = item.querySelector("img");
+    const countEl = item.querySelector(".download-count");
 
-    if (img?.dataset.gif) {
-      const rawGifName = img.dataset.gif;
-      const gifNameEncoded = encodeURIComponent(rawGifName);
+    if (!img?.dataset.gif || !countEl) continue;
 
-      try {
-        const res = await fetch(`/api/count?gif=${gifNameEncoded}`);
+    const rawGifName = img.dataset.gif;
+    const gifNameEncoded = encodeURIComponent(rawGifName);
 
-        if (res.ok) {
-          const data = await res.json();
-          const countEl = item.querySelector(".download-count");
+    try {
+      const res = await fetch(`/api/count?gif=${gifNameEncoded}`);
 
-          if (countEl) {
-            const safeCount = data.count ?? 0;
-            countEl.textContent = `Downloads: ${safeCount}`;
-          }
-        }
-      } catch (err) {
-        console.error(`Error fetching download count for ${rawGifName}:`, err);
+      if (res.ok) {
+        const data = await res.json();
+        countEl.textContent = `Downloads: ${data.count ?? 0}`;
       }
+    } catch {
+      countEl.textContent = "Downloads: 0";
     }
   }
 }
