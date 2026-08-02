@@ -18,13 +18,12 @@ export async function onRequest(context) {
     const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY;
 
     const response = await fetch(
-      `${supabaseUrl}/rest/v1/downloads?gif_name=eq.${encodeURIComponent(gifName)}&select=id`,
+      `${supabaseUrl}/rest/v1/downloads?gif_name=eq.${encodeURIComponent(gifName)}&select=count&limit=1`,
       {
         method: "GET",
         headers: {
           apikey: supabaseKey,
-          Authorization: `Bearer ${supabaseKey}`,
-          Prefer: "count=exact"
+          Authorization: `Bearer ${supabaseKey}`
         }
       }
     );
@@ -38,10 +37,13 @@ export async function onRequest(context) {
       });
     }
 
-    const contentRange = response.headers.get("content-range");
-    const count = contentRange ? parseInt(contentRange.split("/")[1], 10) : 0;
+    const data = await response.json();
+    const count =
+      Array.isArray(data) && data.length > 0 && typeof data[0].count === "number"
+        ? data[0].count
+        : 0;
 
-    return new Response(JSON.stringify({ count: Number.isNaN(count) ? 0 : count }), {
+    return new Response(JSON.stringify({ count }), {
       headers: {
         "Content-Type": "application/json",
         "Cache-Control": "public, max-age=60"
