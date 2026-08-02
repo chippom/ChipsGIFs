@@ -352,7 +352,7 @@ async function fetchAndDisplayAllDownloadCounts() {
   }
 }
 
-/* END — NO SERVICE WORKER */
+/* END — SERVICE WORKER */
 if ("serviceWorker" in navigator && window.isSecureContext) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("/service-worker.js").catch((err) => {
