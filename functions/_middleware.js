@@ -3,7 +3,7 @@ export async function onRequest(context) {
   let pathname = url.pathname;
   const originalPathname = pathname;
 
-  pathname = pathname.replace(/%0D%0A/gi, "");
+  pathname = pathname.replace(/%25?0D%25?0A/gi, "");
   pathname = pathname.replace(/(\/gifs)+\//g, "/gifs/");
 
   if (pathname === "/index" || pathname === "/index/") {
