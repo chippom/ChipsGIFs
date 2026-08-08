@@ -1,4 +1,4 @@
-/* scripts.js v20260708-2000 — ACTIVE SERVICE WORKER (RECONFIGURED) */
+/* scripts.js v20260808-1630 — ACTIVE SERVICE WORKER (RECONFIGURED) */
 
 /* Prevent FOUC: Make body visible once DOM is fully loaded */
 document.addEventListener("DOMContentLoaded", () => {
@@ -322,29 +322,83 @@ function initStarTrails() {
   animateStars();
 }
 
-/* Fetch and update download counts on page load */
+/* Fetch and update all download counts with one batched request */
 async function fetchAndDisplayAllDownloadCounts() {
-  const gifItems = document.querySelectorAll(".gif-item");
+  const gifItems = [...document.querySelectorAll(".gif-item")];
 
-  for (const item of gifItems) {
-    const img = item.querySelector("img");
-    const countEl = item.querySelector(".download-count");
+  const items = gifItems
+    .map(item => ({
+      img: item.querySelector("img"),
+      countEl: item.querySelector(".download-count")
+    }))
+    .filter(({ img, countEl }) => img?.dataset.gif && countEl);
 
-    if (!img?.dataset.gif || !countEl) continue;
+  if (items.length === 0) return;
 
-    const rawGifName = img.dataset.gif;
-    const gifNameEncoded = encodeURIComponent(rawGifName);
+  const cacheKey = "chips_download_counts_v1";
+  const cacheLifetime = 10 * 60 * 1000;
 
-    try {
-      const res = await fetch(`/api/count?gif=${gifNameEncoded}`);
+  let cachedCounts = {};
+  let cacheIsFresh = false;
 
-      if (res.ok) {
-        const data = await res.json();
-        countEl.textContent = `Downloads: ${data.count ?? 0}`;
-      }
-    } catch {
-      countEl.textContent = "Downloads: 0";
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(cacheKey) || "null");
+
+    if (
+      saved &&
+      typeof saved.savedAt === "number" &&
+      saved.counts &&
+      Date.now() - saved.savedAt < cacheLifetime
+    ) {
+      cachedCounts = saved.counts;
+      cacheIsFresh = true;
     }
+  } catch {
+    sessionStorage.removeItem(cacheKey);
+  }
+
+  const missingGifs = [
+    ...new Set(
+      items
+        .map(({ img }) => img.dataset.gif)
+        .filter(gif => !cacheIsFresh || !(gif in cachedCounts))
+    )
+  ];
+
+  if (missingGifs.length > 0) {
+    try {
+      const response = await fetch("/api/counts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ gifs: missingGifs })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+
+        cachedCounts = {
+          ...cachedCounts,
+          ...(data.counts || {})
+        };
+
+        sessionStorage.setItem(
+          cacheKey,
+          JSON.stringify({
+            savedAt: Date.now(),
+            counts: cachedCounts
+          })
+        );
+      }
+    } catch (err) {
+      console.error("Error fetching batched download counts:", err);
+    }
+  }
+
+  for (const { img, countEl } of items) {
+    const count = cachedCounts[img.dataset.gif] ?? 0;
+    countEl.textContent = `Downloads: ${count}`;
   }
 }
 
