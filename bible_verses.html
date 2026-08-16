@@ -10,11 +10,17 @@
   <link rel="preload" as="image" href="/static/gifs/cross_icon.gif" fetchpriority="high">
 
   <!-- Async CSS -->
-  <link rel="preload" href="styles.css?v=20260808-1630" as="style" onload="this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="styles.css?v=20260808-1630"></noscript>
+  <link rel="preload" href="styles.css?v=20260816-1300" as="style" onload="this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="styles.css?v=20260816-1300"></noscript>
 
-  <meta name="description" content="A growing collection of Scripture‑based animated GIFs created to inspire, encourage, and share the message of Christ through uplifting visual artwork.">
-  <meta name="keywords" content="Bible verses GIFs, Scripture GIFs, Christian GIFs, inspirational GIFs, Chips GIFs" />
+  <meta
+    name="description"
+    content="A growing collection of Scripture‑based animated GIFs created to inspire, encourage, and share the message of Christ through uplifting visual artwork."
+  >
+  <meta
+    name="keywords"
+    content="Bible verses GIFs, Scripture GIFs, Christian GIFs, inspirational GIFs, Chips GIFs"
+  >
   <meta name="author" content="Chip Pommert" />
 
   <link rel="icon" type="image/png" href="/favicon.png">
@@ -30,7 +36,7 @@
   <meta name="theme-color" content="#333333" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#39ff14" media="(prefers-color-scheme: dark)">
 
-   <!-- ImageGallery Schema -->
+  <!-- ImageGallery Schema -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -58,30 +64,29 @@
     ]
   }
   </script>
-
 </head>
 
 <body>
+  <header class="header" role="banner">
+    <div class="site-title">
+      <h1 class="title">Bible Verses &amp; Scripture GIF Collection</h1>
 
-<header class="header" role="banner">
-  <div class="site-title">
-    <h1 class="title">Bible Verses &amp; Scripture GIF Collection</h1>
+      <!-- Header LCP GIF with correct intrinsic dimensions -->
+      <img
+        src="/static/gifs/cross_icon.gif"
+        data-gif="cross_icon.gif"
+        alt="Cross icon"
+        class="icon"
+        width="84"
+        height="145"
+        fetchpriority="high"
+      >
+    </div>
 
-    <!-- ⭐ CLS-FIXED HEADER GIF -->
-    <img 
-      src="/static/gifs/cross_icon.gif" 
-      data-gif="cross_icon.gif" 
-      alt="Cross Icon" 
-      class="icon"
-      width="160"
-      height="160"
-    >
-  </div>
-
-  <p class="instructions">
-    Click any verse to view the full-size GIF. Free to download and share.
-  </p>
-</header>
+    <p class="instructions">
+      Click any verse to view the full-size GIF. Free to download and share.
+    </p>
+  </header>
 
 <nav class="pagination pagination-top" aria-label="Page navigation">
 <a href="/">Home</a>
@@ -1057,6 +1062,6 @@
   <img id="overlay-img" class="fullsize-image" src="" alt="Full-size GIF" />
 </div>
 
-<script src="scripts.js?v=20260808-1630"></script>
+<script src="scripts.js?v=20260816-1300"></script>
 </body>
 </html>
