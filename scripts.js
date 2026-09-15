@@ -1,4 +1,5 @@
-/* scripts.js v20260808-1630 — ACTIVE SERVICE WORKER (RECONFIGURED) */
+/* scripts.js v20260914-2009 — OWNER VISITOR-ID UPDATE */
+
 
 /* Prevent FOUC: Make body visible once DOM is fully loaded */
 document.addEventListener("DOMContentLoaded", () => {
@@ -21,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
   fetchAndDisplayAllDownloadCounts();
 });
 
+
 /* -----------------------------------------------------------
    BROWSER-SIDE GIF LOADING
 ----------------------------------------------------------- */
@@ -31,6 +33,7 @@ function loadGif(img, src) {
 
   img.src = src;
 }
+
 
 /* -----------------------------------------------------------
    1) Correct lazy loader — NOW USING WORKER FIRST
@@ -58,6 +61,7 @@ function initLazyLoad() {
   });
 }
 
+
 /* -----------------------------------------------------------
    2) Full-screen overlay on GIF click
 ----------------------------------------------------------- */
@@ -65,9 +69,11 @@ function initOverlay() {
   document.querySelectorAll(".gif-item").forEach(item => {
     item.addEventListener("click", e => {
       if (e.target.classList.contains("download-btn")) return;
+
       const img = item.querySelector("img");
       const overlay = document.getElementById("overlay");
       const overlayImg = document.getElementById("overlay-img");
+
       if (img?.dataset.gif && overlay && overlayImg) {
         overlayImg.src = "/static/gifs/" + img.dataset.gif;
         overlay.classList.add("active");
@@ -83,8 +89,9 @@ function initOverlay() {
   });
 }
 
+
 /* -----------------------------------------------------------
-   3) Overlay right-click logging — FIXED
+   3) Overlay right-click logging
 ----------------------------------------------------------- */
 function initOverlayContextMenuLogging(visitorId) {
   const overlay = document.getElementById("overlay");
@@ -108,7 +115,10 @@ function initOverlayContextMenuLogging(visitorId) {
       await fetch(`/api/update?gif=${encodeURIComponent(gifName)}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ gif: gifName })
+        body: JSON.stringify({
+          gif: gifName,
+          visitor_id: visitorId
+        })
       });
 
       await fetch(`/api/log?gif=${encodeURIComponent(gifName)}`, {
@@ -122,19 +132,24 @@ function initOverlayContextMenuLogging(visitorId) {
   });
 }
 
+
 /* 3) Dark mode toggle */
 function initDarkMode() {
   const toggle = document.getElementById("toggleDarkMode");
 
   toggle?.addEventListener("click", () => {
     document.body.classList.toggle("dark-mode");
-    localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
+    localStorage.setItem(
+      "darkMode",
+      document.body.classList.contains("dark-mode")
+    );
   });
 
   if (localStorage.getItem("darkMode") === "true") {
     document.body.classList.add("dark-mode");
   }
 }
+
 
 /* 4) Download handler */
 function initDownloadHandlers(visitorId) {
@@ -152,7 +167,10 @@ function initDownloadHandlers(visitorId) {
         const rawGifName = img.dataset.gif;
         const gifNameEncoded = encodeURIComponent(rawGifName);
 
-        const countData = JSON.stringify({ gif: rawGifName });
+        const countData = JSON.stringify({
+          gif: rawGifName,
+          visitor_id: visitorId
+        });
 
         await fetch(`/api/update?gif=${gifNameEncoded}`, {
           method: "POST",
@@ -190,9 +208,11 @@ function initDownloadHandlers(visitorId) {
 
         try {
           const countRes = await fetch(`/api/count?gif=${gifNameEncoded}`);
+
           if (countRes.ok) {
             const countDataRes = await countRes.json();
             const safeCount = countDataRes.count ?? 0;
+
             if (countEl) {
               countEl.textContent = `Downloads: ${safeCount}`;
             }
@@ -200,7 +220,6 @@ function initDownloadHandlers(visitorId) {
         } catch (refreshErr) {
           console.error("Error refreshing download count:", refreshErr);
         }
-
       } catch (err) {
         console.error("Download failed:", err);
       } finally {
@@ -211,13 +230,17 @@ function initDownloadHandlers(visitorId) {
   });
 }
 
+
 /* 5) Right-click & middle-click logging on GIFs */
 function initContextMenuLogging(visitorId) {
   document.querySelectorAll(".gif-item img").forEach(img => {
     const logBoth = async () => {
       const gifNameRaw = img.dataset.gif;
 
-      const countData = JSON.stringify({ gif: gifNameRaw });
+      const countData = JSON.stringify({
+        gif: gifNameRaw,
+        visitor_id: visitorId
+      });
 
       try {
         await fetch(`/api/update?gif=${encodeURIComponent(gifNameRaw)}`, {
@@ -248,11 +271,13 @@ function initContextMenuLogging(visitorId) {
     };
 
     img.addEventListener("contextmenu", logBoth);
+
     img.addEventListener("auxclick", e => {
       if (e.button === 1) logBoth();
     });
   });
 }
+
 
 /* 7) Star-trail mouse effect */
 function initStarTrails() {
@@ -298,29 +323,36 @@ function initStarTrails() {
       const oldest = stars.shift();
       container.removeChild(oldest.element);
     }
+
     stars.push(createStar(e.clientX, e.clientY));
   });
 
   function animateStars() {
     const now = Date.now();
+
     for (let i = stars.length - 1; i >= 0; i--) {
       const star = stars[i];
       const elapsed = now - star.created;
+
       if (elapsed > star.life) {
         container.removeChild(star.element);
         stars.splice(i, 1);
         continue;
       }
+
       star.x += star.velocityX;
       star.y += star.velocityY;
       star.element.style.left = `${star.x}px`;
       star.element.style.top = `${star.y}px`;
       star.element.style.opacity = `${1 - elapsed / star.life}`;
     }
+
     requestAnimationFrame(animateStars);
   }
+
   animateStars();
 }
+
 
 /* Fetch and update all download counts with one batched request */
 async function fetchAndDisplayAllDownloadCounts() {
@@ -402,5 +434,5 @@ async function fetchAndDisplayAllDownloadCounts() {
   }
 }
 
-/* END — SERVICE WORKER */
 
+/* END — SERVICE WORKER */
