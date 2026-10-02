@@ -1,4 +1,2 @@
 /index       /       301
 /index.html  /       301
-/*.gif       /static/gifs/:splat  301
-/gifs/*      /static/gifs/:splat  301
