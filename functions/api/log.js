@@ -24,7 +24,11 @@ export async function onRequest(context) {
       return new Response(
         JSON.stringify({ error: "Missing gif parameter" }),
         {
-          status: 400
+          status: 400,
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-store"
+          }
         }
       );
     }
@@ -42,6 +46,65 @@ export async function onRequest(context) {
         JSON.stringify({ error: "Invalid GIF filename" }),
         {
           status: 400,
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-store"
+          }
+        }
+      );
+    }
+
+    // Confirm the exact filename exists in R2 before contacting Supabase.
+    // Fail closed if the binding is missing, the lookup fails, or it times out.
+    let gifObject;
+    let r2TimeoutId;
+
+    try {
+      if (
+        !env.CHIPS_GIFS ||
+        typeof env.CHIPS_GIFS.head !== "function"
+      ) {
+        throw new Error("CHIPS_GIFS R2 binding is unavailable");
+      }
+
+      const timeout = new Promise((_, reject) => {
+        r2TimeoutId = setTimeout(() => {
+          reject(new Error("R2 existence check timed out"));
+        }, 5000);
+      });
+
+      gifObject = await Promise.race([
+        env.CHIPS_GIFS.head(gifName),
+        timeout
+      ]);
+    } catch (err) {
+      console.error(
+        "R2 existence check failed:",
+        err instanceof Error ? err.message : String(err)
+      );
+
+      return new Response(
+        JSON.stringify({
+          error: "GIF storage temporarily unavailable. Please try again."
+        }),
+        {
+          status: 503,
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-store",
+            "Retry-After": "5"
+          }
+        }
+      );
+    } finally {
+      clearTimeout(r2TimeoutId);
+    }
+
+    if (gifObject === null) {
+      return new Response(
+        JSON.stringify({ error: "GIF not found" }),
+        {
+          status: 404,
           headers: {
             "Content-Type": "application/json",
             "Cache-Control": "no-store"
@@ -100,7 +163,11 @@ export async function onRequest(context) {
           details: errText
         }),
         {
-          status: 500
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-store"
+          }
         }
       );
     }
@@ -109,7 +176,8 @@ export async function onRequest(context) {
 
     return new Response(JSON.stringify(data[0]), {
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store"
       }
     });
   } catch (err) {
@@ -119,7 +187,11 @@ export async function onRequest(context) {
         details: err instanceof Error ? err.message : String(err)
       }),
       {
-        status: 500
+        status: 500,
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-store"
+        }
       }
     );
   }

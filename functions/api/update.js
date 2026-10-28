@@ -52,6 +52,65 @@ export async function onRequest(context) {
       );
     }
 
+    // Confirm the exact filename exists in R2 before contacting Supabase.
+    // Fail closed if the binding is missing, the lookup fails, or it times out.
+    let gifObject;
+    let r2TimeoutId;
+
+    try {
+      if (
+        !env.CHIPS_GIFS ||
+        typeof env.CHIPS_GIFS.head !== "function"
+      ) {
+        throw new Error("CHIPS_GIFS R2 binding is unavailable");
+      }
+
+      const timeout = new Promise((_, reject) => {
+        r2TimeoutId = setTimeout(() => {
+          reject(new Error("R2 existence check timed out"));
+        }, 5000);
+      });
+
+      gifObject = await Promise.race([
+        env.CHIPS_GIFS.head(gifName),
+        timeout
+      ]);
+    } catch (err) {
+      console.error(
+        "R2 existence check failed:",
+        err instanceof Error ? err.message : String(err)
+      );
+
+      return new Response(
+        JSON.stringify({
+          error: "GIF storage temporarily unavailable. Please try again."
+        }),
+        {
+          status: 503,
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-store",
+            "Retry-After": "5"
+          }
+        }
+      );
+    } finally {
+      clearTimeout(r2TimeoutId);
+    }
+
+    if (gifObject === null) {
+      return new Response(
+        JSON.stringify({ error: "GIF not found" }),
+        {
+          status: 404,
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-store"
+          }
+        }
+      );
+    }
+
     const supabaseUrl = env.SUPABASE_URL;
     const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY;
 
