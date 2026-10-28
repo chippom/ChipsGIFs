@@ -31,13 +31,34 @@ export async function onRequest(context) {
       });
     }
 
+    // Accept a single GIF filename, not a path, URL, or template expression.
+    // Spaces and ordinary punctuation are allowed.
+    const invalidGifName =
+      gifName !== gifName.trim() ||
+      !/^.+\.gif$/i.test(gifName) ||
+      /[\/\\:{}?#\u0000-\u001F\u007F]/.test(gifName) ||
+      gifName.includes("${");
+
+    if (invalidGifName) {
+      return new Response(
+        JSON.stringify({ error: "Invalid GIF filename" }),
+        {
+          status: 400,
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-store"
+          }
+        }
+      );
+    }
+
     const supabaseUrl = env.SUPABASE_URL;
     const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY;
 
     // scripts.js sends visitor_id with every /api/update request.
     const body = await request.json().catch(() => ({}));
     const visitorId =
-      typeof body.visitor_id === "string" ? body.visitor_id : "";
+      typeof body?.visitor_id === "string" ? body.visitor_id : "";
 
     const isOwnerTesting =
       Boolean(env.OWNER_VISITOR_ID) &&
