@@ -61,10 +61,10 @@ export async function onRequest(context) {
 
     try {
       if (
-        !env.CHIPS_GIFS ||
-        typeof env.CHIPS_GIFS.head !== "function"
+        !env["CHIPS-GIFS"] ||
+        typeof env["CHIPS-GIFS"].head !== "function"
       ) {
-        throw new Error("CHIPS_GIFS R2 binding is unavailable");
+        throw new Error("CHIPS-GIFS R2 binding is unavailable");
       }
 
       const timeout = new Promise((_, reject) => {
@@ -74,7 +74,7 @@ export async function onRequest(context) {
       });
 
       gifObject = await Promise.race([
-        env.CHIPS_GIFS.head(gifName),
+        env["CHIPS-GIFS"].head(gifName),
         timeout
       ]);
     } catch (err) {
