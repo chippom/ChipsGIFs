@@ -2,13 +2,31 @@ export async function onRequest(context) {
   try {
     const { request, env } = context;
 
+    // Reject GET and other methods before contacting Supabase.
+    if (request.method !== "POST") {
+      return new Response(
+        JSON.stringify({ error: "Method not allowed" }),
+        {
+          status: 405,
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-store",
+            Allow: "POST"
+          }
+        }
+      );
+    }
+
     const url = new URL(request.url);
     const gifName = url.searchParams.get("gif");
 
     if (!gifName) {
-      return new Response(JSON.stringify({ error: "Missing gif parameter" }), {
-        status: 400
-      });
+      return new Response(
+        JSON.stringify({ error: "Missing gif parameter" }),
+        {
+          status: 400
+        }
+      );
     }
 
     const supabaseUrl = env.SUPABASE_URL;
@@ -38,34 +56,50 @@ export async function onRequest(context) {
       country
     };
 
-    const response = await fetch(`${supabaseUrl}/rest/v1/visitor_logs`, {
-      method: "POST",
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`,
-        "Content-Type": "application/json",
-        Prefer: "return=representation"
-      },
-      body: JSON.stringify(logEntry)
-    });
+    const response = await fetch(
+      `${supabaseUrl}/rest/v1/visitor_logs`,
+      {
+        method: "POST",
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`,
+          "Content-Type": "application/json",
+          Prefer: "return=representation"
+        },
+        body: JSON.stringify(logEntry)
+      }
+    );
 
     if (!response.ok) {
       const errText = await response.text();
+
       return new Response(
-        JSON.stringify({ error: "Supabase insert failed", details: errText }),
-        { status: 500 }
+        JSON.stringify({
+          error: "Supabase insert failed",
+          details: errText
+        }),
+        {
+          status: 500
+        }
       );
     }
 
     const data = await response.json();
-    return new Response(JSON.stringify(data[0]), {
-      headers: { "Content-Type": "application/json" }
-    });
 
+    return new Response(JSON.stringify(data[0]), {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
   } catch (err) {
     return new Response(
-      JSON.stringify({ error: "Server error", details: err.message }),
-      { status: 500 }
+      JSON.stringify({
+        error: "Server error",
+        details: err instanceof Error ? err.message : String(err)
+      }),
+      {
+        status: 500
+      }
     );
   }
 }

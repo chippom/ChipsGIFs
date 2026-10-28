@@ -2,6 +2,21 @@ export async function onRequest(context) {
   try {
     const { request, env } = context;
 
+    // Reject GET and other methods before contacting Supabase.
+    if (request.method !== "POST") {
+      return new Response(
+        JSON.stringify({ error: "Method not allowed" }),
+        {
+          status: 405,
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-store",
+            Allow: "POST"
+          }
+        }
+      );
+    }
+
     const url = new URL(request.url);
     const gifName = url.searchParams.get("gif");
 
@@ -19,18 +34,17 @@ export async function onRequest(context) {
     const supabaseUrl = env.SUPABASE_URL;
     const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY;
 
-    // The shared scripts.js file now sends visitor_id with every /api/update request.
+    // scripts.js sends visitor_id with every /api/update request.
     const body = await request.json().catch(() => ({}));
     const visitorId =
       typeof body.visitor_id === "string" ? body.visitor_id : "";
 
-    // OWNER_VISITOR_ID is the encrypted Cloudflare secret you just added.
     const isOwnerTesting =
       Boolean(env.OWNER_VISITOR_ID) &&
       visitorId === env.OWNER_VISITOR_ID;
 
     // Do not count your own testing activity.
-    // This skips both recent_downloads and the downloads count update.
+    // Skip both recent_downloads and the downloads count update.
     if (isOwnerTesting) {
       const existing = await fetch(
         `${supabaseUrl}/rest/v1/downloads?gif_name=eq.${encodeURIComponent(gifName)}&select=count`,
@@ -76,7 +90,7 @@ export async function onRequest(context) {
     const ip = request.headers.get("CF-Connecting-IP") || "unknown";
     const tenSecondsAgo = new Date(Date.now() - 10000).toISOString();
 
-    // 1. Check recent_downloads for a duplicate GIF/IP request within 10 seconds.
+    // 1. Check for a duplicate GIF/IP request within 10 seconds.
     const recentCheck = await fetch(
       `${supabaseUrl}/rest/v1/recent_downloads?gif_name=eq.${encodeURIComponent(gifName)}&ip_address=eq.${encodeURIComponent(ip)}&timestamp=gt.${encodeURIComponent(tenSecondsAgo)}`,
       {
@@ -105,7 +119,7 @@ export async function onRequest(context) {
     const recentRows = await recentCheck.json();
 
     if (recentRows.length > 0) {
-      // Duplicate request within 10 seconds: return current count without incrementing.
+      // Return current count without incrementing a duplicate.
       const existing = await fetch(
         `${supabaseUrl}/rest/v1/downloads?gif_name=eq.${encodeURIComponent(gifName)}&select=count`,
         {
@@ -146,7 +160,7 @@ export async function onRequest(context) {
       });
     }
 
-    // 2. Log this real visitor download in recent_downloads.
+    // 2. Record the event in recent_downloads.
     const recentInsert = await fetch(
       `${supabaseUrl}/rest/v1/recent_downloads`,
       {
@@ -207,7 +221,7 @@ export async function onRequest(context) {
     let updateResponse;
 
     if (rows.length === 0) {
-      // First real visitor download for this GIF.
+      // Create the first count for this GIF.
       updateResponse = await fetch(`${supabaseUrl}/rest/v1/downloads`, {
         method: "POST",
         headers: {
